@@ -60,7 +60,14 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                         materialPosition.material().getName(),
                         materialPosition.amount() * order.getAmount(),
                         transporterList.get(i).getName(),
-                        StepTypes.GetMaterialFromSuppliesAndMoveToWarehouse));
+                        StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse));
+
+                factorySteps.add(new FactoryStep(
+                        factory,
+                        materialPosition.material().getName(),
+                        materialPosition.amount() * order.getAmount(),
+                        transporterList.get(i).getName(),
+                        StepTypes.MoveMaterialFromTransporterToWarehouse));
             }
         }
 

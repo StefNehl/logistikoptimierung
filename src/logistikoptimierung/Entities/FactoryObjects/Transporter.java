@@ -19,6 +19,8 @@ public class Transporter extends FactoryObject
     private double remainingDrivingTime;
     private double blockedUntilTimeStep;
 
+    private List<WarehouseItem> loadedItems;
+
     public Transporter(String name, String type, String engine, int maxSize, double maxDrivingTime, Factory factory)
     {
         super(name, factory);
@@ -27,6 +29,7 @@ public class Transporter extends FactoryObject
         this.capacity = maxSize;
         this.remainingDrivingTime = maxDrivingTime;
         this.blockedUntilTimeStep = 0;
+        this.loadedItems = new ArrayList<>();
     }
 
     @Override
@@ -39,9 +42,12 @@ public class Transporter extends FactoryObject
         }
         switch (stepType)
         {
-            case StepTypes.GetMaterialFromSuppliesAndMoveToWarehouse -> {
-                var materials = getMaterialFromSupplier(amountOfItems, (Material) item);
-                moveItemsToWarehouse(materials);
+            case StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse ->
+                this.loadedItems.addAll(getMaterialFromSupplier(amountOfItems, (Material) item));
+            case StepTypes.MoveMaterialFromTransporterToWarehouse -> {
+                var items = new ArrayList<>(this.loadedItems);
+                this.loadedItems.clear();
+                moveItemsToWarehouse(items);
             }
             case StepTypes.ConcludeOrderTransportToCustomer -> {
                 var order = (Order) item;

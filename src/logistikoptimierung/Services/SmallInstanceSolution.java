@@ -21,14 +21,15 @@ public class SmallInstanceSolution implements IOptimizationService
     public List<FactoryStep> optimize(List<Order> orderList)
     {
         var factorySteps = new ArrayList<FactoryStep>();
-        factorySteps.add(new FactoryStep(factory, "M1", 4, "T1", StepTypes.GetMaterialFromSuppliesAndMoveToWarehouse));
+        factorySteps.add(new FactoryStep(factory, "M1", 4, "T1", StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse));
+        factorySteps.add(new FactoryStep(factory, "M1", 1, "T1", StepTypes.MoveMaterialFromTransporterToWarehouse));
         factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer));
         factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.Produce));
-        factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveProductFromBufferToWarehouse));
-        factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer));
-        factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.Produce));
-        factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveProductFromBufferToWarehouse));
-        factorySteps.add(new FactoryStep(factory, "O1", 1, "T1", StepTypes.ConcludeOrderTransportToCustomer));
+        //factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveProductFromBufferToWarehouse));
+        //factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer));
+        //factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.Produce));
+        //factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveProductFromBufferToWarehouse));
+        //factorySteps.add(new FactoryStep(factory, "O1", 1, "T1", StepTypes.ConcludeOrderTransportToCustomer));
 
         return factorySteps;
     }

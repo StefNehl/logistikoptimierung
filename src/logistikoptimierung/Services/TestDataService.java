@@ -23,7 +23,7 @@ public class TestDataService implements IDataService {
 
     private Instance createSmallTestInstance()
     {
-        var runTimeInMinutes = 5 * 8 * 60;
+        var runTimeInMinutes = 100;//5 * 8 * 60;
         int warehouseCapacity = 100;
 
         int nrOfMachines = 1;
