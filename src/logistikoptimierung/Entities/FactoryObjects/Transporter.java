@@ -53,12 +53,13 @@ public class Transporter extends FactoryObject
             }
             case StepTypes.ConcludeOrderTransportToCustomer -> {
                 var order = (Order) item;
-                if(!getProductsForOrderFromWarehouse(order))
+                if(!isOrderComplete(order))
                 {
                     super.getFactory().addLog("Not enough products (" + order.getProduct().getName() + ") for order: " + order.getName());
                     return false;
                 }
 
+                var items = getProductsForOrderFromWarehouse(order);
                 if(!getOrderToCustomer((Order)item))
                 {
                     super.getFactory().addLog("Order " + item.getName() + " not completed");
@@ -122,18 +123,32 @@ public class Transporter extends FactoryObject
         return materialList;
     }
 
-    private boolean getProductsForOrderFromWarehouse(Order order)
+    private boolean isOrderComplete(Order order)
     {
-        var warehouse = this.getFactory().getWarehouse();
+        var warehouseItems = new ArrayList<>(this.getFactory().getWarehouse().getWarehouseItems());
 
         for(int i = 0; i < order.getAmount(); i++)
         {
-            var product = warehouse.removeItemFromWarehouse(order.getProduct());
-            if(product == null)
+            var productAvailable = warehouseItems.remove(order.getProduct());
+            if(!productAvailable)
                 return false;
         }
 
         return true;
+    }
+
+    private List<WarehouseItem> getProductsForOrderFromWarehouse(Order order)
+    {
+        var warehouse = this.getFactory().getWarehouse();
+        var result = new ArrayList<WarehouseItem>();
+
+        for(int i = 0; i < order.getAmount(); i++)
+        {
+            var product = warehouse.removeItemFromWarehouse(order.getProduct());
+            result.add(product);
+        }
+
+        return result;
     }
 
     private boolean getOrderToCustomer(Order order)
