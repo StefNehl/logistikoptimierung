@@ -44,6 +44,10 @@ public class FactoryStep {
         return factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
     }
 
+    public FactoryObject getFactoryObject() {
+        return factoryObject;
+    }
+
     private void addStepMessage()
     {
         var message = "Item: " + this.itemToManipulate.getName() + " Amount " + this.amountOfItems + " FO: " + this.factoryObject.getName() + " Step: " + this.stepType;

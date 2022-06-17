@@ -20,6 +20,7 @@ public class Transporter extends FactoryObject
     private int blockedUntilTimeStep;
 
     private List<WarehouseItem> loadedItems;
+    private String currentTask;
 
     public Transporter(String name, String type, String engine, int maxSize, double maxDrivingTime, Factory factory)
     {
@@ -37,9 +38,10 @@ public class Transporter extends FactoryObject
     {
         if(currentTimeStep < blockedUntilTimeStep)
         {
-            super.getFactory().addBlockLog(super.getName(), stepType);
+            super.getFactory().addBlockLog(super.getName(), currentTask);
             return false;
         }
+        currentTask = stepType;
         switch (stepType)
         {
             case StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse ->
@@ -53,7 +55,7 @@ public class Transporter extends FactoryObject
                 var order = (Order) item;
                 if(!getProductsForOrderFromWarehouse(order))
                 {
-                    super.getFactory().addLog("Not enough products (" + order.getProduct() + ") for order: " + order.getName());
+                    super.getFactory().addLog("Not enough products (" + order.getProduct().getName() + ") for order: " + order.getName());
                     return false;
                 }
 
