@@ -106,7 +106,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                         order.getProduct().getName(),
                         1,
                         machineList.get(i).getName(),
-                        StepTypes.MoveProductFromBufferToWarehouse));
+                        StepTypes.MoveProductFromOutputBufferToWarehouse));
 
                 remainingProductsToProduce--;
             }

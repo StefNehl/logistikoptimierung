@@ -14,6 +14,8 @@ public class Machine extends FactoryObject {
     private int remainingCapacityOutputBuffer;
     private final List<WarehouseItem> inputBuffer;
     private int remainingCapacityInputBuffer;
+    private WarehouseItem itemInProduction;
+    private String currentTask;
     private double remainingAssemblyTime;
     private int blockedUntilTimeStep;
 
@@ -34,9 +36,10 @@ public class Machine extends FactoryObject {
     {
         if(currentTimeStep < this.blockedUntilTimeStep)
         {
-            super.getFactory().addBlockLog(super.getName(), stepType);
+            super.getFactory().addBlockLog(super.getName(), currentTask);
             return false;
         }
+        currentTask = stepType;
         switch (stepType)
         {
             case StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer ->
@@ -63,22 +66,32 @@ public class Machine extends FactoryObject {
                     addNotEnoughCapacityInBufferLogMessage(true);
                     return false;
                 }
-                if(itemsForProductAreAvailableInInputBuffer((Product) item))
+                if(!itemsForProductAreAvailableInInputBuffer((Product) item))
                 {
-                    for (var m : ((Product) item).getBillOfMaterial())
-                    {
-                        removeItemFromBuffer(m.material(), false);
-                    }
-                    produceProduct((Product) item);
+                    addItemNotInBufferLogMessage(item, true);
+                    return false;
                 }
+                for (var m : ((Product) item).getBillOfMaterial())
+                {
+                    removeItemFromBuffer(m.material(), false);
+                }
+                itemInProduction = produceProduct((Product) item);
+
             }
-            case StepTypes.MoveProductToOutputBuffer -> addItemToOutputBuffer(item);
-            case StepTypes.MoveProductFromBufferToWarehouse ->
+            case StepTypes.MoveProductToOutputBuffer -> {
+                if(itemInProduction == null)
+                {
+                    addProduceItemMessage((Product) item);
+                    return false;
+                }
+                return addItemToOutputBuffer(itemInProduction);
+            }
+            case StepTypes.MoveProductFromOutputBufferToWarehouse ->
             {
                 var product = removeItemFromBuffer(item, true);
                 if(product == null)
                 {
-                    super.getFactory().addLog("Product " + item.getName() + " not in output buffer");
+                    addItemNotInBufferLogMessage(item, true);
                     return false;
                 }
                 this.getFactory().getWarehouse().addItemToWarehouse(product);
@@ -101,17 +114,12 @@ public class Machine extends FactoryObject {
         addBufferLogMessage(item, false, false);
     }
 
-    private void addItemToOutputBuffer(WarehouseItem item)
+    private boolean addItemToOutputBuffer(WarehouseItem item)
     {
-        if(remainingCapacityOutputBuffer == 0)
-        {
-            addNotEnoughCapacityInBufferLogMessage(true);
-            return;
-        }
-
         outputBuffer.add(item);
         remainingCapacityOutputBuffer--;
         addBufferLogMessage(item, true, false);
+        return true;
     }
 
     private WarehouseItem removeItemFromBuffer(WarehouseItem item, boolean isOutputBuffer)
@@ -130,11 +138,11 @@ public class Machine extends FactoryObject {
                     remainingCapacityInputBuffer++;
 
                 buffer.remove(itemInBuffer);
-                addBufferLogMessage(itemInBuffer, false, true);
+                addBufferLogMessage(itemInBuffer, isOutputBuffer, true);
                 return itemInBuffer;
             }
         }
-        addItemNotInBufferLogMessage(item, false);
+        addItemNotInBufferLogMessage(item, isOutputBuffer);
         return null;
     }
 
@@ -221,10 +229,14 @@ public class Machine extends FactoryObject {
         }
 
         var operationName = "moved";
+        var fromTo = "to";
         if(isRemoveOperation)
+        {
             operationName = "removed";
+            fromTo = "from";
+        }
 
-        var message = super.getName() + " " + operationName + " item " + item.getName() + "from " + bufferName + " RC: " + remCapacity;
+        var message = super.getName() + " " + operationName + " item " + item.getName() + " " + fromTo + " " + bufferName + " RC: " + remCapacity;
         super.getFactory().addLog(message);
     }
 

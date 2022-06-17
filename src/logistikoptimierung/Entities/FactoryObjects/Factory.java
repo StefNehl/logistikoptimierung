@@ -162,7 +162,7 @@ public class Factory {
 
     public void addBlockLog(String name, String stepType)
     {
-        addLog(name + " is blocked for Task: " + stepType);
+        addLog(name + " is blocked from Task: " + stepType);
     }
 
     public void printLog() {
