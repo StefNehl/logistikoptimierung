@@ -4,9 +4,9 @@ public class Location {
 
     private final String name;
     private final boolean isCustomer;
-    private final double travelTimeToWarehouse;
+    private final int travelTimeToWarehouse;
 
-    public Location(String name, boolean isCustomer, double travelTimeToWarehouse)
+    public Location(String name, boolean isCustomer, int travelTimeToWarehouse)
     {
         this.name = name;
         this.isCustomer = isCustomer;
@@ -21,7 +21,7 @@ public class Location {
         return isCustomer;
     }
 
-    public double getTravelTimeToWarehouse() {
+    public int getTravelTimeToWarehouse() {
         return travelTimeToWarehouse;
     }
 }

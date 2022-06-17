@@ -17,7 +17,7 @@ public class Transporter extends FactoryObject
     private final String engine;
     private final int capacity;
     private double remainingDrivingTime;
-    private double blockedUntilTimeStep;
+    private int blockedUntilTimeStep;
 
     private List<WarehouseItem> loadedItems;
 
@@ -37,7 +37,7 @@ public class Transporter extends FactoryObject
     {
         if(currentTimeStep < blockedUntilTimeStep)
         {
-            super.getFactory().addLog(super.getName() + " is blocked for Task: " + stepType);
+            super.getFactory().addBlockLog(super.getName(), stepType);
             return false;
         }
         switch (stepType)
@@ -102,7 +102,7 @@ public class Transporter extends FactoryObject
             }
 
             this.remainingDrivingTime -= timeToDeduct;
-            this.blockedUntilTimeStep += timeToDeduct;
+            this.blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + timeToDeduct;
 
             var remainingCap = this.capacity;
             while (remainingCap != 0)

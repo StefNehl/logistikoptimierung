@@ -17,6 +17,7 @@ public class Machine extends FactoryObject {
     private final List<WarehouseItem> inputBuffer;
     private int remainingCapacityInputBuffer;
     private double remainingAssemblyTime;
+    private int blockedUntilTimeStep;
 
     public Machine(String name, int maxAmountInPutBuffer, int maxAmountOutPutBuffer, double maxAssemblyTime, Factory factory)
     {
@@ -26,12 +27,18 @@ public class Machine extends FactoryObject {
         this.remainingCapacityInputBuffer = maxAmountInPutBuffer;
         this.remainingCapacityOutputBuffer = maxAmountOutPutBuffer;
         this.remainingAssemblyTime = maxAssemblyTime;
+        this.blockedUntilTimeStep = 0;
     }
 
     //Only returns item if you use Remove from Buffer step
     @Override
     public boolean doWork(int currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
     {
+        if(currentTimeStep < this.blockedUntilTimeStep)
+        {
+            super.getFactory().addBlockLog(super.getName(), stepType);
+            return false;
+        }
         switch (stepType)
         {
             case StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer ->
@@ -45,14 +52,24 @@ public class Machine extends FactoryObject {
                         var itemForBuffer = getFactory().getWarehouse().removeItemFromWarehouse(m.material());
                         if(itemForBuffer == null)
                         {
-                            super.getFactory().addLog("Not enough material (" + m.material() + ") for product: " + item.getName() + "in input buffer");
+                            super.getFactory().addLog("Not enough material (" + m.material().getName() + ") for product: " + item.getName() + " in warehouse");
                             return false;
                         }
                         addItemToInputBuffer((Material) itemForBuffer);
                     }
                 }
             }
-            case StepTypes.Produce -> produceProduct((Product) item);
+            case StepTypes.Produce -> {
+                var items = getItemsForProductFromInputBuffer((Product) item);
+                if(items == null)
+                {
+                    super.getFactory().addLog("Not enough materials for product: " + item.getName() + " in inputBuffer");
+                    return false;
+                }
+
+                produceProduct((Product) item, items);
+            }
+            case StepTypes.MoveProductToOutputBuffer -> addItemToOutputBuffer(item);
             case StepTypes.MoveProductFromBufferToWarehouse ->
             {
                 var product = removeOneItemFromOutputBuffer();
@@ -118,7 +135,7 @@ public class Machine extends FactoryObject {
         super.getFactory().addLog(message);
     }
 
-    private void removeItemFromInputBuffer(WarehouseItem item)
+    private WarehouseItem removeItemFromInputBuffer(WarehouseItem item)
     {
         for(var itemInBuffer : inputBuffer)
         {
@@ -127,10 +144,11 @@ public class Machine extends FactoryObject {
                 remainingCapacityInputBuffer++;
                 inputBuffer.remove(itemInBuffer);
                 addRemovedItemFromBufferMessage(itemInBuffer, false);
-                return;
+                return itemInBuffer;
             }
         }
         addItemNotInBufferMessage(item, false);
+        return null;
     }
 
     private WarehouseItem removeOneItemFromOutputBuffer()
@@ -178,10 +196,10 @@ public class Machine extends FactoryObject {
         super.getFactory().addLog(message);
     }
 
-    private void produceProduct(Product product)
+    private List<WarehouseItem> getItemsForProductFromInputBuffer(Product product)
     {
         var materialList = product.getBillOfMaterial();
-        var copyOfIB = new ArrayList<>(inputBuffer);
+        var copyOfIB = new ArrayList<>(this.inputBuffer);
 
         for (var materialInOrder : materialList)
         {
@@ -198,27 +216,32 @@ public class Machine extends FactoryObject {
             if(!itemFound)
             {
                 addItemNotInInputBufferMessage(materialInOrder.material(), product);
-                return;
+                return null;
             }
         }
 
+        var items = new ArrayList<WarehouseItem>();
+        for(var materialPosition : materialList)
+        {
+            for(int i = 0; i < materialPosition.amount(); i++)
+            {
+                items.add(removeItemFromInputBuffer(materialPosition.material()));
+            }
+        }
+        return items;
+    }
+
+    private void produceProduct(Product product, List<WarehouseItem> items)
+    {
         if(product.getAssemblyTime() > remainingAssemblyTime)
         {
             addNotEnoughAssemblyTimeRemainingMessage(product);
             return;
         }
 
-        for(var materialPosition : materialList)
-        {
-            for(int i = 0; i < materialPosition.amount(); i++)
-            {
-                removeItemFromInputBuffer(materialPosition.material());
-            }
-        }
-
         remainingAssemblyTime -= product.getAssemblyTime();
+        blockedUntilTimeStep += this.getFactory().getCurrentTimeStep() + product.getAssemblyTime();
         addProduceItemMessage(product);
-        addItemToOutputBuffer(product);
     }
 
     private void addItemNotInInputBufferMessage(Material material, Product product)

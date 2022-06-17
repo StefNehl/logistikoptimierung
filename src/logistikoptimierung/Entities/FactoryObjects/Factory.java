@@ -1,6 +1,7 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.FactoryStep;
+import logistikoptimierung.Entities.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.Material;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.Product;
@@ -157,6 +158,11 @@ public class Factory {
         log.add(message);
         if(this.printLogs)
             System.out.println(message);
+    }
+
+    public void addBlockLog(String name, String stepType)
+    {
+        addLog(name + " is blocked for Task: " + stepType);
     }
 
     public void printLog() {
