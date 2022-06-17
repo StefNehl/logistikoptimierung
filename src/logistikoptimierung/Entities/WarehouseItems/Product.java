@@ -5,9 +5,9 @@ import java.util.List;
 public class Product extends WarehouseItem {
 
     private final List<MaterialPosition> billOfMaterial;
-    private final double assemblyTime;
+    private final int assemblyTime;
 
-    public Product(String name, List<MaterialPosition> billOfMaterial, double assemblyTime)
+    public Product(String name, List<MaterialPosition> billOfMaterial, int assemblyTime)
     {
         super(name);
         this.billOfMaterial = billOfMaterial;
@@ -24,7 +24,7 @@ public class Product extends WarehouseItem {
         return billOfMaterial;
     }
 
-    public double getAssemblyTime() {
+    public int getAssemblyTime() {
         return assemblyTime;
     }
 }

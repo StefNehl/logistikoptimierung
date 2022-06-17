@@ -16,7 +16,8 @@ public class Factory {
     private final String name;
     private int currentTimeStep;
     private double currentIncome;
-    private int runTime;
+    private final int startTime;
+    private final int runTime;
     private final boolean printLogs;
 
     private final Warehouse warehouse;
@@ -44,6 +45,8 @@ public class Factory {
         this.currentTimeStep = 0;
         this.currentIncome = 0;
         this.printLogs = printLog;
+
+        this.startTime = 1;
         this.runTime = runTime;
 
         this.warehouse = new Warehouse("WH", warehouseCapacity, this);
@@ -74,11 +77,16 @@ public class Factory {
 
     public void startFactory(List<FactoryStep> factorySteps)
     {
-        for(int i = 0; i < runTime; i++)
+        for(int i = 1; i <= runTime; i++)
         {
+            this.currentTimeStep = i;
+            var handledFactoryObject = new ArrayList<FactoryObject>();
             var copyOfSteps = new ArrayList<>(factorySteps);
             for (var step : copyOfSteps)
             {
+                if(handledFactoryObject.contains(step.getFactoryObject()))
+                    continue;
+                handledFactoryObject.add(step.getFactoryObject());
                 if(step.doStep())
                 {
                     factorySteps.remove(step);

@@ -181,7 +181,7 @@ public class Machine extends FactoryObject {
         }
 
         remainingAssemblyTime -= product.getAssemblyTime();
-        blockedUntilTimeStep += this.getFactory().getCurrentTimeStep() + product.getAssemblyTime();
+        blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + product.getAssemblyTime();
         addProduceItemMessage(product);
         return product;
     }

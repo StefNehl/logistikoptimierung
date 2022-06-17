@@ -12,11 +12,11 @@ public class Main {
     public static void main(String[] args) {
 	// write your code here
 
-        //TestSmallInstanceWithSolution();
+        TestSmallInstanceWithSolution();
 
-        //TestSmallInstanceWithFirstComeFirstServer();
+        TestSmallInstanceWithFirstComeFirstServer();
 
-        TestMediumInstanceWithFirstComeFirstServer();
+        //TestMediumInstanceWithFirstComeFirstServer();
     }
 
     private static void TestSmallInstanceWithSolution()

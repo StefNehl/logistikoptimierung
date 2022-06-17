@@ -40,7 +40,6 @@ public class FactoryStep {
     public boolean doStep()
     {
         addStepMessage();
-        factory.increaseCurrentTimeStep();
         return factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
     }
 
