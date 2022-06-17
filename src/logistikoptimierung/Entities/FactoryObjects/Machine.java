@@ -1,7 +1,5 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.FactoryObjects.Factory;
-import logistikoptimierung.Entities.FactoryObjects.FactoryObject;
 import logistikoptimierung.Entities.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.Material;
 import logistikoptimierung.Entities.WarehouseItems.Product;
@@ -60,19 +58,24 @@ public class Machine extends FactoryObject {
                 }
             }
             case StepTypes.Produce -> {
-                var items = getItemsForProductFromInputBuffer((Product) item);
-                if(items == null)
+                if(remainingCapacityOutputBuffer == 0)
                 {
-                    super.getFactory().addLog("Not enough materials for product: " + item.getName() + " in inputBuffer");
+                    addNotEnoughCapacityInBufferLogMessage(true);
                     return false;
                 }
-
-                produceProduct((Product) item, items);
+                if(itemsForProductAreAvailableInInputBuffer((Product) item))
+                {
+                    for (var m : ((Product) item).getBillOfMaterial())
+                    {
+                        removeItemFromBuffer(m.material(), false);
+                    }
+                    produceProduct((Product) item);
+                }
             }
             case StepTypes.MoveProductToOutputBuffer -> addItemToOutputBuffer(item);
             case StepTypes.MoveProductFromBufferToWarehouse ->
             {
-                var product = removeOneItemFromOutputBuffer();
+                var product = removeItemFromBuffer(item, true);
                 if(product == null)
                 {
                     super.getFactory().addLog("Product " + item.getName() + " not in output buffer");
@@ -89,114 +92,53 @@ public class Machine extends FactoryObject {
     {
         if(remainingCapacityInputBuffer == 0)
         {
-            addNoInputCapacityMessage(false);
+            addNotEnoughCapacityInBufferLogMessage(false);
             return;
         }
 
         inputBuffer.add(item);
         remainingCapacityInputBuffer--;
-        addAddItemMessage(item, false);
+        addBufferLogMessage(item, false, false);
     }
 
     private void addItemToOutputBuffer(WarehouseItem item)
     {
         if(remainingCapacityOutputBuffer == 0)
         {
-            addNoInputCapacityMessage(true);
+            addNotEnoughCapacityInBufferLogMessage(true);
             return;
         }
 
         outputBuffer.add(item);
         remainingCapacityOutputBuffer--;
-        addAddItemMessage(item, true);
+        addBufferLogMessage(item, true, false);
     }
 
-    private void addAddItemMessage(WarehouseItem item, boolean isOutputBuffer)
+    private WarehouseItem removeItemFromBuffer(WarehouseItem item, boolean isOutputBuffer)
     {
-        var bufferName = "IB";
-        var remainingCapacity = this.remainingCapacityInputBuffer;
+        var buffer = inputBuffer;
         if(isOutputBuffer)
-        {
-            bufferName = "OB";
-            remainingCapacity = this.remainingCapacityOutputBuffer;
-        }
+            buffer = outputBuffer;
 
-        var message = super.getName() + " Task: add item " + item.getName() + " to " + bufferName + "  RC: " + remainingCapacity;
-        super.getFactory().addLog(message);
-    }
-
-    private void addNoInputCapacityMessage(boolean isOutputBuffer)
-    {
-        var bufferName = "IB";
-        if(isOutputBuffer)
-            bufferName = "OB";
-
-        var message = super.getName() + " " + bufferName + " full";
-        super.getFactory().addLog(message);
-    }
-
-    private WarehouseItem removeItemFromInputBuffer(WarehouseItem item)
-    {
-        for(var itemInBuffer : inputBuffer)
+        for(var itemInBuffer : buffer)
         {
             if(itemInBuffer.getName().equals(item.getName()))
             {
-                remainingCapacityInputBuffer++;
-                inputBuffer.remove(itemInBuffer);
-                addRemovedItemFromBufferMessage(itemInBuffer, false);
+                if(isOutputBuffer)
+                    remainingCapacityOutputBuffer++;
+                else
+                    remainingCapacityInputBuffer++;
+
+                buffer.remove(itemInBuffer);
+                addBufferLogMessage(itemInBuffer, false, true);
                 return itemInBuffer;
             }
         }
-        addItemNotInBufferMessage(item, false);
+        addItemNotInBufferLogMessage(item, false);
         return null;
     }
 
-    private WarehouseItem removeOneItemFromOutputBuffer()
-    {
-        if(outputBuffer.isEmpty())
-        {
-            addNoItemInBufferMessage(true);
-            return null;
-        }
-
-        var firstItem = outputBuffer.remove(0);
-        remainingCapacityOutputBuffer++;
-        addRemovedItemFromBufferMessage(firstItem, true);
-
-        return firstItem;
-    }
-
-    private void addNoItemInBufferMessage(boolean isOutputBuffer)
-    {
-        var bufferName = "IB";
-        if(isOutputBuffer)
-            bufferName = "OB";
-
-        var message = super.getName() + " " + bufferName + " empty";
-        super.getFactory().addLog(message);
-    }
-
-    private void addItemNotInBufferMessage(WarehouseItem item, boolean isOutputBuffer)
-    {
-        var bufferName = "IB";
-        if(isOutputBuffer)
-            bufferName = "OB";
-
-        var message = super.getName() + " " + bufferName + " item " + item.getName() + " not found";
-        super.getFactory().addLog(message);
-    }
-
-    private void addRemovedItemFromBufferMessage(WarehouseItem item, boolean isOutputBuffer)
-    {
-        var bufferName = "IB";
-        if(isOutputBuffer)
-            bufferName = "OB";
-
-        var message = super.getName() + " Task: removed item " + item.getName() + " from " + bufferName + " RC: " + this.remainingCapacityInputBuffer;
-        super.getFactory().addLog(message);
-    }
-
-    private List<WarehouseItem> getItemsForProductFromInputBuffer(Product product)
+    private boolean itemsForProductAreAvailableInInputBuffer(Product product)
     {
         var materialList = product.getBillOfMaterial();
         var copyOfIB = new ArrayList<>(this.inputBuffer);
@@ -215,39 +157,25 @@ public class Machine extends FactoryObject {
             }
             if(!itemFound)
             {
-                addItemNotInInputBufferMessage(materialInOrder.material(), product);
-                return null;
+                addItemNotInBufferLogMessage(materialInOrder.material(), false);
+                return false;
             }
         }
-
-        var items = new ArrayList<WarehouseItem>();
-        for(var materialPosition : materialList)
-        {
-            for(int i = 0; i < materialPosition.amount(); i++)
-            {
-                items.add(removeItemFromInputBuffer(materialPosition.material()));
-            }
-        }
-        return items;
+        return true;
     }
 
-    private void produceProduct(Product product, List<WarehouseItem> items)
+    private WarehouseItem produceProduct(Product product)
     {
         if(product.getAssemblyTime() > remainingAssemblyTime)
         {
             addNotEnoughAssemblyTimeRemainingMessage(product);
-            return;
+            return null;
         }
 
         remainingAssemblyTime -= product.getAssemblyTime();
         blockedUntilTimeStep += this.getFactory().getCurrentTimeStep() + product.getAssemblyTime();
         addProduceItemMessage(product);
-    }
-
-    private void addItemNotInInputBufferMessage(Material material, Product product)
-    {
-        var message = super.getName() + " Task: produce " + product.getName() + " material " + material.getName() + " not found";
-        super.getFactory().addLog(message);
+        return product;
     }
 
     private void addNotEnoughAssemblyTimeRemainingMessage(Product product)
@@ -259,6 +187,44 @@ public class Machine extends FactoryObject {
     private void addProduceItemMessage(Product product)
     {
         var message = super.getName() + " Task: produce " + product.getName() + " RT: " + this.remainingAssemblyTime;
+        super.getFactory().addLog(message);
+    }
+
+    private void addNotEnoughCapacityInBufferLogMessage(boolean isOutputBuffer)
+    {
+        var bufferName = "InputBuffer";
+        if(isOutputBuffer)
+            bufferName = "OutputBuffer";
+
+        var message = super.getName() + " Not enough capacity in " + bufferName;
+        super.getFactory().addLog(message);
+    }
+
+    private void addItemNotInBufferLogMessage(WarehouseItem item, boolean isOutputBuffer)
+    {
+        var bufferName = "InputBuffer";
+        if(isOutputBuffer)
+            bufferName = "OutputBuffer";
+
+        var message = super.getName() + " item " + item.getName() + " not in " + bufferName;
+        super.getFactory().addLog(message);
+    }
+
+    private void addBufferLogMessage(WarehouseItem item, boolean isOutputBuffer, boolean isRemoveOperation)
+    {
+        var bufferName = "InputBuffer";
+        var remCapacity = this.remainingCapacityInputBuffer;
+        if(isOutputBuffer)
+        {
+            bufferName = "OutputBuffer";
+            remCapacity = this.remainingCapacityOutputBuffer;
+        }
+
+        var operationName = "moved";
+        if(isRemoveOperation)
+            operationName = "removed";
+
+        var message = super.getName() + " " + operationName + " item " + item.getName() + "from " + bufferName + " RC: " + remCapacity;
         super.getFactory().addLog(message);
     }
 
