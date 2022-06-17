@@ -1,0 +1,6 @@
+/out/production/logistikoptimierung/logistikoptimierung/Services/*.class
+/out/production/logistikoptimierung/logistikoptimierung/*.class
+/out/production/logistikoptimierung/logistikoptimierung/Entities/WarehouseItems/*.class
+/out/production/logistikoptimierung/logistikoptimierung/Entities/*.class
+/out/production/logistikoptimierung/logistikoptimierung/Entities/FactoryObjects/*.class
+/out/production/logistikoptimierung/logistikoptimierung/Contracts/*.class
