@@ -27,10 +27,11 @@ public class SmallInstanceSolution implements IOptimizationService
         factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.Produce));
         factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveProductToOutputBuffer));
         factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveProductFromOutputBufferToWarehouse));
-        //factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer));
-        //factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.Produce));
-        //factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveProductFromBufferToWarehouse));
-        //factorySteps.add(new FactoryStep(factory, "O1", 1, "T1", StepTypes.ConcludeOrderTransportToCustomer));
+        factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer));
+        factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.Produce));
+        factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveProductToOutputBuffer));
+        factorySteps.add(new FactoryStep(factory, "P1", 1, "M1", StepTypes.MoveProductFromOutputBufferToWarehouse));
+        factorySteps.add(new FactoryStep(factory, "O1", 1, "T1", StepTypes.ConcludeOrderTransportToCustomer));
 
         return factorySteps;
     }
