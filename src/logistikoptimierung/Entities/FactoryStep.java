@@ -14,7 +14,6 @@ public class FactoryStep {
 
     public FactoryStep(Factory factory, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
     {
-
         for(var item : factory.getAvailableWarehouseItems())
         {
             if(item.getName().equals(itemToManipulate))
@@ -38,16 +37,16 @@ public class FactoryStep {
         this.amountOfItems = amountOfItems;
     }
 
-    public void doStep()
+    public boolean doStep()
     {
         addStepMessage();
         factory.increaseCurrentTimeStep();
-        factoryObject.doWork(itemToManipulate, amountOfItems, stepType);
+        return factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
     }
 
     private void addStepMessage()
     {
-        var message = "T: " + this.factory.getCurrentTimeStep() + " Item: " + this.itemToManipulate.getName() + " Amount " + this.amountOfItems + " FO: " + this.factoryObject.getName() + " Step: " + this.stepType;
+        var message = "Item: " + this.itemToManipulate.getName() + " Amount " + this.amountOfItems + " FO: " + this.factoryObject.getName() + " Step: " + this.stepType;
         factory.addLog(message);
     }
 }

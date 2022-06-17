@@ -30,7 +30,7 @@ public class Machine extends FactoryObject {
 
     //Only returns item if you use Remove from Buffer step
     @Override
-    public void doWork(WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(int currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
     {
         switch (stepType)
         {
@@ -44,7 +44,10 @@ public class Machine extends FactoryObject {
                     {
                         var itemForBuffer = getFactory().getWarehouse().removeItemFromWarehouse(m.material());
                         if(itemForBuffer == null)
-                            return;
+                        {
+                            super.getFactory().addLog("Not enough material (" + m.material() + ") for product: " + item.getName() + "in input buffer");
+                            return false;
+                        }
                         addItemToInputBuffer((Material) itemForBuffer);
                     }
                 }
@@ -54,10 +57,15 @@ public class Machine extends FactoryObject {
             {
                 var product = removeOneItemFromOutputBuffer();
                 if(product == null)
-                    return;
+                {
+                    super.getFactory().addLog("Product " + item.getName() + " not in output buffer");
+                    return false;
+                }
                 this.getFactory().getWarehouse().addItemToWarehouse(product);
             }
         }
+
+        return true;
     }
 
     private void addItemToInputBuffer(Material item)

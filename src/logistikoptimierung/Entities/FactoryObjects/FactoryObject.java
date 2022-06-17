@@ -21,8 +21,9 @@ public class FactoryObject {
         return name;
     }
 
-    public void doWork(WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(int timeStep, WarehouseItem item, int amountOfItems, String stepType)
     {
         factory.addLog("Not Implemented");
+        return false;
     }
 }

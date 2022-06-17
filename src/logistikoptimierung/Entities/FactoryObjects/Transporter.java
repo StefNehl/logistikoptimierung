@@ -17,6 +17,7 @@ public class Transporter extends FactoryObject
     private final String engine;
     private final int capacity;
     private double remainingDrivingTime;
+    private double blockedUntilTimeStep;
 
     public Transporter(String name, String type, String engine, int maxSize, double maxDrivingTime, Factory factory)
     {
@@ -25,11 +26,17 @@ public class Transporter extends FactoryObject
         this.engine = engine;
         this.capacity = maxSize;
         this.remainingDrivingTime = maxDrivingTime;
+        this.blockedUntilTimeStep = 0;
     }
 
     @Override
-    public void doWork(WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(int currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
     {
+        if(currentTimeStep < blockedUntilTimeStep)
+        {
+            super.getFactory().addLog(super.getName() + " is blocked for Task: " + stepType);
+            return false;
+        }
         switch (stepType)
         {
             case StepTypes.GetMaterialFromSuppliesAndMoveToWarehouse -> {
@@ -41,13 +48,13 @@ public class Transporter extends FactoryObject
                 if(!getProductsForOrderFromWarehouse(order))
                 {
                     super.getFactory().addLog("Not enough products (" + order.getProduct() + ") for order: " + order.getName());
-                    return;
+                    return false;
                 }
 
                 if(!getOrderToCustomer((Order)item))
                 {
                     super.getFactory().addLog("Order " + item.getName() + " not completed");
-                    return;
+                    return false;
                 }
 
                 var income = getProductsAndSell((Order) item);
@@ -55,6 +62,7 @@ public class Transporter extends FactoryObject
 
             }
         }
+        return true;
     }
 
     public String getType() {
@@ -81,15 +89,16 @@ public class Transporter extends FactoryObject
         {
             //to and back from the supplier
             var timeToDeduct = material.getSupplierLocation().getTravelTimeToWarehouse() * 2;
-            if(remainingDrivingTime < timeToDeduct)
+            if(this.remainingDrivingTime < timeToDeduct)
             {
                 addDriveTimeReachedException(amount, material);
                 return materialList;
             }
 
-            remainingDrivingTime -= timeToDeduct;
+            this.remainingDrivingTime -= timeToDeduct;
+            this.blockedUntilTimeStep += timeToDeduct;
 
-            var remainingCap = capacity;
+            var remainingCap = this.capacity;
             while (remainingCap != 0)
             {
                 materialList.add(material);
@@ -99,7 +108,7 @@ public class Transporter extends FactoryObject
                 remainingCap--;
             }
 
-            addDriveLogMessage(capacity - remainingCap, material);
+            addDriveLogMessage(this.capacity - remainingCap, material);
         }
 
         return materialList;

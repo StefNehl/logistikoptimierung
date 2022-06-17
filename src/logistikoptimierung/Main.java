@@ -14,9 +14,9 @@ public class Main {
 
         TestSmallInstanceWithSolution();
 
-        TestSmallInstanceWithFirstComeFirstServer();
+        //TestSmallInstanceWithFirstComeFirstServer();
 
-        TestMediumInstanceWithFirstComeFirstServer();
+        //TestMediumInstanceWithFirstComeFirstServer();
     }
 
     private static void TestSmallInstanceWithSolution()
