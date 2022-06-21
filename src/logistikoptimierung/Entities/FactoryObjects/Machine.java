@@ -44,6 +44,7 @@ public class Machine extends FactoryObject {
         {
             case StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer ->
             {
+                /*
                 var itemsToAddToBuffer = ((Product)item).getBillOfMaterial();
 
                 for(var m : itemsToAddToBuffer)
@@ -59,6 +60,8 @@ public class Machine extends FactoryObject {
                         addItemToInputBuffer((Material) itemForBuffer);
                     }
                 }
+
+                 */
             }
             case StepTypes.Produce -> {
                 if(remainingCapacityOutputBuffer == 0)
@@ -71,10 +74,13 @@ public class Machine extends FactoryObject {
                     addItemNotInBufferLogMessage(item, true);
                     return false;
                 }
+                /*
                 for (var m : ((Product) item).getBillOfMaterial())
                 {
                     removeItemFromBuffer(m.material(), false);
                 }
+
+                 */
                 itemInProduction = produceProduct((Product) item);
 
             }
@@ -148,6 +154,7 @@ public class Machine extends FactoryObject {
 
     private boolean itemsForProductAreAvailableInInputBuffer(Product product)
     {
+        /*
         var materialList = product.getBillOfMaterial();
         var copyOfIB = new ArrayList<>(this.inputBuffer);
 
@@ -169,11 +176,14 @@ public class Machine extends FactoryObject {
                 return false;
             }
         }
+
+         */
         return true;
     }
 
     private WarehouseItem produceProduct(Product product)
     {
+        /*
         if(product.getAssemblyTime() > remainingAssemblyTime)
         {
             addNotEnoughAssemblyTimeRemainingMessage(product);
@@ -183,6 +193,8 @@ public class Machine extends FactoryObject {
         remainingAssemblyTime -= product.getAssemblyTime();
         blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + product.getAssemblyTime();
         addProduceItemMessage(product);
+
+         */
         return product;
     }
 

@@ -57,7 +57,9 @@ public class CSVDataImportService implements IDataService
 
             var materials = loadMaterials(
                     loadCsv(path + MATERIAL_WITH_TRANSPORTER_FILENAME));
-            var products = new ArrayList<Product>();
+
+            var products = loadProducts(
+                    loadCsv(path + PRODUCTS_FILENAME));
 
             var transporters = loadTransporters(
                     loadCsv(path + TRANSPORTER_FILENAME));
@@ -173,8 +175,8 @@ public class CSVDataImportService implements IDataService
             }
 
             var productName = dataItem[1];
-
-
+            var newProduct = new Product(productName, productId, productType);
+            products.add(newProduct);
         }
 
         return products;

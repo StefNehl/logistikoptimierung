@@ -43,6 +43,8 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var transporterList = this.factory.getTransporters();
+
+/*
         var materialList = new ArrayList<>(order.getProduct().getBillOfMaterial());
 
         while (!materialList.isEmpty())
@@ -70,7 +72,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                         StepTypes.MoveMaterialFromTransporterToWarehouse));
             }
         }
-
+*/
         return factorySteps;
     }
 
