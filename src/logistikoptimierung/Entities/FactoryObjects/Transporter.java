@@ -1,7 +1,5 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.FactoryObjects.Factory;
-import logistikoptimierung.Entities.FactoryObjects.FactoryObject;
 import logistikoptimierung.Entities.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.Material;
 import logistikoptimierung.Entities.WarehouseItems.Order;
@@ -13,6 +11,7 @@ import java.util.List;
 public class Transporter extends FactoryObject
 {
 
+    private final String area;
     private final String type;
     private final String engine;
     private final int capacity;
@@ -22,9 +21,10 @@ public class Transporter extends FactoryObject
     private List<WarehouseItem> loadedItems;
     private String currentTask;
 
-    public Transporter(String name, String type, String engine, int maxSize, double maxDrivingTime, Factory factory)
+    public Transporter(String name, String area, String type, String engine, int maxSize, double maxDrivingTime, Factory factory)
     {
         super(name, factory);
+        this.area = area;
         this.type = type;
         this.engine = engine;
         this.capacity = maxSize;
@@ -73,6 +73,8 @@ public class Transporter extends FactoryObject
         }
         return true;
     }
+
+    public String getArea() { return area; }
 
     public String getType() {
         return type;
