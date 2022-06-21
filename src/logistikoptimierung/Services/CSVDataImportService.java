@@ -22,6 +22,7 @@ public class CSVDataImportService implements IDataService
     private static final String TRANSPORTER_FILENAME = "Transportmittel.csv";
     private static final String FACTORIES_WITH_BUFFERS_FILENAME = "FabrikenMitPuffer.csv";
     private static final String MATERIAL_WITH_TRANSPORTER_FILENAME = "RohstoffeTransportmittel.csv";
+    private static final String PRODUCTS_FILENAME = "Products.csv";
 
     public static final String CONTRACT_1 = "Aufträge1.csv";
     public static final String CONTRACT_2 = "Aufträge2.csv";
