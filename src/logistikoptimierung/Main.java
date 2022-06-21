@@ -12,15 +12,16 @@ public class Main {
     public static void main(String[] args) {
 	// write your code here
 
-        TestSmallInstanceWithSolution();
+        //TestSmallInstanceWithSolution();
 
-        TestSmallInstanceWithFirstComeFirstServer();
+        //TestSmallInstanceWithFirstComeFirstServer();
 
-        //TestMediumInstanceWithFirstComeFirstServer();
+        TestMediumInstanceWithFirstComeFirstServer();
     }
 
     private static void TestSmallInstanceWithSolution()
     {
+        System.out.println("Test with Small Instance and Solution");
         var dataService = new TestDataService();
         var instance = dataService.loadData("SmallTestInstance");
 
@@ -37,6 +38,7 @@ public class Main {
 
     private static void TestSmallInstanceWithFirstComeFirstServer()
     {
+        System.out.println("Test with Small Instance and First Come First Serve");
         var dataService = new TestDataService();
         var instance = dataService.loadData("SmallTestInstance");
 
@@ -53,6 +55,7 @@ public class Main {
 
     private static void TestMediumInstanceWithFirstComeFirstServer()
     {
+        System.out.println("Test with Medium Instance and First Come First Serve");
         var dataService = new TestDataService();
         var instance = dataService.loadData("MediumTestInstance");
 
