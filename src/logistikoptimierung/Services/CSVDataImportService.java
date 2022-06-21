@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class CSVDataImportService implements IDataService
@@ -45,7 +46,32 @@ public class CSVDataImportService implements IDataService
 
         try
         {
-            loadCsv(path + TRANSPORTER_FILENAME);
+            var runTimeInMinutes = 1000;//5 * 8 * 60;
+            int warehouseCapacity = 100;
+            int nrOfDrivers = 7;
+
+            var orders = new ArrayList<Order>();
+
+            var machines = new ArrayList<Machine>();
+
+            var materials = new ArrayList<Material>();
+            var products = new ArrayList<Product>();
+
+            var transporters = loadTransporter(loadCsv(path + TRANSPORTER_FILENAME));
+
+            var factory = new Factory("Test 1",
+                    warehouseCapacity,
+                    machines,
+                    nrOfDrivers,
+                    transporters,
+                    materials,
+                    products,
+                    orders,
+                    runTimeInMinutes,
+                    true);
+            instance = new Instance(factory);
+
+            return instance;
         }
         catch (Exception ex)
         {
@@ -53,38 +79,14 @@ public class CSVDataImportService implements IDataService
             ex.printStackTrace();
             return null;
         }
-
-        var runTimeInMinutes = 1000;//5 * 8 * 60;
-        int warehouseCapacity = 100;
-        int nrOfDrivers = 7;
-
-        var orders = new ArrayList<Order>();
-
-        var machines = new ArrayList<Machine>();
-        var transporters = new ArrayList<Transporter>();
-
-        var materials = new ArrayList<Material>();
-        var products = new ArrayList<Product>();
-
-        var factory = new Factory("Test 1",
-                warehouseCapacity,
-                machines,
-                nrOfDrivers,
-                transporters,
-                materials,
-                products,
-                orders,
-                runTimeInMinutes,
-                true);
-        instance = new Instance(factory);
-
-        return null;
     }
 
-    private void loadCsv(String filename) throws IOException {
+    private List<String[]> loadCsv(String filename) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filename));
         String line = "";
         boolean isFirstLine = true;
+
+        var dataList = new ArrayList<String[]>();
 
         while ((line = reader.readLine()) != null)
         {
@@ -95,11 +97,36 @@ public class CSVDataImportService implements IDataService
             }
 
             String[] data = line.split(DELIMITER);
-
-
+            dataList.add(data);
         }
 
         reader.close();
+        return dataList;
+    }
+
+    private List<Transporter> loadTransporter(List<String[]> data)
+    {
+        var transporters = new ArrayList<Transporter>();
+
+        for (var dataItem : data)
+        {
+            var area = dataItem[0];
+            var type = dataItem[1];
+            var eng = dataItem[2];
+            var capacityString = dataItem[3];
+            var capacity = Integer.parseInt(capacityString);
+            var name = area + "_" + type + "_" + eng + "_" + capacityString;
+
+            var newTransporter = new Transporter(
+                    name,
+                    area,
+                    type,
+                    eng,
+                    capacity);
+            transporters.add(newTransporter);
+        }
+
+        return transporters;
     }
 
 

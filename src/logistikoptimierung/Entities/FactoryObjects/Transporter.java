@@ -21,14 +21,13 @@ public class Transporter extends FactoryObject
     private List<WarehouseItem> loadedItems;
     private String currentTask;
 
-    public Transporter(String name, String area, String type, String engine, int maxSize, double maxDrivingTime, Factory factory)
+    public Transporter(String name, String area, String type, String engine, int maxCapacity)
     {
-        super(name, factory);
+        super(name);
         this.area = area;
         this.type = type;
         this.engine = engine;
-        this.capacity = maxSize;
-        this.remainingDrivingTime = maxDrivingTime;
+        this.capacity = maxCapacity;
         this.blockedUntilTimeStep = 0;
         this.loadedItems = new ArrayList<>();
     }
@@ -86,6 +85,11 @@ public class Transporter extends FactoryObject
 
     public int getCapacity() {
         return capacity;
+    }
+
+    public void setRemainingDrivingTime(int drivingTime)
+    {
+        this.remainingDrivingTime = drivingTime;
     }
 
     /*

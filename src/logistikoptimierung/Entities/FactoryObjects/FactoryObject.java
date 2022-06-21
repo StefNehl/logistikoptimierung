@@ -5,16 +5,20 @@ import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 public class FactoryObject {
 
     private final String name;
-    private final Factory factory;
+    private Factory factory;
 
-    public FactoryObject(String name, Factory factory)
+    public FactoryObject(String name)
     {
         this.name = name;
-        this.factory = factory;
     }
 
     public Factory getFactory() {
         return factory;
+    }
+
+    public void setFactory(Factory factory)
+    {
+        this.factory = factory;
     }
 
     public String getName() {
@@ -25,5 +29,11 @@ public class FactoryObject {
     {
         factory.addLog("Not Implemented");
         return false;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.name;
     }
 }

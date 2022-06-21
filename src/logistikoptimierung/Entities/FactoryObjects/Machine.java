@@ -21,7 +21,7 @@ public class Machine extends FactoryObject {
 
     public Machine(String name, int maxAmountInPutBuffer, int maxAmountOutPutBuffer, double maxAssemblyTime, Factory factory)
     {
-        super(name, factory);
+        super(name);
         outputBuffer = new ArrayList<>();
         inputBuffer = new ArrayList<>();
         this.remainingCapacityInputBuffer = maxAmountInPutBuffer;
