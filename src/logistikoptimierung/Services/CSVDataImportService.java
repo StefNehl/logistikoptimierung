@@ -10,12 +10,10 @@ import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.Product;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class CSVDataImportService implements IDataService
 {
@@ -57,7 +55,7 @@ public class CSVDataImportService implements IDataService
             var materials = new ArrayList<Material>();
             var products = new ArrayList<Product>();
 
-            var transporters = loadTransporter(loadCsv(path + TRANSPORTER_FILENAME));
+            var transporters = loadTransporters(loadCsv(path + TRANSPORTER_FILENAME));
 
             var factory = new Factory("Test 1",
                     warehouseCapacity,
@@ -104,7 +102,7 @@ public class CSVDataImportService implements IDataService
         return dataList;
     }
 
-    private List<Transporter> loadTransporter(List<String[]> data)
+    private List<Transporter> loadTransporters(List<String[]> data)
     {
         var transporters = new ArrayList<Transporter>();
 
@@ -127,6 +125,13 @@ public class CSVDataImportService implements IDataService
         }
 
         return transporters;
+    }
+
+    private List<Material> loadMaterials(List<String[]> data)
+    {
+        var materials = new ArrayList<Material>();
+
+        return materials;
     }
 
 

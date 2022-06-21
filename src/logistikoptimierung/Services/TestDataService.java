@@ -25,7 +25,7 @@ public class TestDataService implements IDataService {
 
     private Instance createSmallTestInstance()
     {
-        var runTimeInMinutes = 100;//5 * 8 * 60;
+/*        var runTimeInMinutes = 100;//5 * 8 * 60;
         int warehouseCapacity = 100;
 
         int nrOfMachines = 1;
@@ -62,12 +62,13 @@ public class TestDataService implements IDataService {
                 runTimeInMinutes,
                 true);
 
-        return new Instance(factory);
+        return new Instance(factory);*/
+        return null;
     }
 
     private Instance createMediumTestInstance()
     {
-        var runTimeInMinutes = 5 * 8 * 60;
+       /* var runTimeInMinutes = 5 * 8 * 60;
         int warehouseCapacity = 100;
 
         int nrOfMachines = 3;
@@ -123,6 +124,7 @@ public class TestDataService implements IDataService {
                 runTimeInMinutes,
                 true);
 
-        return new Instance(factory);
+        return new Instance(factory);*/
+        return null;
     }
 }
