@@ -103,7 +103,7 @@ public class Transporter extends FactoryObject
         while (amount != 0)
         {
             //to and back from the supplier
-            var timeToDeduct = material.getSupplierLocation().getTravelTimeToWarehouse() * 2;
+            var timeToDeduct = material.getTravelTime() * 2;
             if(this.remainingDrivingTime < timeToDeduct)
             {
                 addDriveTimeReachedException(amount, material);
@@ -163,7 +163,7 @@ public class Transporter extends FactoryObject
         while (amount != 0)
         {
             //to and back from the customer
-            var timeToDeduct = order.getTargetLocation().getTravelTimeToWarehouse() * 2;
+            var timeToDeduct = order.getTravelTime() * 2;
             if(remainingDrivingTime < timeToDeduct)
             {
                 addDriveTimeReachedException(amount, order);

@@ -38,8 +38,7 @@ public class TestDataService implements IDataService {
         var machines = new ArrayList<Machine>();
         var transporters = new ArrayList<Transporter>();
 
-        var location = new Location("S1", false, 10);
-        var material = new Material("M1", location);
+        var material = new Material("M1", 10);
         var materials = new ArrayList<Material>();
         materials.add(material);
 
@@ -50,8 +49,7 @@ public class TestDataService implements IDataService {
         products.add(productToProduce);
 
         var orders = new ArrayList<Order>();
-        var customerLocation = new Location("C1", true, 10);
-        orders.add(new Order("O1", productToProduce, 2, 1000, customerLocation));
+        orders.add(new Order("O1", productToProduce, 2, 1000, 10));
 
         var factory = new Factory("Test 1",
                 warehouseCapacity,
@@ -84,16 +82,13 @@ public class TestDataService implements IDataService {
 
 
         var materials = new ArrayList<Material>();
-        var location = new Location("S1", false, 10);
-        var material1 = new Material("M1", location);
+        var material1 = new Material("M1", 10);
         materials.add(material1);
 
-        location = new Location("S2", false, 10);
-        var material2 = new Material("M2", location);
+        var material2 = new Material("M2", 10);
         materials.add(material2);
 
-        location = new Location("S3", false, 10);
-        var material3 = new Material("M3", location);
+        var material3 = new Material("M3", 10);
         materials.add(material3);
 
         var products = new ArrayList<Product>();
@@ -111,13 +106,11 @@ public class TestDataService implements IDataService {
         products.add(product2);
 
         var orders = new ArrayList<Order>();
-        var customerLocation1 = new Location("C1", true, 10);
-        orders.add(new Order("O1", product1, 2, 1000, customerLocation1));
+        orders.add(new Order("O1", product1, 2, 1000, 10));
 
-        var customerLocation2 = new Location("C2", true, 100);
-        orders.add(new Order("O2", product2, 2, 2000, customerLocation2));
+        orders.add(new Order("O2", product2, 2, 2000, 100));
 
-        orders.add(new Order("O3", product2, 5, 1500, customerLocation1));
+        orders.add(new Order("O3", product2, 5, 1500, 10));
 
         var factory = new Factory("Test 1",
                 warehouseCapacity,

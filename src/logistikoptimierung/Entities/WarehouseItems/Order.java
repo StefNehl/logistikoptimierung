@@ -5,15 +5,15 @@ public class Order extends WarehouseItem {
     private final Product product;
     private final int amount;
     private final double income;
-    private final Location targetLocation;
+    private final int travelTime;
 
-    public Order(String name, Product product, int amount, double income, Location targetLocation)
+    public Order(String name, Product product, int amount, double income, int travelTime)
     {
         super(name);
         this.product = product;
         this.amount = amount;
         this.income = income;
-        this.targetLocation = targetLocation;
+        this.travelTime = travelTime;
     }
 
     public Product getProduct() {
@@ -28,7 +28,7 @@ public class Order extends WarehouseItem {
         return income;
     }
 
-    public Location getTargetLocation() {
-        return targetLocation;
+    public int getTravelTime() {
+        return travelTime;
     }
 }

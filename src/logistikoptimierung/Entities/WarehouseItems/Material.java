@@ -2,12 +2,12 @@ package logistikoptimierung.Entities.WarehouseItems;
 
 public class Material extends WarehouseItem {
 
-    private final Location supplierLocation;
+    private final int travelTime;
 
-    public Material(String name, Location supplierLocation)
+    public Material(String name, int travelTime)
     {
         super(name);
-        this.supplierLocation = supplierLocation;
+        this.travelTime = travelTime;
     }
 
     @Override
@@ -15,7 +15,7 @@ public class Material extends WarehouseItem {
         return super.getName();
     }
 
-    public Location getSupplierLocation() {
-        return supplierLocation;
+    public int getTravelTime() {
+        return travelTime;
     }
 }
