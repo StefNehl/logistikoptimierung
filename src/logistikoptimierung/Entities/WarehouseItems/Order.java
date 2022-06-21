@@ -7,9 +7,9 @@ public class Order extends WarehouseItem {
     private final double income;
     private final int travelTime;
 
-    public Order(String name, Product product, int amount, double income, int travelTime)
+    public Order(String orderId, String name, Product product, int amount, double income, int travelTime)
     {
-        super(name);
+        super(orderId, name);
         this.product = product;
         this.amount = amount;
         this.income = income;

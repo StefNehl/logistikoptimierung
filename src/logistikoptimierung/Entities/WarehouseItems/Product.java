@@ -6,12 +6,21 @@ public class Product extends WarehouseItem {
 
     private final List<MaterialPosition> billOfMaterial;
     private final int assemblyTime;
+    private final String machineType;
+    private final int batchSize;
 
-    public Product(String name, List<MaterialPosition> billOfMaterial, int assemblyTime)
+    public Product(String name,
+                   String productId,
+                   List<MaterialPosition> billOfMaterial,
+                   int assemblyTime,
+                   int batchSize,
+                   String machineType)
     {
-        super(name);
+        super(productId, name);
         this.billOfMaterial = billOfMaterial;
         this.assemblyTime = assemblyTime;
+        this.machineType = machineType;
+        this.batchSize = batchSize;
     }
 
     @Override
@@ -24,7 +33,16 @@ public class Product extends WarehouseItem {
         return billOfMaterial;
     }
 
+
     public int getAssemblyTime() {
         return assemblyTime;
+    }
+
+    public String getMachineType() {
+        return machineType;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
     }
 }

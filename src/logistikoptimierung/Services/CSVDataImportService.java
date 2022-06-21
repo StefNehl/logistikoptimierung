@@ -144,15 +144,39 @@ public class CSVDataImportService implements IDataService
                     .replace(")", "")
                     .split(" ");
             var engine = transportConstraints[2];
-            var name = dataItem[1];
-            var transportTimeString = dataItem[2];
+            var materialId = dataItem[1];
+            var name = dataItem[2];
+            var transportTimeString = dataItem[3];
             var transportTime = convertStringToSeconds(transportTimeString);
 
-            var newMaterial = new Material(name, area, transportTypes, engine, transportTime);
+            var newMaterial = new Material(materialId, name, area, transportTypes, engine, transportTime);
             materials.add(newMaterial);
         }
 
         return materials;
+    }
+
+    private List<Product> loadProducts(List<String[]> data)
+    {
+        var products = new ArrayList<Product>();
+
+        var productType = "";
+
+        for (var dataItem : data)
+        {
+            var productId = dataItem[0];
+            if(productId.isBlank())
+            {
+                productType = dataItem[1];
+                continue;
+            }
+
+            var productName = dataItem[1];
+
+
+        }
+
+        return products;
     }
 
     private int convertStringToSeconds(String timeString)
