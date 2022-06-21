@@ -12,6 +12,8 @@ import logistikoptimierung.Entities.WarehouseItems.Product;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +54,12 @@ public class CSVDataImportService implements IDataService
 
             var machines = new ArrayList<Machine>();
 
-            var materials = new ArrayList<Material>();
+            var materials = loadMaterials(
+                    loadCsv(path + MATERIAL_WITH_TRANSPORTER_FILENAME));
             var products = new ArrayList<Product>();
 
-            var transporters = loadTransporters(loadCsv(path + TRANSPORTER_FILENAME));
+            var transporters = loadTransporters(
+                    loadCsv(path + TRANSPORTER_FILENAME));
 
             var factory = new Factory("Test 1",
                     warehouseCapacity,
@@ -131,9 +135,33 @@ public class CSVDataImportService implements IDataService
     {
         var materials = new ArrayList<Material>();
 
+        for(var dataItem : data)
+        {
+            var transportConstraints = dataItem[0].split(",");
+            var area = transportConstraints[0];
+            var transportTypes = transportConstraints[1]
+                    .replace("(", "")
+                    .replace(")", "")
+                    .split(" ");
+            var engine = transportConstraints[2];
+            var name = dataItem[1];
+            var transportTimeString = dataItem[2];
+            var transportTime = convertStringToSeconds(transportTimeString);
+
+            var newMaterial = new Material(name, area, transportTypes, engine, transportTime);
+            materials.add(newMaterial);
+        }
+
         return materials;
     }
 
+    private int convertStringToSeconds(String timeString)
+    {
+        var time = LocalTime.parse(timeString);
+        var seconds = time.getSecond();
+
+        return seconds;
+    }
 
 
 }
