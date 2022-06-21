@@ -3,6 +3,8 @@ package logistikoptimierung.Services;
 import logistikoptimierung.Contracts.IDataService;
 import logistikoptimierung.Entities.*;
 import logistikoptimierung.Entities.FactoryObjects.Factory;
+import logistikoptimierung.Entities.FactoryObjects.Machine;
+import logistikoptimierung.Entities.FactoryObjects.Transporter;
 import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.util.ArrayList;
@@ -30,8 +32,11 @@ public class TestDataService implements IDataService {
         int capacityInputBuffer = 5;
         int capacityOutputBuffer = 5;
 
-        int nrOfTransporter = 1;
+        int nrOfDrivers = 1;
         int capacityOfTransporter = 5;
+
+        var machines = new ArrayList<Machine>();
+        var transporters = new ArrayList<Transporter>();
 
         var location = new Location("S1", false, 10);
         var material = new Material("M1", location);
@@ -50,11 +55,9 @@ public class TestDataService implements IDataService {
 
         var factory = new Factory("Test 1",
                 warehouseCapacity,
-                nrOfMachines,
-                capacityInputBuffer,
-                capacityOutputBuffer,
-                nrOfTransporter,
-                capacityOfTransporter,
+                machines,
+                nrOfDrivers,
+                transporters,
                 materials,
                 products,
                 orders,
@@ -73,8 +76,11 @@ public class TestDataService implements IDataService {
         int capacityInputBuffer = 5;
         int capacityOutputBuffer = 5;
 
-        int nrOfTransporter = 10;
+        int nrOfDrivers = 7;
         int capacityOfTransporter = 5;
+
+        var machines = new ArrayList<Machine>();
+        var transporters = new ArrayList<Transporter>();
 
 
         var materials = new ArrayList<Material>();
@@ -115,11 +121,9 @@ public class TestDataService implements IDataService {
 
         var factory = new Factory("Test 1",
                 warehouseCapacity,
-                nrOfMachines,
-                capacityInputBuffer,
-                capacityOutputBuffer,
-                nrOfTransporter,
-                capacityOfTransporter,
+                machines,
+                nrOfDrivers,
+                transporters,
                 materials,
                 products,
                 orders,

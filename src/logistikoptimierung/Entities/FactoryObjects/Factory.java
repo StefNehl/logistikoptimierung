@@ -30,11 +30,9 @@ public class Factory {
 
     public Factory(String name,
                    int warehouseCapacity,
-                   int nrOfMachines,
-                   int maxCapacityInputBuffer,
-                   int maxCapacityOutputBuffer,
-                   int nrOfTransporters,
-                   int transportCapacity,
+                   List<Machine> machines,
+                   int nrOfDrivers,
+                   List<Transporter> transporters,
                    List<Material> suppliedMaterials,
                    List<Product> availableProducts,
                    List<Order> orderList,
@@ -48,36 +46,17 @@ public class Factory {
 
         this.startTime = 1;
         this.runTime = runTime;
-
         this.warehouse = new Warehouse("WH", warehouseCapacity, this);
-
-        this.machines = new ArrayList<>();
-        for (int i = 0; i < nrOfMachines; i++)
-            machines.add(
-                    new Machine("M" + (i + 1),
-                            maxCapacityInputBuffer,
-                            maxCapacityOutputBuffer,
-                            runTime,
-                            this
-                    ));
-
-        this.transporters = new ArrayList<>();
-        for (int i = 0; i < nrOfTransporters; i++)
-            transporters.add(new Transporter("T" + (i + 1),
-                    "",
-                    "",
-                    transportCapacity,
-                    runTime,
-                    this));
-
-        this.suppliedMaterials = suppliedMaterials;
-        this.availableProducts = availableProducts;
+        this.machines = new ArrayList<>(machines);
+        this.transporters = new ArrayList<>(transporters);
+        this.suppliedMaterials = new ArrayList<>(suppliedMaterials);
+        this.availableProducts = new ArrayList<>(availableProducts);
         this.orderList = orderList;
     }
 
     public void startFactory(List<FactoryStep> factorySteps)
     {
-        for(int i = 1; i <= runTime; i++)
+        for(int i = startTime; i <= runTime; i++)
         {
             this.currentTimeStep = i;
             var handledFactoryObject = new ArrayList<FactoryObject>();

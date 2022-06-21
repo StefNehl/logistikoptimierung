@@ -1,6 +1,7 @@
 package logistikoptimierung;
 
 import logistikoptimierung.Entities.*;
+import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer;
 import logistikoptimierung.Services.SmallInstanceSolution;
 import logistikoptimierung.Services.TestDataService;
@@ -16,7 +17,18 @@ public class Main {
 
         //TestSmallInstanceWithFirstComeFirstServer();
 
-        TestMediumInstanceWithFirstComeFirstServer();
+        //TestMediumInstanceWithFirstComeFirstServer();
+
+        TestCSVImport();
+    }
+
+    private static void TestCSVImport()
+    {
+        System.out.println("Test with csv import");
+        var dataService = new CSVDataImportService();
+        var instance = dataService.loadData(CSVDataImportService.CONTRACT_1);
+
+
     }
 
     private static void TestSmallInstanceWithSolution()
