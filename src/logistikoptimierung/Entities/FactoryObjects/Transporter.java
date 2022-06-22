@@ -2,11 +2,11 @@ package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.Material;
+import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Transporter extends FactoryObject
 {
@@ -18,7 +18,7 @@ public class Transporter extends FactoryObject
     private double remainingDrivingTime;
     private int blockedUntilTimeStep;
 
-    private List<WarehouseItem> loadedItems;
+    private MaterialPosition loadedItem;
     private String currentTask;
 
     public Transporter(String name, String area, String type, String engine, int maxCapacity)
@@ -29,7 +29,6 @@ public class Transporter extends FactoryObject
         this.engine = engine;
         this.capacity = maxCapacity;
         this.blockedUntilTimeStep = 0;
-        this.loadedItems = new ArrayList<>();
     }
 
     @Override
@@ -44,21 +43,19 @@ public class Transporter extends FactoryObject
         switch (stepType)
         {
             case StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse ->
-                this.loadedItems.addAll(getMaterialFromSupplier(amountOfItems, (Material) item));
+                this.loadedItem = getMaterialFromSupplier(amountOfItems, (Material) item);
             case StepTypes.MoveMaterialFromTransporterToWarehouse -> {
-                var items = new ArrayList<>(this.loadedItems);
-                this.loadedItems.clear();
-                moveItemsToWarehouse(items);
+                this.getFactory().getWarehouse().addItemToWarehouse(loadedItem);
+                this.loadedItem = null;
             }
             case StepTypes.ConcludeOrderTransportToCustomer -> {
                 var order = (Order) item;
                 if(!isOrderComplete(order))
                 {
-                    super.getFactory().addLog("Not enough products (" + order.getProduct().getName() + ") for order: " + order.getName());
+                    super.getFactory().addLog("Not enough products (" + order.getProduct().item().getName() + ") for order: " + order.getName());
                     return false;
                 }
 
-                var items = getProductsForOrderFromWarehouse(order);
                 if(!getOrderToCustomer((Order)item))
                 {
                     super.getFactory().addLog("Order " + item.getName() + " not completed");
@@ -87,46 +84,39 @@ public class Transporter extends FactoryObject
         return capacity;
     }
 
-    public void setRemainingDrivingTime(int drivingTime)
+    private MaterialPosition getMaterialFromSupplier(int amount, Material material)
     {
-        this.remainingDrivingTime = drivingTime;
-    }
-
-    /*
-    gets the amount of the specific material and deducts the time for every drive
-    returns the items which are possible to get in the remaining driving time of the transporter
-     */
-    private List<WarehouseItem> getMaterialFromSupplier(int amount, Material material)
-    {
-        var materialList = new ArrayList<WarehouseItem>();
-
-        while (amount != 0)
+        if(amount > this.capacity)
         {
-            //to and back from the supplier
-            var timeToDeduct = material.getTravelTime() * 2;
-            if(this.remainingDrivingTime < timeToDeduct)
-            {
-                addDriveTimeReachedException(amount, material);
-                return materialList;
-            }
-
-            this.remainingDrivingTime -= timeToDeduct;
-            this.blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + timeToDeduct;
-
-            var remainingCap = this.capacity;
-            while (remainingCap != 0)
-            {
-                materialList.add(material);
-                amount--;
-                if(amount == 0)
-                    break;
-                remainingCap--;
-            }
-
-            addDriveLogMessage(this.capacity - remainingCap, material);
+            addCapacityExceededMessage(material, amount);
+            return null;
         }
 
-        return materialList;
+        if(!areTransportationConstraintsFulfilled(material))
+        {
+            addTransportationConstraintNotFulfilledMessage(material);
+            return null;
+        }
+
+        var drivingTime = material.getTravelTime() * 2;
+        this.blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + drivingTime;
+
+        var newPosition = new MaterialPosition(material, amount);
+        addDriveLogMessage(newPosition);
+
+        return newPosition;
+    }
+
+    public boolean areTransportationConstraintsFulfilled(Material material)
+    {
+        if(!material.getArea().equals(this.area))
+            return false;
+
+        if(material.getEngine().equals("x") &&
+                !material.getEngine().equals(this.engine))
+            return false;
+
+        return !material.checkTransportType(this.type);
     }
 
     private boolean isOrderComplete(Order order)
@@ -143,57 +133,9 @@ public class Transporter extends FactoryObject
         return true;
     }
 
-    private List<WarehouseItem> getProductsForOrderFromWarehouse(Order order)
-    {
-        var warehouse = this.getFactory().getWarehouse();
-        var result = new ArrayList<WarehouseItem>();
-
-        for(int i = 0; i < order.getAmount(); i++)
-        {
-            var product = warehouse.removeItemFromWarehouse(order.getProduct());
-            result.add(product);
-        }
-
-        return result;
-    }
-
     private boolean getOrderToCustomer(Order order)
     {
-        var amount = order.getAmount();
-        while (amount != 0)
-        {
-            //to and back from the customer
-            var timeToDeduct = order.getTravelTime() * 2;
-            if(remainingDrivingTime < timeToDeduct)
-            {
-                addDriveTimeReachedException(amount, order);
-                return false;
-            }
-
-            remainingDrivingTime -= timeToDeduct;
-
-            var remainingCap = capacity;
-            while (remainingCap != 0)
-            {
-                amount--;
-                if(amount == 0)
-                    break;
-                remainingCap--;
-            }
-
-            addDriveLogMessage(capacity - remainingCap, order.getProduct());
-        }
-
-        return true;
-    }
-
-    private void moveItemsToWarehouse(List<WarehouseItem> materials)
-    {
-        var warehouse = super.getFactory().getWarehouse();
-        for (var m : materials)
-        {
-            warehouse.addItemToWarehouse(m);
-        }
+        return false;
     }
 
     private double getProductsAndSell(Order order)
@@ -201,15 +143,21 @@ public class Transporter extends FactoryObject
         return order.getIncome();
     }
 
-    private void addDriveLogMessage(int amount, WarehouseItem item)
+    private void addDriveLogMessage(MaterialPosition position)
     {
-        var message = super.getName() + " Task: get Material " + item.getName() + " Amount: " + amount + " RemainingDrivingTime: " + this.remainingDrivingTime;
+        var message = super.getName() + " Task: get Material " + position.item().getName() + " Amount: " + position.amount() + " RemainingDrivingTime: " + this.remainingDrivingTime;
         super.getFactory().addLog(message);
     }
 
-    private void addDriveTimeReachedException(int amount, WarehouseItem item)
+    private void addCapacityExceededMessage(Material material, int amount)
     {
-        var message = super.getName() + " Max drive time reached. " + amount + " from " + item.getName() + " where not delivered";
+        var message = super.getName() + ": Capacity exceeded for " + material.getName() + " amount: " + amount;
+        super.getFactory().addLog(message);
+    }
+
+    private void addTransportationConstraintNotFulfilledMessage(WarehouseItem material)
+    {
+        var message = super.getName() + ": Transport constraints not fulfilled for " + material.getName();
         super.getFactory().addLog(message);
     }
 }
