@@ -122,7 +122,6 @@ public class Factory {
         var result = new ArrayList<WarehouseItem>();
         result.addAll(suppliedMaterials);
         result.addAll(availableProducts);
-        result.addAll(orderList);
 
         return result;
     }

@@ -49,21 +49,6 @@ public class Transporter extends FactoryObject
                 this.loadedItem = null;
             }
             case StepTypes.ConcludeOrderTransportToCustomer -> {
-                var order = (Order) item;
-                if(!isOrderComplete(order))
-                {
-                    super.getFactory().addLog("Not enough products (" + order.getProduct().item().getName() + ") for order: " + order.getName());
-                    return false;
-                }
-
-                if(!getOrderToCustomer((Order)item))
-                {
-                    super.getFactory().addLog("Order " + item.getName() + " not completed");
-                    return false;
-                }
-
-                var income = getProductsAndSell((Order) item);
-                super.getFactory().increaseIncome(income);
 
             }
         }
@@ -123,7 +108,7 @@ public class Transporter extends FactoryObject
     {
         var warehouseItems = new ArrayList<>(this.getFactory().getWarehouse().getWarehouseItems());
 
-        for(int i = 0; i < order.getAmount(); i++)
+        for(int i = 0; i < order.getProduct().amount(); i++)
         {
             var productAvailable = warehouseItems.remove(order.getProduct());
             if(!productAvailable)

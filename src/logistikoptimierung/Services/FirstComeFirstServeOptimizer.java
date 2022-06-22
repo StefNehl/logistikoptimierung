@@ -30,8 +30,8 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
 
             factorySteps.add(new FactoryStep(
                     factory,
-                    order.getName(),
-                    order.getAmount(),
+                    order.getProduct().item().getName(),
+                    order.getProduct().amount(),
                     factory.getTransporters().get(0).getName(),
                     StepTypes.ConcludeOrderTransportToCustomer));
         }
@@ -79,7 +79,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     private List<FactoryStep> splitBomOnMachines(Order order)
     {
         var factorySteps = new ArrayList<FactoryStep>();
-        var remainingProductsToProduce = order.getAmount();
+        /*var remainingProductsToProduce = order.getAmount();
         var machineList = this.factory.getProductions();
 
         while (remainingProductsToProduce != 0)
@@ -119,7 +119,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
 
                 remainingProductsToProduce--;
             }
-        }
+        }*/
 
         return factorySteps;
     }

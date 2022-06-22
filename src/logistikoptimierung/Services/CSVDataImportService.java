@@ -48,9 +48,6 @@ public class CSVDataImportService implements IDataService
             int warehouseCapacity = 100;
             int nrOfDrivers = 7;
 
-            var orders = new ArrayList<Order>();
-
-            var machines = new ArrayList<Machine>();
 
             var materials = loadMaterials(
                     loadCsv(path + MATERIAL_WITH_TRANSPORTER_FILENAME));
@@ -67,6 +64,10 @@ public class CSVDataImportService implements IDataService
             var productions = loadProduction(
                     loadCsv(path + PRODUCTIONS_FILENAME),
                     availableItems);
+
+            var orders = loadOrders(
+                    loadCsv(path + CONTRACT_1), availableItems);
+
 
             var factory = new Factory("Test 1",
                     warehouseCapacity,
@@ -189,7 +190,6 @@ public class CSVDataImportService implements IDataService
     private List<Production> loadProduction(List<String[]> data, List<WarehouseItem> items)
     {
         var productionList = new ArrayList<Production>();
-        var availableItems = new ArrayList<WarehouseItem>(items);
         Production currentProduction = null;
         var currentProductionProcesses = new ArrayList<ProductionProcess>();
 
@@ -212,7 +212,6 @@ public class CSVDataImportService implements IDataService
                         bufferOutput);
 
                 productionList.add(currentProduction);
-
             }
 
             var bom = new ArrayList<MaterialPosition>();
@@ -221,7 +220,7 @@ public class CSVDataImportService implements IDataService
             var productionTimeString = dataItem[4];
             var productionTime = convertStringToSeconds(productionTimeString);
 
-            var product = findWarehouseItem(productName, availableItems);
+            var product = findWarehouseItem(productName, items);
             var productionProcess = new ProductionProcess(
                     product,
                     productBatchSize,
@@ -234,7 +233,7 @@ public class CSVDataImportService implements IDataService
                 var materialBatchSize = Integer.parseInt(dataItem[startCount]);
                 var materialName = dataItem[startCount + 1];
 
-                var material = findWarehouseItem(materialName, availableItems);
+                var material = findWarehouseItem(materialName, items);
                 var materialPosition = new MaterialPosition(material, materialBatchSize);
                 bom.add(materialPosition);
                 startCount = startCount + 2;
@@ -244,6 +243,36 @@ public class CSVDataImportService implements IDataService
 
         }
         return productionList;
+    }
+
+    private List<Order> loadOrders(List<String[]> data, List<WarehouseItem> items)
+    {
+        var orders = new ArrayList<Order>();
+        var count = 0;
+        for(var dataItem : data)
+        {
+            var area = dataItem[0];
+            var productName = dataItem[2];
+            var product = findWarehouseItem(productName, items);
+
+            var amount = Integer.parseInt(dataItem[3]);
+            var materialPosition = new MaterialPosition(product, amount);
+
+            var income = Integer.parseInt(dataItem[4]);
+            var transportType = dataItem[5];
+            var engine = dataItem[6];
+
+            //Convert minutes to seconds
+            var transportTime = Integer.parseInt(dataItem[7]) * 60;
+
+            var order = new Order(count, area, materialPosition,
+                    income, transportType, engine, transportTime);
+
+            orders.add(order);
+            count++;
+        }
+
+        return orders;
     }
 
     private WarehouseItem findWarehouseItem(String name, List<WarehouseItem> items)
