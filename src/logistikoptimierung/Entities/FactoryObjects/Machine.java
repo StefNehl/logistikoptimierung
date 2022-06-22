@@ -100,7 +100,7 @@ public class Machine extends FactoryObject {
                     addItemNotInBufferLogMessage(item, true);
                     return false;
                 }
-                this.getFactory().getWarehouse().addItemToWarehouse(product);
+                //this.getFactory().getWarehouse().addItemToWarehouse(product);
             }
         }
 

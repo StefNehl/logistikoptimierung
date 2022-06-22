@@ -207,7 +207,6 @@ public class CSVDataImportService implements IDataService
                 currentProductionProcesses = new ArrayList<>();
                 currentProduction = new Production(
                         productionName,
-                        productionName,
                         currentProductionProcesses,
                         bufferInput,
                         bufferOutput);
