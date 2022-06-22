@@ -1,7 +1,6 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.FactoryStep;
-import logistikoptimierung.Entities.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.Material;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.Product;
@@ -21,7 +20,7 @@ public class Factory {
     private final boolean printLogs;
 
     private final Warehouse warehouse;
-    private final List<Machine> machines;
+    private final List<Production> productions;
     private final List<Transporter> transporters;
     private final List<Material> suppliedMaterials;
     private final List<Product> availableProducts;
@@ -30,7 +29,7 @@ public class Factory {
 
     public Factory(String name,
                    int warehouseCapacity,
-                   List<Machine> machines,
+                   List<Production> productions,
                    int nrOfDrivers,
                    List<Transporter> transporters,
                    List<Material> suppliedMaterials,
@@ -47,7 +46,7 @@ public class Factory {
         this.startTime = 1;
         this.runTime = runTime;
         this.warehouse = new Warehouse("WH", warehouseCapacity, this);
-        this.machines = new ArrayList<>(machines);
+        this.productions = new ArrayList<>(productions);
         this.transporters = new ArrayList<>(transporters);
         this.suppliedMaterials = new ArrayList<>(suppliedMaterials);
         this.availableProducts = new ArrayList<>(availableProducts);
@@ -93,7 +92,7 @@ public class Factory {
     public List<FactoryObject> getFactoryObject() {
         var result = new ArrayList<FactoryObject>();
         result.addAll(transporters);
-        result.addAll(machines);
+        result.addAll(productions);
 
         return result;
     }
@@ -102,8 +101,8 @@ public class Factory {
         return this.warehouse;
     }
 
-    public List<Machine> getMachines() {
-        return machines;
+    public List<Production> getProductions() {
+        return productions;
     }
 
     public List<Material> getSuppliedMaterials() {

@@ -80,7 +80,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var remainingProductsToProduce = order.getAmount();
-        var machineList = this.factory.getMachines();
+        var machineList = this.factory.getProductions();
 
         while (remainingProductsToProduce != 0)
         {

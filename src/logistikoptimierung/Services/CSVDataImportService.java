@@ -1,13 +1,9 @@
 package logistikoptimierung.Services;
 
 import logistikoptimierung.Contracts.IDataService;
-import logistikoptimierung.Entities.FactoryObjects.Factory;
-import logistikoptimierung.Entities.FactoryObjects.Machine;
-import logistikoptimierung.Entities.FactoryObjects.Transporter;
+import logistikoptimierung.Entities.FactoryObjects.*;
 import logistikoptimierung.Entities.Instance;
-import logistikoptimierung.Entities.WarehouseItems.Material;
-import logistikoptimierung.Entities.WarehouseItems.Order;
-import logistikoptimierung.Entities.WarehouseItems.Product;
+import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,6 +19,7 @@ public class CSVDataImportService implements IDataService
     private static final String FACTORIES_WITH_BUFFERS_FILENAME = "FabrikenMitPuffer.csv";
     private static final String MATERIAL_WITH_TRANSPORTER_FILENAME = "RohstoffeTransportmittel.csv";
     private static final String PRODUCTS_FILENAME = "Products.csv";
+    private static final String PRODUCTIONS_FILENAME = "FabrikenMitPuffer.csv";
 
     public static final String CONTRACT_1 = "Aufträge1.csv";
     public static final String CONTRACT_2 = "Aufträge2.csv";
@@ -64,9 +61,16 @@ public class CSVDataImportService implements IDataService
             var transporters = loadTransporters(
                     loadCsv(path + TRANSPORTER_FILENAME));
 
+            var availableItems = new ArrayList<WarehouseItem>(materials);
+            availableItems.addAll(products);
+
+            var productions = loadProduction(
+                    loadCsv(path + PRODUCTIONS_FILENAME),
+                    availableItems);
+
             var factory = new Factory("Test 1",
                     warehouseCapacity,
-                    machines,
+                    productions,
                     nrOfDrivers,
                     transporters,
                     materials,
@@ -180,6 +184,77 @@ public class CSVDataImportService implements IDataService
         }
 
         return products;
+    }
+
+    private List<Production> loadProduction(List<String[]> data, List<WarehouseItem> items)
+    {
+        var productionList = new ArrayList<Production>();
+        var availableItems = new ArrayList<WarehouseItem>(items);
+        Production currentProduction = null;
+        var currentProductionProcesses = new ArrayList<ProductionProcess>();
+
+        for(var dataItem : data)
+        {
+            if(dataItem.length == 1)
+                continue;
+            var productionName = dataItem[0];
+            if(!productionName.isBlank())
+            {
+                var bufferStrings = dataItem[1].split("/");
+                var bufferInput = Integer.parseInt(bufferStrings[0].substring(0, 1));
+                var bufferOutput = Integer.parseInt(bufferStrings[1].substring(0, 1));
+
+                currentProductionProcesses = new ArrayList<>();
+                currentProduction = new Production(
+                        productionName,
+                        productionName,
+                        currentProductionProcesses,
+                        bufferInput,
+                        bufferOutput);
+
+                productionList.add(currentProduction);
+
+            }
+
+            var bom = new ArrayList<MaterialPosition>();
+            var productName = dataItem[3];
+            var productBatchSize = Integer.parseInt(dataItem[2]);
+            var productionTimeString = dataItem[4];
+            var productionTime = convertStringToSeconds(productionTimeString);
+
+            var product = findWarehouseItem(productName, availableItems);
+            var productionProcess = new ProductionProcess(
+                    product,
+                    productBatchSize,
+                    productionTime,
+                    bom);
+
+            int startCount = 5;
+            while (startCount < dataItem.length && !dataItem[startCount].isBlank())
+            {
+                var materialBatchSize = Integer.parseInt(dataItem[startCount]);
+                var materialName = dataItem[startCount + 1];
+
+                var material = findWarehouseItem(materialName, availableItems);
+                var materialPosition = new MaterialPosition(material, materialBatchSize);
+                bom.add(materialPosition);
+                startCount = startCount + 2;
+            }
+
+            currentProductionProcesses.add(productionProcess);
+
+        }
+        return productionList;
+    }
+
+    private WarehouseItem findWarehouseItem(String name, List<WarehouseItem> items)
+    {
+        for(var item : items)
+        {
+            if(name.equals(item.getName()))
+                return item;
+        }
+        return null;
     }
 
     private int convertStringToSeconds(String timeString)
