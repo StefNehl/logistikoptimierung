@@ -30,8 +30,6 @@ public class CSVDataImportService implements IDataService
     private static final String DATA_PATH = "data\\";
     private static final String DELIMITER = ";";
 
-    private Instance instance;
-
     public CSVDataImportService()
     {
 
@@ -79,9 +77,7 @@ public class CSVDataImportService implements IDataService
                     orders,
                     runTimeInMinutes,
                     true);
-            instance = new Instance(factory);
-
-            return instance;
+            return new Instance(factory);
         }
         catch (Exception ex)
         {
@@ -93,7 +89,7 @@ public class CSVDataImportService implements IDataService
 
     private List<String[]> loadCsv(String filename) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filename));
-        String line = "";
+        String line;
         boolean isFirstLine = true;
 
         var dataList = new ArrayList<String[]>();
@@ -190,7 +186,7 @@ public class CSVDataImportService implements IDataService
     private List<Production> loadProduction(List<String[]> data, List<WarehouseItem> items)
     {
         var productionList = new ArrayList<Production>();
-        Production currentProduction = null;
+        Production currentProduction;
         var currentProductionProcesses = new ArrayList<ProductionProcess>();
 
         for(var dataItem : data)
@@ -265,7 +261,7 @@ public class CSVDataImportService implements IDataService
             //Convert minutes to seconds
             var transportTime = Integer.parseInt(dataItem[7]) * 60;
 
-            var order = new Order(count, area, materialPosition,
+            var order = new Order(count + "", area, materialPosition,
                     income, transportType, engine, transportTime);
 
             orders.add(order);

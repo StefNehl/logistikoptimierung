@@ -37,17 +37,5 @@ public class Material extends WarehouseItem {
         return transportTypes;
     }
 
-    public boolean checkTransportType(String type)
-    {
-        if(transportTypes[0] == "x")
-            return true;
 
-        for(int i = 0; i < transportTypes.length; i++)
-        {
-            if(transportTypes[i].equals(type))
-                return true;
-        }
-
-        return false;
-    }
 }

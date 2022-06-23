@@ -65,6 +65,7 @@ public class Transporter extends FactoryObject
                     return false;
                 }
 
+                return getSpecificAmountOfItemsFromOrderToCustomer((Order)item, amountOfItems);
             }
         }
         return true;
@@ -92,7 +93,7 @@ public class Transporter extends FactoryObject
             return null;
         }
 
-        if(!areTransportationConstraintsFulfilled(material))
+        if(!areTransportationConstraintsFulfilledForMaterial(material))
         {
             addTransportationConstraintNotFulfilledMessage(material);
             return null;
@@ -107,40 +108,70 @@ public class Transporter extends FactoryObject
         return newPosition;
     }
 
-    public boolean areTransportationConstraintsFulfilled(Material material)
+    public boolean areTransportationConstraintsFulfilledForMaterial(Material material)
     {
-        if(!material.getArea().equals(this.area))
-            return false;
+        var area = material.getArea();
+        var engine = material.getEngine();
+        var transportTypes = material.getTransportTypes();
 
-        if(material.getEngine().equals("x") &&
-                !material.getEngine().equals(this.engine))
-            return false;
-
-        return !material.checkTransportType(this.type);
+        return areTransportationConstraintsFulfilled(area, engine, transportTypes);
     }
 
-    private boolean isOrderComplete(Order order)
+    public boolean areTransportationConstraintsFulfilledForOrder(Order order)
     {
-        var warehouseItems = new ArrayList<>(this.getFactory().getWarehouse().getWarehouseItems());
+        var area = order.getArea();
+        var engine = order.getEngine();
+        var transportTypes = new String[]{order.getTransportType()};
 
-        for(int i = 0; i < order.getProduct().amount(); i++)
-        {
-            var productAvailable = warehouseItems.remove(order.getProduct());
-            if(!productAvailable)
-                return false;
+        return areTransportationConstraintsFulfilled(area, engine, transportTypes);
+    }
+
+    private boolean areTransportationConstraintsFulfilled(String area, String engine,
+                                                         String[] transportTypes)
+    {
+        if(!area.equals(this.area))
+            return false;
+
+        if(engine.equals("x") &&
+                !engine.equals(this.engine))
+            return false;
+
+        return !checkTransportType(transportTypes);
+    }
+
+    private boolean checkTransportType(String[] transportTypes)
+    {
+        if(transportTypes[0].equals("x"))
+            return true;
+
+        for (String transportType : transportTypes) {
+            if (transportType.equals(type))
+                return true;
         }
 
-        return true;
-    }
-
-    private boolean getOrderToCustomer(Order order)
-    {
         return false;
     }
 
-    private double getProductsAndSell(Order order)
+    private boolean getSpecificAmountOfItemsFromOrderToCustomer(Order order, int amountOfItems)
     {
-        return order.getIncome();
+        if(amountOfItems > this.capacity)
+        {
+            addCapacityExceededMessage(order.getProduct().item(), amountOfItems);
+            return false;
+        }
+
+        if(!areTransportationConstraintsFulfilledForOrder(order))
+        {
+            addTransportationConstraintNotFulfilledMessage(order);
+            return false;
+        }
+
+        blockedUntilTimeStep = order.getTravelTime() * 2;
+        order.deductProductAmount(amountOfItems);
+
+        if(order.getProduct().amount() <= 0)
+            this.getFactory().increaseIncome(order.getIncome());
+        return true;
     }
 
     private void addNoAvailableDriverLogMessage()
@@ -155,9 +186,9 @@ public class Transporter extends FactoryObject
         super.getFactory().addLog(message);
     }
 
-    private void addCapacityExceededMessage(Material material, int amount)
+    private void addCapacityExceededMessage(WarehouseItem item, int amount)
     {
-        var message = super.getName() + ": Capacity exceeded for " + material.getName() + " amount: " + amount;
+        var message = super.getName() + ": Capacity exceeded for " + item.getName() + " amount: " + amount;
         super.getFactory().addLog(message);
     }
 

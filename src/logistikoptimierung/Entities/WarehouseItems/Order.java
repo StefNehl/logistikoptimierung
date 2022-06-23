@@ -1,21 +1,20 @@
 package logistikoptimierung.Entities.WarehouseItems;
 
-public class Order
+public class Order extends WarehouseItem
 {
-    private int orderId;
-    private String area;
-    private final MaterialPosition product;
+    private final String area;
+    private MaterialPosition product;
     private final double income;
     private final String transportType;
     private final String engine;
     private final int travelTime;
 
-    public Order(int orderId, String area,
+    public Order(String orderId, String area,
                  MaterialPosition product,
                  double income, String transportType,
                  String engine, int travelTime)
     {
-        this.orderId = orderId;
+        super(orderId, orderId, false);
         this.area = area;
         this.product = product;
         this.income = income;
@@ -24,18 +23,17 @@ public class Order
         this.travelTime = travelTime;
     }
 
-
-
-    public int getOrderId() {
-        return orderId;
-    }
-
     public String getArea() {
         return area;
     }
 
     public MaterialPosition getProduct() {
         return product;
+    }
+
+    public void deductProductAmount(int amountToDeduct)
+    {
+        this.product = new MaterialPosition(this.product.item(), this.product.amount() - amountToDeduct);
     }
 
     public double getIncome() {
