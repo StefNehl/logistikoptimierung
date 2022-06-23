@@ -14,7 +14,7 @@ public class Order extends WarehouseItem
                  double income, String transportType,
                  String engine, int travelTime)
     {
-        super(orderId, orderId, false);
+        super(orderId, orderId, WarehouseItemTypes.Order);
         this.area = area;
         this.product = product;
         this.income = income;

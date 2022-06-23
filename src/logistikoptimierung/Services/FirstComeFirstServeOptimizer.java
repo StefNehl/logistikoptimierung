@@ -5,7 +5,7 @@ import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.Transporter;
 import logistikoptimierung.Entities.FactoryStep;
 import logistikoptimierung.Entities.StepTypes;
-import logistikoptimierung.Entities.WarehouseItems.Order;
+import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
         {
             if(orderCount == nrOfOrdersToOptimize)
                 break;
-            handleOrder(order);
+            factorySteps.addAll(handleOrder(order));
             orderCount++;
         }
 
@@ -41,8 +41,11 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
         var factorySteps = new ArrayList<FactoryStep>();
         var productToProduce = order.getProduct().item();
 
-        if(productToProduce.isMaterial())
+        //Bring Material From Supplier To Warehouse
+        //Bring Material From Warehouse to Customer
+        if(productToProduce.getItemType().equals(WarehouseItemTypes.Material))
         {
+            factorySteps.addAll(splitBomOnTransporters(order));
             factorySteps.addAll(sendOrderToCustomerSteps(order));
             return factorySteps;
         }
@@ -62,38 +65,74 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
 
     private List<FactoryStep> sendOrderToCustomerSteps(Order order)
     {
-        var factorySteps = new ArrayList<FactoryStep>();
-        var availableTransporters = this.factory.getTransporters();
-        var remainingAmount = order.getProduct().amount();
+        var stepTypes = new String[]
+                {
+                        StepTypes.ConcludeOrderTransportToCustomer
+                };
+        var factorySteps = new ArrayList<>(getTransportationFactoryStepsForOneTask(
+                stepTypes,
+                order,
+                order.getProduct().amount(),
+                getFittingTransporters(order)));
 
+        return factorySteps;
+    }
+
+    private List<Transporter> getFittingTransporters(WarehouseItem item)
+    {
+        var availableTransporters = this.factory.getTransporters();
         var fittingTransporters = new ArrayList<Transporter>();
 
         for (var transporter : availableTransporters)
         {
-            if(transporter.areTransportationConstraintsFulfilledForOrder(order))
+            if(item.getItemType().equals(WarehouseItemTypes.Order))
             {
-                fittingTransporters.add(transporter);
+                if(transporter.areTransportationConstraintsFulfilledForOrder((Order) item))
+                    fittingTransporters.add(transporter);
             }
+
+            if(item.getItemType().equals(WarehouseItemTypes.Material))
+            {
+                if(transporter.areTransportationConstraintsFulfilledForMaterial((Material) item))
+                    fittingTransporters.add(transporter);
+            }
+
         }
+
+        return fittingTransporters;
+    }
+
+    private List<FactoryStep> getTransportationFactoryStepsForOneTask(String[] stepTypes,
+                                                                      WarehouseItem item,
+                                                                      int amountOfItems,
+                                                                      List<Transporter> fittingTransporters)
+    {
+        var factorySteps = new ArrayList<FactoryStep>();
+        var remainingAmount = amountOfItems;
 
         while(remainingAmount != 0)
         {
             for(var transporter : fittingTransporters)
             {
                 var transporterAmount = 0;
-                if(transporter.getCapacity() >= order.getProduct().amount())
-                    transporterAmount = order.getProduct().amount();
+                if(transporter.getCapacity() >= amountOfItems)
+                    transporterAmount = amountOfItems;
                 else
                     transporterAmount = transporter.getCapacity();
 
                 remainingAmount -= transporterAmount;
 
-                factorySteps.add(new FactoryStep(
-                        factory,
-                        order.getProduct().item().getName(),
-                        transporterAmount,
-                        transporter.getName(),
-                        StepTypes.ConcludeOrderTransportToCustomer));
+                for(var stepType : stepTypes)
+                {
+                    factorySteps.add(new FactoryStep(
+                            factory,
+                            item.getName(),
+                            transporterAmount,
+                            transporter.getName(),
+                            stepType));
+                }
+
+
 
                 if(remainingAmount == 0)
                     break;
@@ -106,14 +145,25 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     private List<FactoryStep> splitBomOnTransporters(Order order)
     {
         var factorySteps = new ArrayList<FactoryStep>();
-        var transporterList = this.factory.getTransporters();
 
-        var productToProduce = order.getProduct().item();
-
-        if(productToProduce.isMaterial())
+        //Only get Material from the Supplier
+        if(order.getProduct().item().getItemType().equals(WarehouseItemTypes.Material))
         {
+            var stepTypes = new String[]{
+                    StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse,
+                    StepTypes.MoveMaterialFromTransporterToWarehouse
+            };
+            factorySteps.addAll(getTransportationFactoryStepsForOneTask(stepTypes,
+                    order.getProduct().item(),
+                    order.getProduct().amount(),
+                    getFittingTransporters(order.getProduct().item())));
 
+            return factorySteps;
         }
+
+        var productToProduce = (Product)order.getProduct().item();
+        var productionProcess = this.factory.getProductionProcessesForProduct(productToProduce);
+
         //var productionProcess =
 
 /*

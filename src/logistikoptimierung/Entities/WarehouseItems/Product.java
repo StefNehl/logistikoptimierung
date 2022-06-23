@@ -10,7 +10,7 @@ public class Product extends WarehouseItem {
                    String productId,
                    String machineType)
     {
-        super(productId, name, false);
+        super(productId, name, WarehouseItemTypes.Product);
         this.machineType = machineType;
     }
 

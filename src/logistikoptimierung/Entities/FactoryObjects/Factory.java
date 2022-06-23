@@ -1,10 +1,7 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.FactoryStep;
-import logistikoptimierung.Entities.WarehouseItems.Material;
-import logistikoptimierung.Entities.WarehouseItems.Order;
-import logistikoptimierung.Entities.WarehouseItems.Product;
-import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
+import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +46,13 @@ public class Factory {
         this.warehouse = new Warehouse("WH", warehouseCapacity, this);
         this.productions = new ArrayList<>(productions);
         this.transporters = new ArrayList<>(transporters);
+        for(var transporter : this.transporters)
+            transporter.setFactory(this);
 
         drivers = new ArrayList<>();
         for(int i = 0; i < nrOfDrivers; i++)
         {
-            drivers.add(new Driver(i + ""));
+            drivers.add(new Driver(i + "", i));
         }
 
         this.suppliedMaterials = new ArrayList<>(suppliedMaterials);
@@ -121,8 +120,28 @@ public class Factory {
         return this.warehouse;
     }
 
-    public List<Production> getProductions() {
-        return productions;
+    public List<ProductionProcess> getProductionProcessesForProduct(Product product)
+    {
+        var processList = new ArrayList<ProductionProcess>();
+        addProcessesRecursiveToList(product, processList);
+        return processList;
+    }
+
+    public void addProcessesRecursiveToList(Product product, List<ProductionProcess> productionProcesses)
+    {
+        for (var production : productions)
+        {
+            var process = production.getProductionProcessForProduct(product);
+            if(process != null)
+            {
+                productionProcesses.add(process);
+                for(var subProduct : process.getMaterialPositions())
+                {
+                    if(!subProduct.item().getItemType().equals(WarehouseItemTypes.Product))
+                        addProcessesRecursiveToList((Product) subProduct.item(), productionProcesses);
+                }
+            }
+        }
     }
 
     public List<Material> getSuppliedMaterials() {
@@ -142,6 +161,7 @@ public class Factory {
         var result = new ArrayList<WarehouseItem>();
         result.addAll(suppliedMaterials);
         result.addAll(availableProducts);
+        result.addAll(orderList);
 
         return result;
     }

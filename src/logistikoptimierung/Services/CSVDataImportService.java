@@ -114,6 +114,7 @@ public class CSVDataImportService implements IDataService
     {
         var transporters = new ArrayList<Transporter>();
 
+        var idCount = 0;
         for (var dataItem : data)
         {
             var area = dataItem[0];
@@ -125,11 +126,13 @@ public class CSVDataImportService implements IDataService
 
             var newTransporter = new Transporter(
                     name,
+                    idCount,
                     area,
                     type,
                     eng,
                     capacity);
             transporters.add(newTransporter);
+            idCount++;
         }
 
         return transporters;
@@ -188,6 +191,7 @@ public class CSVDataImportService implements IDataService
         var productionList = new ArrayList<Production>();
         Production currentProduction;
         var currentProductionProcesses = new ArrayList<ProductionProcess>();
+        var idCount = 0;
 
         for(var dataItem : data)
         {
@@ -203,11 +207,13 @@ public class CSVDataImportService implements IDataService
                 currentProductionProcesses = new ArrayList<>();
                 currentProduction = new Production(
                         productionName,
+                        idCount,
                         currentProductionProcesses,
                         bufferInput,
                         bufferOutput);
 
                 productionList.add(currentProduction);
+                idCount++;
             }
 
             var bom = new ArrayList<MaterialPosition>();

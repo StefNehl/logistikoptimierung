@@ -4,13 +4,13 @@ public class WarehouseItem {
 
     private final String name;
     private final String itemId;
-    private boolean isMaterial;
+    private String itemType;
 
-    public WarehouseItem(String itemId, String name, boolean isMaterial)
+    public WarehouseItem(String itemId, String name, String itemType)
     {
         this.name = name;
         this.itemId = itemId;
-        this.isMaterial = isMaterial;
+        this.itemType = itemType;
     }
 
     public String getName() {
@@ -21,8 +21,8 @@ public class WarehouseItem {
         return itemId;
     }
 
-    public boolean isMaterial() {
-        return isMaterial;
+    public String getItemType() {
+        return itemType;
     }
 
     @Override

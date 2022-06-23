@@ -49,7 +49,12 @@ public class FactoryStep {
 
     private void addStepMessage()
     {
-        var message = "Item: " + this.itemToManipulate.getName() + " Amount " + this.amountOfItems + " FO: " + this.factoryObject.getName() + " Step: " + this.stepType;
-        factory.addLog(message);
+        factory.addLog(this.toString());
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Item: " + this.itemToManipulate.getName() + " Amount " + this.amountOfItems + " FO: " + this.factoryObject.getName() + " Step: " + this.stepType;
     }
 }

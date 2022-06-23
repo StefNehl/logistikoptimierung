@@ -10,20 +10,18 @@ import java.util.ArrayList;
 
 public class Transporter extends FactoryObject
 {
-
     private final String area;
     private final String type;
     private final String engine;
     private final int capacity;
-    private double remainingDrivingTime;
     private int blockedUntilTimeStep;
 
     private MaterialPosition loadedItem;
     private String currentTask;
 
-    public Transporter(String name, String area, String type, String engine, int maxCapacity)
+    public Transporter(String name, int id, String area, String type, String engine, int maxCapacity)
     {
-        super(name);
+        super(name, "T" + id);
         this.area = area;
         this.type = type;
         this.engine = engine;
@@ -43,7 +41,7 @@ public class Transporter extends FactoryObject
         currentTask = stepType;
         switch (stepType)
         {
-            case StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse ->{
+            case StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse -> {
                 var driver = this.getFactory().getNotBlockedDriver();
                 if(driver == null)
                 {
@@ -57,6 +55,13 @@ public class Transporter extends FactoryObject
                 this.loadedItem = null;
             }
             case StepTypes.ConcludeOrderTransportToCustomer -> {
+
+                //Check if material is available
+                if(!this.getFactory().getWarehouse().checkIfMaterialIsAvailable(((Order)item).getProduct().item(), amountOfItems))
+                {
+                    super.getFactory().addLog("Material: " + item + "in the amount: " + amountOfItems + " not available");
+                    return false;
+                }
 
                 var driver = this.getFactory().getNotBlockedDriver();
                 if(driver == null)
@@ -182,7 +187,7 @@ public class Transporter extends FactoryObject
 
     private void addDriveLogMessage(MaterialPosition position)
     {
-        var message = super.getName() + " Task: get Material " + position.item().getName() + " Amount: " + position.amount() + " RemainingDrivingTime: " + this.remainingDrivingTime;
+        var message = super.getName() + " Task: get Material " + position.item().getName() + " Amount: " + position.amount();
         super.getFactory().addLog(message);
     }
 

@@ -9,8 +9,8 @@ public class Driver extends FactoryObject
     private int blockedUntilTimeStep;
 
 
-    public Driver(String name) {
-        super(name);
+    public Driver(String name, int id) {
+        super(name, "D" + id);
         blockedUntilTimeStep = 0;
     }
 

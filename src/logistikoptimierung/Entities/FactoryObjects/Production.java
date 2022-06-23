@@ -23,11 +23,12 @@ public class Production extends FactoryObject
     private int blockedUntilTimeStep;
 
     public Production(String name,
+                      int id,
                       List<ProductionProcess> productionProcesses,
                       int maxNrOfInputBufferBatches,
                       int maxNrOfOutputBufferBatches)
     {
-        super(name);
+        super(name, "P" + id);
         this.productionProcesses = productionProcesses;
         this.remainingNrOfInputBufferBatches = maxNrOfInputBufferBatches;
         this.remainingNrOfOutputBufferBatches = maxNrOfOutputBufferBatches;
@@ -54,7 +55,7 @@ public class Production extends FactoryObject
                 }
 
                 var productToProduce = (Product) item;
-                var process = getProductionProcess(productToProduce);
+                var process = getProductionProcessForProduct(productToProduce);
 
                 if(process == null)
                 {
@@ -130,7 +131,7 @@ public class Production extends FactoryObject
         return true;
     }
 
-    private ProductionProcess getProductionProcess(WarehouseItem productToProduce)
+    public ProductionProcess getProductionProcessForProduct(Product productToProduce)
     {
         for(var process : productionProcesses)
         {

@@ -58,7 +58,7 @@ public class Warehouse
 
                 if(itemToOverwrite.amount() < materialPosition.amount())
                 {
-                    addItemNotFoundMessage(materialPosition);
+                    addItemNotFoundMessage(materialPosition.item());
                     return null;
                 }
 
@@ -71,8 +71,32 @@ public class Warehouse
             }
         }
 
-        addItemNotFoundMessage(materialPosition);
+        addItemNotFoundMessage(materialPosition.item());
         return null;
+    }
+
+    public boolean checkIfMaterialIsAvailable(WarehouseItem warehouseItem, int amount)
+    {
+        for (var item : warehouseItems)
+        {
+            if(item.item().equals(warehouseItem))
+            {
+                var index = warehouseItems.indexOf(item);
+                var itemToOverwrite = warehouseItems.get(index);
+
+                if(itemToOverwrite.amount() < amount)
+                {
+                    addItemNotFoundMessage(warehouseItem);
+                    return false;
+                }
+                else
+                    return true;
+
+            }
+        }
+
+        addItemNotFoundMessage(warehouseItem);
+        return false;
     }
 
     public String getName() {
@@ -95,9 +119,9 @@ public class Warehouse
         this.factory.addLog(message);
     }
 
-    private void addItemNotFoundMessage(MaterialPosition item)
+    private void addItemNotFoundMessage(WarehouseItem item)
     {
-        var message = this.name + " " + item.item().getName() + " not found or no enough amount in warehouse";
+        var message = this.name + " " + item.getName() + " not found or no enough amount in warehouse";
         this.factory.addLog(message);
     }
 
