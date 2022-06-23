@@ -22,6 +22,7 @@ public class Factory {
     private final Warehouse warehouse;
     private final List<Production> productions;
     private final List<Transporter> transporters;
+    private final List<Driver> drivers;
     private final List<Material> suppliedMaterials;
     private final List<Product> availableProducts;
     private final List<Order> orderList;
@@ -48,6 +49,13 @@ public class Factory {
         this.warehouse = new Warehouse("WH", warehouseCapacity, this);
         this.productions = new ArrayList<>(productions);
         this.transporters = new ArrayList<>(transporters);
+
+        drivers = new ArrayList<>();
+        for(int i = 0; i < nrOfDrivers; i++)
+        {
+            drivers.add(new Driver(i + ""));
+        }
+
         this.suppliedMaterials = new ArrayList<>(suppliedMaterials);
         this.availableProducts = new ArrayList<>(availableProducts);
         this.orderList = orderList;
@@ -77,16 +85,23 @@ public class Factory {
         return currentTimeStep;
     }
 
-    public void increaseCurrentTimeStep() {
-        this.currentTimeStep++;
-    }
-
     public String getName() {
         return this.name;
     }
 
     public List<Transporter> getTransporters() {
         return transporters;
+    }
+
+    public Driver getNotBlockedDriver()
+    {
+        for(var driver : drivers)
+        {
+            if(currentTimeStep > driver.getBlockedUntilTimeStep())
+                return driver;
+        }
+
+        return null;
     }
 
     public List<FactoryObject> getFactoryObject() {

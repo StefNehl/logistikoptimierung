@@ -39,16 +39,31 @@ public class Transporter extends FactoryObject
             super.getFactory().addBlockLog(super.getName(), currentTask);
             return false;
         }
+
         currentTask = stepType;
         switch (stepType)
         {
-            case StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse ->
+            case StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse ->{
+                var driver = this.getFactory().getNotBlockedDriver();
+                if(driver == null)
+                {
+                    addNoAvailableDriverLogMessage();
+                    return false;
+                }
                 this.loadedItem = getMaterialFromSupplier(amountOfItems, (Material) item);
+            }
             case StepTypes.MoveMaterialFromTransporterToWarehouse -> {
                 this.getFactory().getWarehouse().addItemToWarehouse(loadedItem);
                 this.loadedItem = null;
             }
             case StepTypes.ConcludeOrderTransportToCustomer -> {
+
+                var driver = this.getFactory().getNotBlockedDriver();
+                if(driver == null)
+                {
+                    addNoAvailableDriverLogMessage();
+                    return false;
+                }
 
             }
         }
@@ -126,6 +141,12 @@ public class Transporter extends FactoryObject
     private double getProductsAndSell(Order order)
     {
         return order.getIncome();
+    }
+
+    private void addNoAvailableDriverLogMessage()
+    {
+        var message = super.getName() + ": no driver available for task: " + currentTask;
+        super.getFactory().addLog(message);
     }
 
     private void addDriveLogMessage(MaterialPosition position)

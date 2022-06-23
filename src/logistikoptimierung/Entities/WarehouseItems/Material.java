@@ -9,7 +9,7 @@ public class Material extends WarehouseItem {
 
     public Material(String materialId, String name, String area, String[] transportTypes, String engine,  int travelTime)
     {
-        super(materialId, name);
+        super(materialId, name, true);
         this.travelTime = travelTime;
         this.area = area;
         this.transportTypes = transportTypes;

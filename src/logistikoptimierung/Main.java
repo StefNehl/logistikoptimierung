@@ -28,6 +28,16 @@ public class Main {
         var dataService = new CSVDataImportService();
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_1);
 
+        var optimizer = new FirstComeFirstServeOptimizer(instance.getFactory());
+        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList());
+
+        instance.getFactory().startFactory(factoryTaskList);
+
+        System.out.println();
+        System.out.println("**********************************************");
+        System.out.println("End income: " + instance.getFactory().getCurrentIncome());
+        System.out.println("**********************************************");
+        System.out.println();
 
     }
 

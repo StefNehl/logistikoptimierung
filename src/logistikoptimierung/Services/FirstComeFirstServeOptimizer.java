@@ -39,14 +39,37 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
         return factorySteps;
     }
 
+    private List<FactoryStep> handleOrder(Order order)
+    {
+        var factorySteps = new ArrayList<FactoryStep>();
+        var productToProduce = order.getProduct().item();
+        if(productToProduce.isMaterial())
+        {
+            factorySteps.add(new FactoryStep(
+                    factory,
+                    order.getProduct().item().getName(),
+                    order.getProduct().amount(),
+                    factory.getTransporters().get(0).getName(),
+                    StepTypes.ConcludeOrderTransportToCustomer));
+        }
+
+        return null;
+    }
+
     private List<FactoryStep> splitBomOnTransporters(Order order)
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var transporterList = this.factory.getTransporters();
 
-/*
-        var materialList = new ArrayList<>(order.getProduct().getBillOfMaterial());
+        var productToProduce = order.getProduct().item();
 
+        if(productToProduce.isMaterial())
+        {
+
+        }
+        //var productionProcess =
+
+/*
         while (!materialList.isEmpty())
         {
             for(int i = 0; i < transporterList.size(); i++)
