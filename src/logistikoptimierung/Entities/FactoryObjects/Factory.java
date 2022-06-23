@@ -93,6 +93,11 @@ public class Factory {
         return transporters;
     }
 
+    public int getNrOfDrivers()
+    {
+        return drivers.size();
+    }
+
     public Driver getNotBlockedDriver()
     {
         for(var driver : drivers)

@@ -132,11 +132,11 @@ public class Transporter extends FactoryObject
         if(!area.equals(this.area))
             return false;
 
-        if(engine.equals("x") &&
+        if(!engine.equals("x") &&
                 !engine.equals(this.engine))
             return false;
 
-        return !checkTransportType(transportTypes);
+        return checkTransportType(transportTypes);
     }
 
     private boolean checkTransportType(String[] transportTypes)

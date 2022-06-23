@@ -2,6 +2,7 @@ package logistikoptimierung.Services;
 
 import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.Factory;
+import logistikoptimierung.Entities.FactoryObjects.Transporter;
 import logistikoptimierung.Entities.FactoryStep;
 import logistikoptimierung.Entities.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.Order;
@@ -19,21 +20,17 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     }
 
     @Override
-    public List<FactoryStep> optimize(List<Order> orderList)
+    public List<FactoryStep> optimize(List<Order> orderList, int nrOfOrdersToOptimize)
     {
         var factorySteps = new ArrayList<FactoryStep>();
+        var orderCount = 0;
 
         for (var order : orderList)
         {
-            factorySteps.addAll(splitBomOnTransporters(order));
-            factorySteps.addAll(splitBomOnMachines(order));
-
-            factorySteps.add(new FactoryStep(
-                    factory,
-                    order.getProduct().item().getName(),
-                    order.getProduct().amount(),
-                    factory.getTransporters().get(0).getName(),
-                    StepTypes.ConcludeOrderTransportToCustomer));
+            if(orderCount == nrOfOrdersToOptimize)
+                break;
+            handleOrder(order);
+            orderCount++;
         }
 
         return factorySteps;
@@ -43,17 +40,67 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var productToProduce = order.getProduct().item();
+
         if(productToProduce.isMaterial())
         {
-            factorySteps.add(new FactoryStep(
-                    factory,
-                    order.getProduct().item().getName(),
-                    order.getProduct().amount(),
-                    factory.getTransporters().get(0).getName(),
-                    StepTypes.ConcludeOrderTransportToCustomer));
+            factorySteps.addAll(sendOrderToCustomerSteps(order));
+            return factorySteps;
         }
 
-        return null;
+        factorySteps.addAll(splitBomOnTransporters(order));
+        factorySteps.addAll(splitBomOnMachines(order));
+
+        factorySteps.add(new FactoryStep(
+                factory,
+                order.getProduct().item().getName(),
+                order.getProduct().amount(),
+                factory.getTransporters().get(0).getName(),
+                StepTypes.ConcludeOrderTransportToCustomer));
+
+        return factorySteps;
+    }
+
+    private List<FactoryStep> sendOrderToCustomerSteps(Order order)
+    {
+        var factorySteps = new ArrayList<FactoryStep>();
+        var availableTransporters = this.factory.getTransporters();
+        var remainingAmount = order.getProduct().amount();
+
+        var fittingTransporters = new ArrayList<Transporter>();
+
+        for (var transporter : availableTransporters)
+        {
+            if(transporter.areTransportationConstraintsFulfilledForOrder(order))
+            {
+                fittingTransporters.add(transporter);
+            }
+        }
+
+        while(remainingAmount != 0)
+        {
+            for(var transporter : fittingTransporters)
+            {
+                var transporterAmount = 0;
+                if(transporter.getCapacity() >= order.getProduct().amount())
+                    transporterAmount = order.getProduct().amount();
+                else
+                    transporterAmount = transporter.getCapacity();
+
+                remainingAmount -= transporterAmount;
+
+                factorySteps.add(new FactoryStep(
+                        factory,
+                        order.getProduct().item().getName(),
+                        transporterAmount,
+                        transporter.getName(),
+                        StepTypes.ConcludeOrderTransportToCustomer));
+
+                if(remainingAmount == 0)
+                    break;
+            }
+        }
+
+        return factorySteps;
     }
 
     private List<FactoryStep> splitBomOnTransporters(Order order)
