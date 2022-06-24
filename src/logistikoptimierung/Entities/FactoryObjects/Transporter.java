@@ -101,7 +101,7 @@ public class Transporter extends FactoryObject
             return null;
         }
 
-        var drivingTime = material.getTravelTime() * 2;
+        var drivingTime = material.getTravelTime();
         this.blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + drivingTime;
 
         var newPosition = new MaterialPosition(material, amount);
@@ -168,7 +168,7 @@ public class Transporter extends FactoryObject
             return false;
         }
 
-        blockedUntilTimeStep = order.getTravelTime() * 2;
+        blockedUntilTimeStep = order.getTravelTime();
         order.deductProductAmount(amountOfItems);
 
         if(order.getProduct().amount() <= 0)
