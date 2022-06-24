@@ -3,7 +3,7 @@ package logistikoptimierung.Services;
 import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.Transporter;
-import logistikoptimierung.Entities.FactoryStep;
+import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
 import logistikoptimierung.Entities.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.*;
 

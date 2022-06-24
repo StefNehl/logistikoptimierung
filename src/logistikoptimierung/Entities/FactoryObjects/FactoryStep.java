@@ -1,8 +1,5 @@
-package logistikoptimierung.Entities;
+package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.FactoryObjects.Factory;
-import logistikoptimierung.Entities.FactoryObjects.FactoryObject;
-import logistikoptimierung.Entities.FactoryObjects.FactoryObjectTypes;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 public class FactoryStep {

@@ -76,10 +76,12 @@ public class CSVDataImportService implements IDataService
                     products,
                     orders,
                     runTimeInMinutes,
+                    false,
+                    false,
                     true,
-                    true,
-                    true,
-                    true);
+                    false,
+                    false,
+                    false);
             return new Instance(factory);
         }
         catch (Exception ex)

@@ -59,7 +59,7 @@ public class Transporter extends FactoryObject
                 //Check if material is available
                 if(!this.getFactory().getWarehouse().checkIfMaterialIsAvailable(((Order)item).getProduct().item(), amountOfItems))
                 {
-                    super.addLogMessage("Material: " + item + "in the amount: " + amountOfItems + " not available");
+                    super.addLogMessage("Material: " + item + " in the amount: " + amountOfItems + " not available");
                     return false;
                 }
 

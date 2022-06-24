@@ -1,6 +1,5 @@
 package logistikoptimierung.Contracts;
-import logistikoptimierung.Entities.FactoryObjects.Factory;
-import logistikoptimierung.Entities.FactoryStep;
+import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 
 import java.util.List;

@@ -1,6 +1,5 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.FactoryStep;
 import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.util.ArrayList;
@@ -27,9 +26,8 @@ public class Factory {
     private final boolean printProductionMessages;
     private final boolean printTransportMessages;
     private final boolean printWarehouseMessages;
-
-
-
+    private final boolean printFactoryMessages;
+    private final boolean printFactoryStepMessages;
 
     public Factory(String name,
                    int warehouseCapacity,
@@ -41,6 +39,8 @@ public class Factory {
                    List<Order> orderList,
                    int runTime,
                    boolean printDriverMessages,
+                   boolean printFactoryMessage,
+                   boolean printFactoryStepMessages,
                    boolean printProductionMessages,
                    boolean printTransportMessages,
                    boolean printWarehouseMessages) {
@@ -51,6 +51,8 @@ public class Factory {
         this.printProductionMessages = printProductionMessages;
         this.printTransportMessages = printTransportMessages;
         this.printWarehouseMessages = printWarehouseMessages;
+        this.printFactoryMessages = printFactoryMessage;
+        this.printFactoryStepMessages = printFactoryStepMessages;
 
         this.startTime = 1;
         this.runTime = runTime;
@@ -196,19 +198,26 @@ public class Factory {
         {
             case FactoryObjectTypes.Driver -> {
                 if(this.printDriverMessages)
-                    System.out.println(message);
+                    System.out.println(newMessage);
+            }
+            case FactoryObjectTypes.Factory -> {
+                if(this.printFactoryMessages)
+                    System.out.println(newMessage);
+            }
+            case FactoryObjectTypes.FactoryStep -> {
+                System.out.println(newMessage);
             }
             case FactoryObjectTypes.Production -> {
                 if(this.printProductionMessages)
-                    System.out.println(message);
+                    System.out.println(newMessage);
             }
             case FactoryObjectTypes.Transporter -> {
                 if(this.printTransportMessages)
-                    System.out.println(message);
+                    System.out.println(newMessage);
             }
             case FactoryObjectTypes.Warehouse -> {
                 if(this.printWarehouseMessages)
-                    System.out.println(message);
+                    System.out.println(newMessage);
             }
         }
     }

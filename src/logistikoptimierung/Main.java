@@ -24,7 +24,7 @@ public class Main {
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_1);
 
         var optimizer = new FirstComeFirstServeOptimizer(instance.getFactory());
-        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),1);
+        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),5);
 
         instance.getFactory().startFactory(factoryTaskList);
 
