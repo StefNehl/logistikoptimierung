@@ -38,16 +38,7 @@ public class FactoryStep {
     public boolean doStep()
     {
         var completed = factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
-
-        if(this.factory.getPrintOnlyCompletedFactorySteps())
-        {
-            if(completed)
-                addStepMessage(completed);
-            else
-                return completed;
-        }
-        else
-            addStepMessage(completed);
+        addStepMessage(completed);
         return completed;
     }
 
@@ -57,7 +48,7 @@ public class FactoryStep {
 
     private void addStepMessage(boolean completed)
     {
-        factory.addLog(this.toString() + " Completed: " + completed, FactoryObjectTypes.FactoryStep);
+        factory.addLog(this.toString() + " Completed: " + completed, FactoryObjectTypes.FactoryStep, completed);
     }
 
     @Override

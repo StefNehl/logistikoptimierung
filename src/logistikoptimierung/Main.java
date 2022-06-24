@@ -28,7 +28,6 @@ public class Main {
         System.out.println("End income: " + instance.getFactory().getCurrentIncome());
         System.out.println("**********************************************");
         System.out.println();
-
     }
 
 }

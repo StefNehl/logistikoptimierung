@@ -100,11 +100,6 @@ public class Factory {
         return currentTimeStep;
     }
 
-    public boolean getPrintOnlyCompletedFactorySteps()
-    {
-        return this.printOnlyCompletedFactoryStepMessages;
-    }
-
     public String getName() {
         return this.name;
     }
@@ -198,7 +193,7 @@ public class Factory {
         return currentIncome;
     }
 
-    public void addLog(String message, String factoryObjectType)
+    public void addLog(String message, String factoryObjectType, boolean completed)
     {
         var newMessage = new FactoryObjectMessage(currentTimeStep, message, factoryObjectType);
         this.logMessages.add(newMessage);
@@ -213,8 +208,17 @@ public class Factory {
                     System.out.println(newMessage);
             }
             case FactoryObjectTypes.FactoryStep -> {
-                if(this.printFactoryStepMessages)
-                    System.out.println(newMessage);
+                if(!this.printFactoryMessages)
+                    break;
+
+                if(this.printOnlyCompletedFactoryStepMessages)
+                {
+                    if(completed)
+                        System.out.println(newMessage);
+                    break;
+                }
+
+                System.out.println(newMessage);
             }
             case FactoryObjectTypes.Production -> {
                 if(this.printProductionMessages)
@@ -230,6 +234,12 @@ public class Factory {
             }
         }
     }
+
+    public void addLog(String message, String factoryObjectType)
+    {
+        addLog(message, factoryObjectType, true);
+    }
+
 
     public void addBlockLog(String name, String stepType, String factoryObjectType)
     {

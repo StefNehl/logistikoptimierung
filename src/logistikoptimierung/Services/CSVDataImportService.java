@@ -257,7 +257,7 @@ public class CSVDataImportService implements IDataService
     private List<Order> loadOrders(List<String[]> data, List<WarehouseItem> items)
     {
         var orders = new ArrayList<Order>();
-        var count = 0;
+        var count = 1;
         for(var dataItem : data)
         {
             var area = dataItem[0];
@@ -274,7 +274,7 @@ public class CSVDataImportService implements IDataService
             //Convert minutes to seconds
             var transportTime = Integer.parseInt(dataItem[7]) * 60;
 
-            var order = new Order(count + "", area, materialPosition,
+            var order = new Order("Order " + count, area, materialPosition,
                     income, transportType, engine, transportTime);
 
             orders.add(order);
