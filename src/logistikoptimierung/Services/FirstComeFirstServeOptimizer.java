@@ -134,13 +134,10 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                             stepType));
                 }
 
-
-
                 if(remainingAmount == 0)
                     break;
             }
         }
-
         return factorySteps;
     }
 
@@ -164,37 +161,20 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
         }
 
         var productToProduce = (Product)order.getProduct().item();
-        var productionProcess = this.factory.getProductionProcessesForProduct(productToProduce);
+        var materialList = this.factory.getMaterialPositionsForProduct(productToProduce);
 
-        //var productionProcess =
-
-/*
-        while (!materialList.isEmpty())
+        for(var materialPosition : materialList)
         {
-            for(int i = 0; i < transporterList.size(); i++)
-            {
-                if(materialList.isEmpty())
-                    break;
-
-                var materialPosition = materialList.get(0);
-                materialList.remove(materialPosition);
-
-                factorySteps.add(new FactoryStep(
-                        factory,
-                        materialPosition.material().getName(),
-                        materialPosition.amount() * order.getAmount(),
-                        transporterList.get(i).getName(),
-                        StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse));
-
-                factorySteps.add(new FactoryStep(
-                        factory,
-                        materialPosition.material().getName(),
-                        materialPosition.amount() * order.getAmount(),
-                        transporterList.get(i).getName(),
-                        StepTypes.MoveMaterialFromTransporterToWarehouse));
-            }
+            var stepTypes = new String[]{
+                    FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse,
+                    FactoryStepTypes.MoveMaterialFromTransporterToWarehouse
+            };
+            factorySteps.addAll(getTransportationFactoryStepsForOneTask(stepTypes,
+                    materialPosition.item(),
+                    materialPosition.amount(),
+                    getFittingTransporters(materialPosition.item())));
         }
-*/
+
         return factorySteps;
     }
 

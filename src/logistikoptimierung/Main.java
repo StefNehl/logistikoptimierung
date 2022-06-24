@@ -18,10 +18,10 @@ public class Main {
     {
         System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
-        var instance = dataService.loadData(CSVDataImportService.CONTRACT_1);
+        var instance = dataService.loadData(CSVDataImportService.CONTRACT_4);
 
         var optimizer = new FirstComeFirstServeOptimizer(instance.getFactory());
-        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),10);
+        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),1);
 
         instance.getFactory().startFactory(factoryTaskList);
 

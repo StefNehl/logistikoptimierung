@@ -156,7 +156,7 @@ public class Factory {
         return processList;
     }
 
-    public void addProcessesRecursiveToList(Product product, List<ProductionProcess> productionProcesses)
+    private void addProcessesRecursiveToList(Product product, List<ProductionProcess> productionProcesses)
     {
         for (var production : productions)
         {
@@ -168,6 +168,42 @@ public class Factory {
                 {
                     if(subProduct.item().getItemType().equals(WarehouseItemTypes.Product))
                         addProcessesRecursiveToList((Product) subProduct.item(), productionProcesses);
+                }
+            }
+        }
+    }
+
+    public List<MaterialPosition> getMaterialPositionsForProduct(Product product)
+    {
+        var materialList = new ArrayList<MaterialPosition>();
+        addMaterialPositionRecursiveToList(product, 200, materialList);
+        return materialList;
+    }
+
+    private void addMaterialPositionRecursiveToList(Product product,
+                                                    int productAmount,
+                                                    List<MaterialPosition> materialPositions)
+    {
+        for (var production : productions)
+        {
+            var process = production.getProductionProcessForProduct(product);
+            if(process != null)
+            {
+                for(var subProduct : process.getMaterialPositions())
+                {
+                    var conversationRate = (process.getProductionBatchSize() / subProduct.amount());
+                    var amount = productAmount * conversationRate;
+                    if(subProduct.item().getItemType().equals(WarehouseItemTypes.Product))
+                    {
+                        addMaterialPositionRecursiveToList(
+                                (Product) subProduct.item(),
+                                amount,
+                                materialPositions);
+                    }
+                    else if(subProduct.item().getItemType().equals(WarehouseItemTypes.Material))
+                    {
+                        materialPositions.add(new MaterialPosition(subProduct.item(), amount));
+                    }
                 }
             }
         }
