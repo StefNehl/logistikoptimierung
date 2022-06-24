@@ -1,12 +1,9 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.Material;
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
-
-import java.util.ArrayList;
 
 public class Transporter extends FactoryObject
 {

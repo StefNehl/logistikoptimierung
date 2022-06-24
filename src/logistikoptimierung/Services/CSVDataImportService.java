@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Time;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class CSVDataImportService implements IDataService
                     availableItems);
 
             var orders = loadOrders(
-                    loadCsv(path + CONTRACT_1), availableItems);
+                    loadCsv(path + filename), availableItems);
 
 
             var factory = new Factory("Test 1",
@@ -77,7 +78,7 @@ public class CSVDataImportService implements IDataService
                     orders,
                     runTimeInMinutes,
                     false,
-                    false,
+                    true,
                     true,
                     false,
                     false,
@@ -156,8 +157,8 @@ public class CSVDataImportService implements IDataService
                     .replace(")", "")
                     .split(" ");
             var engine = transportConstraints[2];
-            var materialId = dataItem[1];
-            var name = dataItem[2];
+            var materialId = dataItem[1].trim();
+            var name = dataItem[2].trim();
             var transportTimeString = dataItem[3];
             var transportTime = convertStringToSeconds(transportTimeString);
 
@@ -176,14 +177,14 @@ public class CSVDataImportService implements IDataService
 
         for (var dataItem : data)
         {
-            var productId = dataItem[0];
+            var productId = dataItem[0].trim();
             if(productId.isBlank())
             {
                 productType = dataItem[1];
                 continue;
             }
 
-            var productName = dataItem[1];
+            var productName = dataItem[1].trim();
             var newProduct = new Product(productName, productId, productType);
             products.add(newProduct);
         }
@@ -294,8 +295,8 @@ public class CSVDataImportService implements IDataService
 
     private int convertStringToSeconds(String timeString)
     {
-        var time = LocalTime.parse(timeString);
-        var seconds = time.getSecond();
+        var time = LocalTime.parse(timeString, DateTimeFormatter.ofPattern("HH:mm:ss"));
+        var seconds = time.toSecondOfDay();
 
         return seconds;
     }

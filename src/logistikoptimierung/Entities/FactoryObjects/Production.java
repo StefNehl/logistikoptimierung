@@ -1,6 +1,5 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.Product;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
@@ -135,7 +134,7 @@ public class Production extends FactoryObject
     {
         for(var process : productionProcesses)
         {
-            if(productToProduce.getName().equals(process.getProductToProduce().getName()))
+            if(productToProduce.equals(process.getProductToProduce()))
                 return process;
         }
         return null;

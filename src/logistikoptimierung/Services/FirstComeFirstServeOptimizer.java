@@ -4,7 +4,7 @@ import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.Transporter;
 import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
-import logistikoptimierung.Entities.StepTypes;
+import logistikoptimierung.Entities.FactoryObjects.StepTypes;
 import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.util.ArrayList;

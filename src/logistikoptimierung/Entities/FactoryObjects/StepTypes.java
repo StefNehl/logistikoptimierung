@@ -1,4 +1,4 @@
-package logistikoptimierung.Entities;
+package logistikoptimierung.Entities.FactoryObjects;
 
 public class StepTypes {
 
