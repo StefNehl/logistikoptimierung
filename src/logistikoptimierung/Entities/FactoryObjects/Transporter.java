@@ -34,7 +34,7 @@ public class Transporter extends FactoryObject
     {
         if(currentTimeStep < blockedUntilTimeStep)
         {
-            super.getFactory().addBlockLog(super.getName(), currentTask);
+            super.addBlockMessage(super.getName(), currentTask);
             return false;
         }
 
@@ -59,7 +59,7 @@ public class Transporter extends FactoryObject
                 //Check if material is available
                 if(!this.getFactory().getWarehouse().checkIfMaterialIsAvailable(((Order)item).getProduct().item(), amountOfItems))
                 {
-                    super.getFactory().addLog("Material: " + item + "in the amount: " + amountOfItems + " not available");
+                    super.addLogMessage("Material: " + item + "in the amount: " + amountOfItems + " not available");
                     return false;
                 }
 
@@ -182,24 +182,24 @@ public class Transporter extends FactoryObject
     private void addNoAvailableDriverLogMessage()
     {
         var message = super.getName() + ": no driver available for task: " + currentTask;
-        super.getFactory().addLog(message);
+        super.addLogMessage(message);
     }
 
     private void addDriveLogMessage(MaterialPosition position)
     {
         var message = super.getName() + " Task: get Material " + position.item().getName() + " Amount: " + position.amount();
-        super.getFactory().addLog(message);
+        super.addLogMessage(message);
     }
 
     private void addCapacityExceededMessage(WarehouseItem item, int amount)
     {
         var message = super.getName() + ": Capacity exceeded for " + item.getName() + " amount: " + amount;
-        super.getFactory().addLog(message);
+        super.addLogMessage(message);
     }
 
     private void addTransportationConstraintNotFulfilledMessage(WarehouseItem material)
     {
         var message = super.getName() + ": Transport constraints not fulfilled for " + material.getName();
-        super.getFactory().addLog(message);
+        super.addLogMessage(message);
     }
 }

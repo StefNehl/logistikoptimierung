@@ -2,6 +2,7 @@ package logistikoptimierung.Entities;
 
 import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.FactoryObject;
+import logistikoptimierung.Entities.FactoryObjects.FactoryObjectTypes;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 public class FactoryStep {
@@ -21,7 +22,7 @@ public class FactoryStep {
         }
 
         if(this.itemToManipulate == null)
-            factory.addLog("Item " + itemToManipulate + " not found");
+            factory.addLog("Item " + itemToManipulate + " not found", FactoryObjectTypes.FactoryStep);
 
         for (var factoryObject :
                 factory.getFactoryObject()) {
@@ -30,7 +31,7 @@ public class FactoryStep {
         }
 
         if(factoryObject == null)
-            factory.addLog("Factory Object " + factoryObjectName + " not found");
+            factory.addLog("Factory Object " + factoryObjectName + " not found", FactoryObjectTypes.FactoryStep);
 
         this.stepType = stepType;
         this.factory = factory;
@@ -49,7 +50,7 @@ public class FactoryStep {
 
     private void addStepMessage()
     {
-        factory.addLog(this.toString());
+        factory.addLog(this.toString(), FactoryObjectTypes.FactoryStep);
     }
 
     @Override

@@ -8,13 +8,11 @@ import java.util.List;
 
 public class Factory {
 
-    private final List<String> log;
     private final String name;
     private int currentTimeStep;
     private double currentIncome;
     private final int startTime;
     private final int runTime;
-    private final boolean printLogs;
 
     private final Warehouse warehouse;
     private final List<Production> productions;
@@ -23,6 +21,14 @@ public class Factory {
     private final List<Material> suppliedMaterials;
     private final List<Product> availableProducts;
     private final List<Order> orderList;
+
+    private final List<FactoryObjectMessage> logMessages = new ArrayList<>();
+    private final boolean printDriverMessages;
+    private final boolean printProductionMessages;
+    private final boolean printTransportMessages;
+    private final boolean printWarehouseMessages;
+
+
 
 
     public Factory(String name,
@@ -34,12 +40,17 @@ public class Factory {
                    List<Product> availableProducts,
                    List<Order> orderList,
                    int runTime,
-                   boolean printLog) {
+                   boolean printDriverMessages,
+                   boolean printProductionMessages,
+                   boolean printTransportMessages,
+                   boolean printWarehouseMessages) {
         this.name = name;
-        this.log = new ArrayList<>();
         this.currentTimeStep = 0;
         this.currentIncome = 0;
-        this.printLogs = printLog;
+        this.printDriverMessages = printDriverMessages;
+        this.printProductionMessages = printProductionMessages;
+        this.printTransportMessages = printTransportMessages;
+        this.printWarehouseMessages = printWarehouseMessages;
 
         this.startTime = 1;
         this.runTime = runTime;
@@ -170,31 +181,47 @@ public class Factory {
     {
         this.currentIncome += additionalIncome;
         var message = "Income increase, new income: " + additionalIncome;
-        addLog(message);
+        addLog(message, FactoryObjectTypes.Factory);
     }
 
     public double getCurrentIncome() {
         return currentIncome;
     }
 
-    public void addLog(String message)
+    public void addLog(String message, String factoryObjectType)
     {
-        message = this.currentTimeStep + ": " + message;
-        log.add(message);
-        if(this.printLogs)
-            System.out.println(message);
+        var newMessage = new FactoryObjectMessage(currentTimeStep, message, factoryObjectType);
+        this.logMessages.add(newMessage);
+        switch (factoryObjectType)
+        {
+            case FactoryObjectTypes.Driver -> {
+                if(this.printDriverMessages)
+                    System.out.println(message);
+            }
+            case FactoryObjectTypes.Production -> {
+                if(this.printProductionMessages)
+                    System.out.println(message);
+            }
+            case FactoryObjectTypes.Transporter -> {
+                if(this.printTransportMessages)
+                    System.out.println(message);
+            }
+            case FactoryObjectTypes.Warehouse -> {
+                if(this.printWarehouseMessages)
+                    System.out.println(message);
+            }
+        }
     }
 
-    public void addBlockLog(String name, String stepType)
+    public void addBlockLog(String name, String stepType, String factoryObjectType)
     {
-        addLog(name + " is blocked from Task: " + stepType);
+        addLog(name + " is blocked from Task: " + stepType, factoryObjectType);
     }
 
-    public void printLog() {
-        for (var message :
-                log) {
+    public void printAllLogMessage() {
+        for (var message : this.logMessages)
+        {
             System.out.println(message);
-
         }
     }
 

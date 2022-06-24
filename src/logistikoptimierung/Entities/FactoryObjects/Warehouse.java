@@ -105,24 +105,24 @@ public class Warehouse extends FactoryObject
     private void addCapacityReachedMessage()
     {
         var message = super.getName() + " Capacity reached";
-        this.factory.addLog(message);
+        this.factory.addLog(message, FactoryObjectTypes.Warehouse);
     }
 
     private void addAddItemMessage(MaterialPosition item)
     {
         var message = super.getName() + " Task: add item " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
-        this.factory.addLog(message);
+        this.factory.addLog(message, FactoryObjectTypes.Warehouse);
     }
 
     private void addItemNotFoundMessage(WarehouseItem item)
     {
         var message = super.getName() + " " + item.getName() + " not found or no enough amount in warehouse";
-        this.factory.addLog(message);
+        this.factory.addLog(message, FactoryObjectTypes.Warehouse);
     }
 
     private void addItemRemovedMessage(MaterialPosition item)
     {
         var message = super.getName() + " Task: remove " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
-        this.factory.addLog(message);
+        this.factory.addLog(message, FactoryObjectTypes.Warehouse);
     }
 }

@@ -76,6 +76,9 @@ public class CSVDataImportService implements IDataService
                     products,
                     orders,
                     runTimeInMinutes,
+                    true,
+                    true,
+                    true,
                     true);
             return new Instance(factory);
         }

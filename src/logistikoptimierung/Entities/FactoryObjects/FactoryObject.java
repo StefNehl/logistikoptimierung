@@ -31,8 +31,18 @@ public class FactoryObject {
 
     public boolean doWork(int timeStep, WarehouseItem item, int amountOfItems, String stepType)
     {
-        factory.addLog("Not Implemented");
+        factory.addLog("Not Implemented", factoryObjectType);
         return false;
+    }
+
+    public void addLogMessage(String message)
+    {
+        this.factory.addLog(message, factoryObjectType);
+    }
+
+    public void addBlockMessage(String message, String stepType)
+    {
+        this.factory.addBlockLog(message, stepType, factoryObjectType);
     }
 
     @Override

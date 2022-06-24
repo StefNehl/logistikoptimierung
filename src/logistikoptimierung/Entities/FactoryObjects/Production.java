@@ -40,7 +40,7 @@ public class Production extends FactoryObject
     {
         if(currentTimeStep < this.blockedUntilTimeStep)
         {
-            super.getFactory().addBlockLog(super.getName(), currentTask);
+            super.addBlockMessage(super.getName(), currentTask);
             return false;
         }
         currentTask = stepType;
@@ -69,7 +69,7 @@ public class Production extends FactoryObject
                     var itemForBuffer = getFactory().getWarehouse().removeItemFromWarehouse(m);
                     if(itemForBuffer == null)
                     {
-                        super.getFactory().addLog("Not enough material (" + m.item().getName() + ") for product: " + item.getName() + " in warehouse");
+                        super.addLogMessage("Not enough material (" + m.item().getName() + ") for product: " + item.getName() + " in warehouse");
                         return false;
                     }
                 }
@@ -96,7 +96,7 @@ public class Production extends FactoryObject
             case StepTypes.MoveProductToOutputBuffer -> {
                 if(productInProduction == null)
                 {
-                    super.getFactory().addLog("No product in production. " + item.getName());
+                    super.addLogMessage("No product in production. " + item.getName());
                     return false;
                 }
 
@@ -169,13 +169,13 @@ public class Production extends FactoryObject
     private void addPProcessNotFoundMessage(Product product)
     {
         var message = super.getName() + product.getName() + " Process for product not found";
-        super.getFactory().addLog(message);
+        super.addLogMessage(message);
     }
 
     private void addProduceItemMessage(Product product)
     {
         var message = super.getName() + " Task: produce " + product.getName();
-        super.getFactory().addLog(message);
+        super.addLogMessage(message);
     }
 
     private void addNotEnoughCapacityInBufferLogMessage(boolean isOutputBuffer)
@@ -185,7 +185,7 @@ public class Production extends FactoryObject
             bufferName = "OutputBuffer";
 
         var message = super.getName() + " Not enough capacity in " + bufferName;
-        super.getFactory().addLog(message);
+        super.addLogMessage(message);
     }
 
     private void addItemNotInBufferLogMessage(WarehouseItem item, boolean isOutputBuffer)
@@ -195,7 +195,7 @@ public class Production extends FactoryObject
             bufferName = "OutputBuffer";
 
         var message = super.getName() + " item " + item.getName() + " not in " + bufferName;
-        super.getFactory().addLog(message);
+        super.addLogMessage(message);
     }
 
     private void addBufferLogMessage(WarehouseItem item, boolean isOutputBuffer, boolean isRemoveOperation)
@@ -217,6 +217,6 @@ public class Production extends FactoryObject
         }
 
         var message = super.getName() + " " + operationName + " item " + item.getName() + " " + fromTo + " " + bufferName + " RC: " + remCapacity;
-        super.getFactory().addLog(message);
+        super.addLogMessage(message);
     }
 }

@@ -19,11 +19,11 @@ public class Driver extends FactoryObject
     {
         if(currentTimeStep < blockedUntilTimeStep)
         {
-            super.getFactory().addBlockLog(super.getName(), currentTask);
+            super.addBlockMessage(super.getName(), currentTask);
             return false;
         }
 
-        super.getFactory().addLog("Driving for item: " + item.getName());
+        super.addLogMessage("Driving for item: " + item.getName());
         return true;
     }
 
