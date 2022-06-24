@@ -38,7 +38,7 @@ public class Transporter extends FactoryObject
         currentTask = stepType;
         switch (stepType)
         {
-            case StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse -> {
+            case FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse -> {
                 var driver = this.getFactory().getNotBlockedDriver();
                 if(driver == null)
                 {
@@ -47,11 +47,11 @@ public class Transporter extends FactoryObject
                 }
                 this.loadedItem = getMaterialFromSupplier(amountOfItems, (Material) item);
             }
-            case StepTypes.MoveMaterialFromTransporterToWarehouse -> {
+            case FactoryStepTypes.MoveMaterialFromTransporterToWarehouse -> {
                 this.getFactory().getWarehouse().addItemToWarehouse(loadedItem);
                 this.loadedItem = null;
             }
-            case StepTypes.ConcludeOrderTransportToCustomer -> {
+            case FactoryStepTypes.ConcludeOrderTransportToCustomer -> {
 
                 //Check if material is available
                 if(!this.getFactory().getWarehouse().checkIfMaterialIsAvailable(((Order)item).getProduct().item(), amountOfItems))

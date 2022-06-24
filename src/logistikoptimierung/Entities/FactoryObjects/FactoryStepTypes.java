@@ -1,6 +1,6 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-public class StepTypes {
+public class FactoryStepTypes {
 
     public static final String GetMaterialFromSuppliesAndMoveBackToWarehouse = "Get Material From Supplies And Move back to Warehouse";
     public static final String MoveMaterialFromTransporterToWarehouse = "Move Material From Transporter To Warehouse";

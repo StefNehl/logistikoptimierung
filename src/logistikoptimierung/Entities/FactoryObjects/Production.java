@@ -45,7 +45,7 @@ public class Production extends FactoryObject
         currentTask = stepType;
         switch (stepType)
         {
-            case StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer -> {
+            case FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer -> {
 
                 if(remainingNrOfInputBufferBatches == 0)
                 {
@@ -77,7 +77,7 @@ public class Production extends FactoryObject
                 remainingNrOfInputBufferBatches--;
                 addBufferLogMessage(item, false, true);
             }
-            case StepTypes.Produce -> {
+            case FactoryStepTypes.Produce -> {
                 if(this.remainingNrOfOutputBufferBatches == 0)
                 {
                     addNotEnoughCapacityInBufferLogMessage(true);
@@ -92,7 +92,7 @@ public class Production extends FactoryObject
                 productInProduction = producedProduct;
                 return true;
             }
-            case StepTypes.MoveProductToOutputBuffer -> {
+            case FactoryStepTypes.MoveProductToOutputBuffer -> {
                 if(productInProduction == null)
                 {
                     super.addLogMessage("No product in production. " + item.getName());
@@ -105,7 +105,7 @@ public class Production extends FactoryObject
                 addBufferLogMessage(item, true, false);
                 return true;
             }
-            case StepTypes.MoveProductFromOutputBufferToWarehouse -> {
+            case FactoryStepTypes.MoveProductFromOutputBufferToWarehouse -> {
                 MaterialPosition productToMove = null;
                 for(var product : productsInOutputBuffer)
                 {

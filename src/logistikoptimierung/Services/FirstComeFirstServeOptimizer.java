@@ -4,7 +4,7 @@ import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.Transporter;
 import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
-import logistikoptimierung.Entities.FactoryObjects.StepTypes;
+import logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes;
 import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                 order.getProduct().item().getName(),
                 order.getProduct().amount(),
                 factory.getTransporters().get(0).getName(),
-                StepTypes.ConcludeOrderTransportToCustomer));
+                FactoryStepTypes.ConcludeOrderTransportToCustomer));
 
         return factorySteps;
     }
@@ -67,7 +67,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     {
         var stepTypes = new String[]
                 {
-                        StepTypes.ConcludeOrderTransportToCustomer
+                        FactoryStepTypes.ConcludeOrderTransportToCustomer
                 };
         var factorySteps = new ArrayList<>(getTransportationFactoryStepsForOneTask(
                 stepTypes,
@@ -150,8 +150,8 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
         if(order.getProduct().item().getItemType().equals(WarehouseItemTypes.Material))
         {
             var stepTypes = new String[]{
-                    StepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse,
-                    StepTypes.MoveMaterialFromTransporterToWarehouse
+                    FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse,
+                    FactoryStepTypes.MoveMaterialFromTransporterToWarehouse
             };
             factorySteps.addAll(getTransportationFactoryStepsForOneTask(stepTypes,
                     order.getProduct().item(),
