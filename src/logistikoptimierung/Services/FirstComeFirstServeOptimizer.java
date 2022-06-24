@@ -152,7 +152,11 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
         }
 
         var productToProduce = (Product)order.getProduct().item();
-        var materialList = this.factory.getMaterialPositionsForProduct(productToProduce);
+        var materialList = this.factory
+                .getMaterialPositionsForProduct(
+                        productToProduce,
+                        order.getProduct().amount(),
+                        true);
 
         for(var materialPosition : materialList)
         {

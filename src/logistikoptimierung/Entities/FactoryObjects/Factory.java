@@ -11,7 +11,6 @@ public class Factory {
     private long currentTimeStep;
     private double currentIncome;
     private final long startTime;
-    private final long runTime;
 
     private final Warehouse warehouse;
     private final List<Production> productions;
@@ -22,13 +21,13 @@ public class Factory {
     private final List<Order> orderList;
 
     private final List<FactoryObjectMessage> logMessages = new ArrayList<>();
-    private final boolean printDriverMessages;
-    private final boolean printProductionMessages;
-    private final boolean printTransportMessages;
-    private final boolean printWarehouseMessages;
-    private final boolean printFactoryMessages;
-    private final boolean printFactoryStepMessages;
-    private final boolean printOnlyCompletedFactoryStepMessages;
+    private boolean printDriverMessages;
+    private boolean printProductionMessages;
+    private boolean printTransportMessages;
+    private boolean printWarehouseMessages;
+    private boolean printFactoryMessages;
+    private boolean printFactoryStepMessages;
+    private boolean printOnlyCompletedFactoryStepMessages;
 
     private final int oneHourInSeconds = 3600;
 
@@ -39,28 +38,13 @@ public class Factory {
                    List<Transporter> transporters,
                    List<Material> suppliedMaterials,
                    List<Product> availableProducts,
-                   List<Order> orderList,
-                   long runTime,
-                   boolean printDriverMessages,
-                   boolean printFactoryMessage,
-                   boolean printFactoryStepMessages,
-                   boolean printOnlyCompletedFactoryStepMessages,
-                   boolean printProductionMessages,
-                   boolean printTransportMessages,
-                   boolean printWarehouseMessages) {
+                   List<Order> orderList) {
         this.name = name;
         this.currentTimeStep = 0;
         this.currentIncome = 0;
-        this.printDriverMessages = printDriverMessages;
-        this.printProductionMessages = printProductionMessages;
-        this.printTransportMessages = printTransportMessages;
-        this.printWarehouseMessages = printWarehouseMessages;
-        this.printFactoryMessages = printFactoryMessage;
-        this.printFactoryStepMessages = printFactoryStepMessages;
-        this.printOnlyCompletedFactoryStepMessages = printOnlyCompletedFactoryStepMessages;
+
 
         this.startTime = 1;
-        this.runTime = runTime;
         this.warehouse = new Warehouse("WH", warehouseCapacity, this);
         this.productions = new ArrayList<>(productions);
         for(var production : this.productions)
@@ -81,8 +65,17 @@ public class Factory {
         this.orderList = orderList;
     }
 
-    public void startFactory(List<FactoryStep> factorySteps)
+    public void startFactory(List<FactoryStep> factorySteps, long runTime, FactoryMessageSettings factoryMessageSettings)
     {
+        logMessages.clear();
+        this.printDriverMessages = factoryMessageSettings.printDriverMessages();
+        this.printProductionMessages = factoryMessageSettings.printProductionMessages();
+        this.printTransportMessages = factoryMessageSettings.printTransportMessages();
+        this.printWarehouseMessages = factoryMessageSettings.printWarehouseMessages();
+        this.printFactoryMessages = factoryMessageSettings.printFactoryMessage();
+        this.printFactoryStepMessages = factoryMessageSettings.printFactoryStepMessages();
+        this.printOnlyCompletedFactoryStepMessages = factoryMessageSettings.printOnlyCompletedFactoryStepMessages();
+
         int hourCount = 1;
         addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
 
@@ -176,15 +169,22 @@ public class Factory {
         }
     }
 
-    public List<MaterialPosition> getMaterialPositionsForProduct(Product product)
+    public List<MaterialPosition> getMaterialPositionsForProduct(Product product, int amount)
+    {
+        return getMaterialPositionsForProduct(product, amount, false);
+    }
+
+    public List<MaterialPosition> getMaterialPositionsForProduct(Product product, int amount,
+                                                                 boolean respectBatchSize)
     {
         var materialList = new ArrayList<MaterialPosition>();
-        addMaterialPositionRecursiveToList(product, 200, materialList);
+        addMaterialPositionRecursiveToList(product, amount, respectBatchSize, materialList);
         return materialList;
     }
 
     private void addMaterialPositionRecursiveToList(Product product,
                                                     int productAmount,
+                                                    boolean respectBatchSize,
                                                     List<MaterialPosition> materialPositions)
     {
         for (var production : productions)
@@ -196,11 +196,19 @@ public class Factory {
                 {
                     var conversationRate = (process.getProductionBatchSize() / subProduct.amount());
                     var amount = productAmount * conversationRate;
+
+                    if(respectBatchSize)
+                    {
+                        var nrOfBatches = (int)Math.ceil((double) amount / (double) process.getProductionBatchSize());
+                        amount = nrOfBatches * process.getProductionBatchSize();
+                    }
+
                     if(subProduct.item().getItemType().equals(WarehouseItemTypes.Product))
                     {
                         addMaterialPositionRecursiveToList(
                                 (Product) subProduct.item(),
                                 amount,
+                                respectBatchSize,
                                 materialPositions);
                     }
                     else if(subProduct.item().getItemType().equals(WarehouseItemTypes.Material))

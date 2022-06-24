@@ -128,7 +128,7 @@ public class Warehouse extends FactoryObject
 
     private void addItemNotFoundMessage(WarehouseItem item)
     {
-        var message = super.getName() + " " + item.getName() + " not found or no enough amount in warehouse";
+        var message = super.getName() + " " + item.getName() + " not found or not enough amount in warehouse";
         this.factory.addLog(message, FactoryObjectTypes.Warehouse);
     }
 
