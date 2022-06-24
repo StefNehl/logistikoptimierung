@@ -150,7 +150,7 @@ public class Factory {
                 productionProcesses.add(process);
                 for(var subProduct : process.getMaterialPositions())
                 {
-                    if(!subProduct.item().getItemType().equals(WarehouseItemTypes.Product))
+                    if(subProduct.item().getItemType().equals(WarehouseItemTypes.Product))
                         addProcessesRecursiveToList((Product) subProduct.item(), productionProcesses);
                 }
             }
