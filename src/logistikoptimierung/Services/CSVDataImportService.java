@@ -43,8 +43,8 @@ public class CSVDataImportService implements IDataService
 
         try
         {
-            var runTimeInMinutes = 1000;//5 * 8 * 60;
-            int warehouseCapacity = 100;
+            var runTimeInMinutes = 144000; //One week 60 * 60 * 8 * 5 = 144 000
+            int warehouseCapacity = 1000;
             int nrOfDrivers = 7;
 
 

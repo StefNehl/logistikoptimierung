@@ -30,6 +30,8 @@ public class Factory {
     private final boolean printFactoryStepMessages;
     private final boolean printOnlyCompletedFactoryStepMessages;
 
+    private final int oneHourInSeconds = 3600;
+
     public Factory(String name,
                    int warehouseCapacity,
                    List<Production> productions,
@@ -78,8 +80,17 @@ public class Factory {
 
     public void startFactory(List<FactoryStep> factorySteps)
     {
+        int hourCount = 1;
+        addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
+
         for(int i = startTime; i <= runTime; i++)
         {
+            if(i % oneHourInSeconds == 0)
+            {
+                hourCount++;
+                addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
+            }
+
             this.currentTimeStep = i;
             var handledFactoryObject = new ArrayList<FactoryObject>();
             var copyOfSteps = new ArrayList<>(factorySteps);
@@ -91,6 +102,8 @@ public class Factory {
                 if(step.doStep())
                 {
                     factorySteps.remove(step);
+                    if(factorySteps.isEmpty())
+                        return;
                 }
             }
         }
@@ -208,7 +221,7 @@ public class Factory {
                     System.out.println(newMessage);
             }
             case FactoryObjectTypes.FactoryStep -> {
-                if(!this.printFactoryMessages)
+                if(!this.printFactoryStepMessages)
                     break;
 
                 if(this.printOnlyCompletedFactoryStepMessages)

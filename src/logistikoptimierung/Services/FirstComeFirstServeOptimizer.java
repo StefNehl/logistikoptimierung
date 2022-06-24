@@ -115,10 +115,12 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
             for(var transporter : fittingTransporters)
             {
                 var transporterAmount = 0;
-                if(transporter.getCapacity() >= amountOfItems)
-                    transporterAmount = amountOfItems;
+                if(transporter.getCapacity() >= remainingAmount)
+                    transporterAmount = remainingAmount;
                 else
+                {
                     transporterAmount = transporter.getCapacity();
+                }
 
                 remainingAmount -= transporterAmount;
 
