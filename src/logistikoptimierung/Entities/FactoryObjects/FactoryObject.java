@@ -29,7 +29,7 @@ public class FactoryObject {
         return this.objectId + " " + name;
     }
 
-    public boolean doWork(int timeStep, WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(long timeStep, WarehouseItem item, int amountOfItems, String stepType)
     {
         factory.addLog("Not Implemented", factoryObjectType);
         return false;

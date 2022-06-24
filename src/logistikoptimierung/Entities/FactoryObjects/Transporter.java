@@ -11,7 +11,7 @@ public class Transporter extends FactoryObject
     private final String type;
     private final String engine;
     private final int capacity;
-    private int blockedUntilTimeStep;
+    private long blockedUntilTimeStep;
 
     private MaterialPosition loadedItem;
     private String currentTask;
@@ -27,7 +27,7 @@ public class Transporter extends FactoryObject
     }
 
     @Override
-    public boolean doWork(int currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
     {
         if(currentTimeStep < blockedUntilTimeStep)
         {

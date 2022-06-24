@@ -15,7 +15,7 @@ public class Driver extends FactoryObject
     }
 
     @Override
-    public boolean doWork(int currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
     {
         if(currentTimeStep < blockedUntilTimeStep)
         {

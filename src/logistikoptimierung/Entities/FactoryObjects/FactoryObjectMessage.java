@@ -1,6 +1,6 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-public record FactoryObjectMessage(int timeStep, String message, String factoryObjectType) {
+public record FactoryObjectMessage(long timeStep, String message, String factoryObjectType) {
     @Override
     public String toString()
     {

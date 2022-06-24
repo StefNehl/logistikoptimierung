@@ -8,10 +8,10 @@ import java.util.List;
 public class Factory {
 
     private final String name;
-    private int currentTimeStep;
+    private long currentTimeStep;
     private double currentIncome;
-    private final int startTime;
-    private final int runTime;
+    private final long startTime;
+    private final long runTime;
 
     private final Warehouse warehouse;
     private final List<Production> productions;
@@ -40,7 +40,7 @@ public class Factory {
                    List<Material> suppliedMaterials,
                    List<Product> availableProducts,
                    List<Order> orderList,
-                   int runTime,
+                   long runTime,
                    boolean printDriverMessages,
                    boolean printFactoryMessage,
                    boolean printFactoryStepMessages,
@@ -83,7 +83,7 @@ public class Factory {
         int hourCount = 1;
         addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
 
-        for(int i = startTime; i <= runTime; i++)
+        for(long i = startTime; i <= runTime; i++)
         {
             if(i % oneHourInSeconds == 0)
             {
@@ -109,7 +109,7 @@ public class Factory {
         }
     }
 
-    public int getCurrentTimeStep() {
+    public long getCurrentTimeStep() {
         return currentTimeStep;
     }
 

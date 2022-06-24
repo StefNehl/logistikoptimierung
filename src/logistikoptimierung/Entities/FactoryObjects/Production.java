@@ -19,7 +19,7 @@ public class Production extends FactoryObject
     private Set<MaterialPosition> productsInOutputBuffer;
 
     private String currentTask;
-    private int blockedUntilTimeStep;
+    private long blockedUntilTimeStep;
 
     public Production(String name,
                       int id,
@@ -35,7 +35,7 @@ public class Production extends FactoryObject
     }
 
     @Override
-    public boolean doWork(int currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
     {
         if(currentTimeStep < this.blockedUntilTimeStep)
         {
