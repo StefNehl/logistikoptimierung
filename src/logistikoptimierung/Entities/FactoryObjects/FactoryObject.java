@@ -7,12 +7,13 @@ public class FactoryObject {
     private final String objectId;
     private final String name;
     private Factory factory;
+    private final String factoryObjectType;
 
-    public FactoryObject(String name, String objectId)
+    public FactoryObject(String name, String objectId, String factoryObjectType)
     {
         this.name = name;
         this.objectId = objectId;
-
+        this.factoryObjectType = factoryObjectType;
     }
 
     public Factory getFactory() {

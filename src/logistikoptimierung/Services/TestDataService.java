@@ -2,12 +2,6 @@ package logistikoptimierung.Services;
 
 import logistikoptimierung.Contracts.IDataService;
 import logistikoptimierung.Entities.*;
-import logistikoptimierung.Entities.FactoryObjects.Factory;
-import logistikoptimierung.Entities.FactoryObjects.Machine;
-import logistikoptimierung.Entities.FactoryObjects.Transporter;
-import logistikoptimierung.Entities.WarehouseItems.*;
-
-import java.util.ArrayList;
 
 public class TestDataService implements IDataService {
 

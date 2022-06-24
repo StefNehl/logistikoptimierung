@@ -10,7 +10,7 @@ public class Driver extends FactoryObject
 
 
     public Driver(String name, int id) {
-        super(name, "D" + id);
+        super(name, "D" + id, FactoryObjectTypes.Driver);
         blockedUntilTimeStep = 0;
     }
 

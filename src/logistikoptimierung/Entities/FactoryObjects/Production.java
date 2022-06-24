@@ -28,7 +28,7 @@ public class Production extends FactoryObject
                       int maxNrOfInputBufferBatches,
                       int maxNrOfOutputBufferBatches)
     {
-        super(name, "P" + id);
+        super(name, "P" + id, FactoryObjectTypes.Production);
         this.productionProcesses = productionProcesses;
         this.remainingNrOfInputBufferBatches = maxNrOfInputBufferBatches;
         this.remainingNrOfOutputBufferBatches = maxNrOfOutputBufferBatches;
