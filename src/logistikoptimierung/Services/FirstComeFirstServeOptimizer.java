@@ -1,10 +1,7 @@
 package logistikoptimierung.Services;
 
 import logistikoptimierung.Contracts.IOptimizationService;
-import logistikoptimierung.Entities.FactoryObjects.Factory;
-import logistikoptimierung.Entities.FactoryObjects.Transporter;
-import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
-import logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes;
+import logistikoptimierung.Entities.FactoryObjects.*;
 import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.util.ArrayList;
@@ -52,13 +49,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
 
         factorySteps.addAll(splitBomOnTransporters(order));
         factorySteps.addAll(splitBomOnMachines(order));
-
-        factorySteps.add(new FactoryStep(
-                factory,
-                order.getProduct().item().getName(),
-                order.getProduct().amount(),
-                factory.getTransporters().get(0).getName(),
-                FactoryStepTypes.ConcludeOrderTransportToCustomer));
+        factorySteps.addAll(sendOrderToCustomerSteps(order));
 
         return factorySteps;
     }
@@ -181,47 +172,35 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     private List<FactoryStep> splitBomOnMachines(Order order)
     {
         var factorySteps = new ArrayList<FactoryStep>();
-        /*var remainingProductsToProduce = order.getAmount();
-        var machineList = this.factory.getProductions();
+        var processToProduce = this.factory.getProductionProcessesForProduct((Product) order.getProduct().item());
 
-        while (remainingProductsToProduce != 0)
+        for(int i = processToProduce.size()-1; i >= 0; i--)
         {
-            for(int i = 0; i < machineList.size(); i++)
+            var process = processToProduce.get(i);
+            var amountNeeded = order.getProduct().amount();
+            var batchSizeOfProduct = process.getProductionBatchSize();
+            var nrOfBatchesNeeded = (int)Math.ceil((double) amountNeeded / (double)batchSizeOfProduct);
+
+            for(int j = 0; j < nrOfBatchesNeeded; j++)
             {
-                if(remainingProductsToProduce == 0)
-                    break;
+                var stepTypes = new String[]{
+                        FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer,
+                        FactoryStepTypes.Produce,
+                        FactoryStepTypes.MoveProductToOutputBuffer
+                };
 
-                factorySteps.add(new FactoryStep(
-                        factory,
-                        order.getProduct().getName(),
-                        1,
-                        machineList.get(i).getName(),
-                        StepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer));
+                for(var step : stepTypes)
+                {
+                    var newStep = new FactoryStep(factory,
+                            process.getProductToProduce().getName(),
+                            1,
+                            process.getProduction().getName(),
+                            step);
 
-                factorySteps.add(new FactoryStep(
-                        factory,
-                        order.getProduct().getName(),
-                        1,
-                        machineList.get(i).getName(),
-                        StepTypes.Produce));
-
-                factorySteps.add(new FactoryStep(
-                        factory,
-                        order.getProduct().getName(),
-                        1,
-                        machineList.get(i).getName(),
-                        StepTypes.MoveProductToOutputBuffer));
-
-                factorySteps.add(new FactoryStep(
-                        factory,
-                        order.getProduct().getName(),
-                        1,
-                        machineList.get(i).getName(),
-                        StepTypes.MoveProductFromOutputBufferToWarehouse));
-
-                remainingProductsToProduce--;
+                    factorySteps.add(newStep);
+                }
             }
-        }*/
+        }
 
         return factorySteps;
     }

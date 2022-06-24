@@ -196,7 +196,7 @@ public class CSVDataImportService implements IDataService
     private List<Production> loadProduction(List<String[]> data, List<WarehouseItem> items)
     {
         var productionList = new ArrayList<Production>();
-        Production currentProduction;
+        Production currentProduction = null;
         var currentProductionProcesses = new ArrayList<ProductionProcess>();
         var idCount = 0;
 
@@ -234,6 +234,7 @@ public class CSVDataImportService implements IDataService
                     product,
                     productBatchSize,
                     productionTime,
+                    currentProduction,
                     bom);
 
             int startCount = 5;

@@ -63,6 +63,9 @@ public class Factory {
         this.runTime = runTime;
         this.warehouse = new Warehouse("WH", warehouseCapacity, this);
         this.productions = new ArrayList<>(productions);
+        for(var production : this.productions)
+            production.setFactory(this);
+
         this.transporters = new ArrayList<>(transporters);
         for(var transporter : this.transporters)
             transporter.setFactory(this);

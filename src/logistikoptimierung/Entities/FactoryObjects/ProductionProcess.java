@@ -12,14 +12,18 @@ public class ProductionProcess
     private int productionBatchSize;
     private int productionTime;
 
+    private Production production;
     List<MaterialPosition> materialPositions;
 
     public ProductionProcess(WarehouseItem productToProduce, int productionBatchSize,
-                             int productionTime, List<MaterialPosition> materialPositions)
+                             int productionTime,
+                             Production production,
+                             List<MaterialPosition> materialPositions)
     {
         this.productToProduce = productToProduce;
         this.productionBatchSize = productionBatchSize;
         this.productionTime = productionTime;
+        this.production = production;
         this.materialPositions = materialPositions;
     }
 
@@ -33,6 +37,10 @@ public class ProductionProcess
 
     public int getProductionTime() {
         return productionTime;
+    }
+
+    public Production getProduction() {
+        return production;
     }
 
     public List<MaterialPosition> getMaterialPositions() {
