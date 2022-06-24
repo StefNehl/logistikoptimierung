@@ -31,18 +31,30 @@ public class Warehouse extends FactoryObject
 
         remainingWarehouseCapacity = remainingWarehouseCapacity - materialPosition.amount();
 
-        if(warehouseItems.contains(materialPosition.item()))
+        MaterialPosition warehousePosition = null;
+        var indexToRemove = 0;
+
+        for(var wp : warehouseItems)
         {
-            var index = warehouseItems.indexOf(materialPosition.item());
-            var itemToOverwrite = warehouseItems.get(index);
-            var newPosition = new MaterialPosition(materialPosition.item(),
-                    itemToOverwrite.amount() + materialPosition.amount());
-            warehouseItems.set(index, newPosition);
+            if(wp.item().getName() == materialPosition.item().getName())
+            {
+                var newPosition = new MaterialPosition(materialPosition.item(),
+                        wp.amount() + materialPosition.amount());
+                warehousePosition = newPosition;
+                indexToRemove = warehouseItems.indexOf(wp);
+            }
+        }
+
+        if(warehousePosition != null)
+        {
+            warehouseItems.remove(indexToRemove);
+            warehouseItems.add(warehousePosition);
         }
         else
         {
             warehouseItems.add(materialPosition);
         }
+
         addAddItemMessage(materialPosition);
     }
 

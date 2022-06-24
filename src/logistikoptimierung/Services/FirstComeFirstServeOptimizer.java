@@ -186,7 +186,8 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                 var stepTypes = new String[]{
                         FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer,
                         FactoryStepTypes.Produce,
-                        FactoryStepTypes.MoveProductToOutputBuffer
+                        FactoryStepTypes.MoveProductToOutputBuffer,
+                        FactoryStepTypes.MoveProductFromOutputBufferToWarehouse
                 };
 
                 for(var step : stepTypes)

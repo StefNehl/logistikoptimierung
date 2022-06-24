@@ -14,9 +14,9 @@ public class Production extends FactoryObject
     private int remainingNrOfInputBufferBatches;
     private int remainingNrOfOutputBufferBatches;
 
-    private HashSet<ProductionProcess> processesInInputBuffer;
+    private Set<ProductionProcess> processesInInputBuffer = new HashSet<>();
     private MaterialPosition productInProduction;
-    private Set<MaterialPosition> productsInOutputBuffer;
+    private Set<MaterialPosition> productsInOutputBuffer = new HashSet<>();
 
     private String currentTask;
     private long blockedUntilTimeStep;
