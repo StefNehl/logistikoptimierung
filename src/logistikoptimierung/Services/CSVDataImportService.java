@@ -80,6 +80,7 @@ public class CSVDataImportService implements IDataService
                     false,
                     true,
                     true,
+                    true,
                     false,
                     false,
                     false);

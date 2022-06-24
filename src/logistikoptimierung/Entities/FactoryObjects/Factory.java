@@ -28,6 +28,7 @@ public class Factory {
     private final boolean printWarehouseMessages;
     private final boolean printFactoryMessages;
     private final boolean printFactoryStepMessages;
+    private final boolean printOnlyCompletedFactoryStepMessages;
 
     public Factory(String name,
                    int warehouseCapacity,
@@ -41,6 +42,7 @@ public class Factory {
                    boolean printDriverMessages,
                    boolean printFactoryMessage,
                    boolean printFactoryStepMessages,
+                   boolean printOnlyCompletedFactoryStepMessages,
                    boolean printProductionMessages,
                    boolean printTransportMessages,
                    boolean printWarehouseMessages) {
@@ -53,6 +55,7 @@ public class Factory {
         this.printWarehouseMessages = printWarehouseMessages;
         this.printFactoryMessages = printFactoryMessage;
         this.printFactoryStepMessages = printFactoryStepMessages;
+        this.printOnlyCompletedFactoryStepMessages = printOnlyCompletedFactoryStepMessages;
 
         this.startTime = 1;
         this.runTime = runTime;
@@ -95,6 +98,11 @@ public class Factory {
 
     public int getCurrentTimeStep() {
         return currentTimeStep;
+    }
+
+    public boolean getPrintOnlyCompletedFactorySteps()
+    {
+        return this.printOnlyCompletedFactoryStepMessages;
     }
 
     public String getName() {
@@ -205,7 +213,8 @@ public class Factory {
                     System.out.println(newMessage);
             }
             case FactoryObjectTypes.FactoryStep -> {
-                System.out.println(newMessage);
+                if(this.printFactoryStepMessages)
+                    System.out.println(newMessage);
             }
             case FactoryObjectTypes.Production -> {
                 if(this.printProductionMessages)

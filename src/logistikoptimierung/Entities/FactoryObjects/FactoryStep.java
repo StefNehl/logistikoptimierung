@@ -37,17 +37,27 @@ public class FactoryStep {
 
     public boolean doStep()
     {
-        addStepMessage();
-        return factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
+        var completed = factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
+
+        if(this.factory.getPrintOnlyCompletedFactorySteps())
+        {
+            if(completed)
+                addStepMessage(completed);
+            else
+                return completed;
+        }
+        else
+            addStepMessage(completed);
+        return completed;
     }
 
     public FactoryObject getFactoryObject() {
         return factoryObject;
     }
 
-    private void addStepMessage()
+    private void addStepMessage(boolean completed)
     {
-        factory.addLog(this.toString(), FactoryObjectTypes.FactoryStep);
+        factory.addLog(this.toString() + " Completed: " + completed, FactoryObjectTypes.FactoryStep);
     }
 
     @Override
