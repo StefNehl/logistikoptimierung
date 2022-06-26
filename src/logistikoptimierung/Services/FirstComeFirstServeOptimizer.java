@@ -176,6 +176,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     private List<MaterialPosition> condenseMaterialList(List<MaterialPosition> materialList)
     {
         var newMaterialList = new ArrayList<MaterialPosition>();
+
         return newMaterialList;
     }
 

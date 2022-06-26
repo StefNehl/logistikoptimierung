@@ -30,4 +30,16 @@ public class WarehouseItem {
     {
         return this.name;
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if(!(o instanceof WarehouseItem))
+            return false;
+
+        if(this.name.equals(((WarehouseItem) o).getName()))
+            return true;
+
+        return false;
+    }
 }
