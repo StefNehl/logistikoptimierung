@@ -216,7 +216,7 @@ public class Factory {
         }
     }
 
-    private ProductionProcess getProductionProcessForWarehouseItem(WarehouseItem item)
+    public ProductionProcess getProductionProcessForWarehouseItem(WarehouseItem item)
     {
         for (var production : productions)
         {

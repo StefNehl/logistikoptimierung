@@ -87,7 +87,6 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                 if(transporter.areTransportationConstraintsFulfilledForMaterial((Material) item))
                     fittingTransporters.add(transporter);
             }
-
         }
 
         return fittingTransporters;
@@ -100,6 +99,9 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var remainingAmount = amountOfItems;
+
+        if(fittingTransporters.isEmpty())
+            return factorySteps;
 
         while(remainingAmount != 0)
         {
@@ -158,8 +160,15 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                         order.getProduct().amount(),
                         true);
 
-        for(var materialPosition : materialList)
+        var condensedMaterialList = condenseMaterialList(materialList);
+
+        for(var materialPosition : condensedMaterialList)
         {
+            //produce everything. Also, Stahl and Bauholz
+            var process = this.factory.getProductionProcessForWarehouseItem(materialPosition.item());
+            if(process != null)
+                continue;
+
             var stepTypes = new String[]{
                     FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse,
                     FactoryStepTypes.MoveMaterialFromTransporterToWarehouse
@@ -177,7 +186,33 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
     {
         var newMaterialList = new ArrayList<MaterialPosition>();
 
+        for (var item: materialList)
+        {
+            var position = findMaterialPositionByName(item.item().getName(), newMaterialList);
+            if(position == null)
+            {
+                var newPosition = new MaterialPosition(item.item(), item.amount());
+                newMaterialList.add(newPosition);
+                continue;
+            }
+
+            var newPosition = new MaterialPosition(item.item(), position.amount() + item.amount());
+            newMaterialList.remove(position);
+            newMaterialList.add(newPosition);
+        }
+
         return newMaterialList;
+    }
+
+    private MaterialPosition findMaterialPositionByName(String name, List<MaterialPosition> materialList)
+    {
+        for (var position : materialList)
+        {
+            if(position.item().getName().equals(name))
+                return position;
+        }
+
+        return null;
     }
 
     private List<FactoryStep> splitBomOnMachines(Order order)
