@@ -53,12 +53,11 @@ public class Production extends FactoryObject
                     return false;
                 }
 
-                var productToProduce = (Product) item;
-                var process = getProductionProcessForProduct(productToProduce);
+                var process = getProductionProcessForProduct(item);
 
                 if(process == null)
                 {
-                    addPProcessNotFoundMessage(productToProduce);
+                    addPProcessNotFoundMessage(item);
                     return false;
                 }
 
@@ -84,7 +83,7 @@ public class Production extends FactoryObject
                     return false;
                 }
 
-                var producedProduct = produce((Product) item);
+                var producedProduct = produce(item);
 
                 if(producedProduct == null)
                     return false;
@@ -140,7 +139,7 @@ public class Production extends FactoryObject
         return null;
     }
 
-    private MaterialPosition produce(Product productToProduce)
+    private MaterialPosition produce(WarehouseItem productToProduce)
     {
         ProductionProcess processInInput = null;
         for(var process : processesInInputBuffer)
@@ -165,13 +164,13 @@ public class Production extends FactoryObject
         return new MaterialPosition(productToProduce, processInInput.getProductionBatchSize());
     }
 
-    private void addPProcessNotFoundMessage(Product product)
+    private void addPProcessNotFoundMessage(WarehouseItem product)
     {
         var message = super.getName() + product.getName() + " Process for product not found";
         super.addLogMessage(message);
     }
 
-    private void addProduceItemMessage(Product product)
+    private void addProduceItemMessage(WarehouseItem product)
     {
         var message = super.getName() + " Task: produce " + product.getName();
         super.addLogMessage(message);

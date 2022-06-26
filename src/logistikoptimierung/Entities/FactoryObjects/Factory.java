@@ -156,19 +156,15 @@ public class Factory {
         return processList;
     }
 
-    private void addProcessesRecursiveToList(Product product, List<ProductionProcess> productionProcesses)
+    private void addProcessesRecursiveToList(WarehouseItem product, List<ProductionProcess> productionProcesses)
     {
-        for (var production : productions)
+        var process = getProductionProcessForWarehouseItem(product);
+        if(process != null)
         {
-            var process = production.getProductionProcessForProduct(product);
-            if(process != null)
+            productionProcesses.add(process);
+            for(var subProduct : process.getMaterialPositions())
             {
-                productionProcesses.add(process);
-                for(var subProduct : process.getMaterialPositions())
-                {
-                    if(subProduct.item().getItemType().equals(WarehouseItemTypes.Product))
-                        addProcessesRecursiveToList((Product) subProduct.item(), productionProcesses);
-                }
+                addProcessesRecursiveToList(subProduct.item(), productionProcesses);
             }
         }
     }

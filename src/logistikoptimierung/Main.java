@@ -22,7 +22,7 @@ public class Main {
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
 
         var optimizer = new FirstComeFirstServeOptimizer(instance.getFactory());
-        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),3);
+        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),1);
 
         var factoryMessageSettings = new FactoryMessageSettings(
                 false,
