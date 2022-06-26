@@ -6,5 +6,7 @@ public record FactoryMessageSettings(                   boolean printDriverMessa
                                                         boolean printOnlyCompletedFactoryStepMessages,
                                                         boolean printProductionMessages,
                                                         boolean printTransportMessages,
-                                                        boolean printWarehouseMessages) {
+                                                        boolean printWarehouseMessages,
+                                                        boolean printWarehouseStockChangeMessages,
+                                                        boolean printCompleteWarehouseStockAfterChangeMessages) {
 }

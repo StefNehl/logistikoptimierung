@@ -25,9 +25,11 @@ public class Factory {
     private boolean printProductionMessages;
     private boolean printTransportMessages;
     private boolean printWarehouseMessages;
+    private boolean printWarehouseStockChangeMessages;
     private boolean printFactoryMessages;
     private boolean printFactoryStepMessages;
     private boolean printOnlyCompletedFactoryStepMessages;
+    private boolean printCompleteWarehouseStockAfterChangeMessages;
 
     private final int oneHourInSeconds = 3600;
 
@@ -75,6 +77,8 @@ public class Factory {
         this.printFactoryMessages = factoryMessageSettings.printFactoryMessage();
         this.printFactoryStepMessages = factoryMessageSettings.printFactoryStepMessages();
         this.printOnlyCompletedFactoryStepMessages = factoryMessageSettings.printOnlyCompletedFactoryStepMessages();
+        this.printWarehouseStockChangeMessages = factoryMessageSettings.printWarehouseStockChangeMessages();
+        this.printCompleteWarehouseStockAfterChangeMessages = factoryMessageSettings.printCompleteWarehouseStockAfterChangeMessages();
 
         int hourCount = 1;
         addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
@@ -288,8 +292,16 @@ public class Factory {
                 if(this.printTransportMessages)
                     System.out.println(newMessage);
             }
+            case FactoryObjectTypes.WarehouseStock ->{
+                if(this.printWarehouseStockChangeMessages)
+                    System.out.println(newMessage);
+            }
             case FactoryObjectTypes.Warehouse -> {
                 if(this.printWarehouseMessages)
+                    System.out.println(newMessage);
+            }
+            case FactoryObjectTypes.CompleteWarehouseStock -> {
+                if(this.printCompleteWarehouseStockAfterChangeMessages)
                     System.out.println(newMessage);
             }
         }

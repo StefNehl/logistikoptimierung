@@ -56,6 +56,7 @@ public class Warehouse extends FactoryObject
         }
 
         addAddItemMessage(materialPosition);
+        addCompleteWarehouseStockMessage();
     }
 
     public MaterialPosition removeItemFromWarehouse(MaterialPosition materialPosition)
@@ -78,6 +79,7 @@ public class Warehouse extends FactoryObject
                         itemToOverwrite.amount() - materialPosition.amount());
                 warehouseItems.set(index, newPosition);
                 addItemRemovedMessage(materialPosition);
+                addCompleteWarehouseStockMessage();
                 return item;
             }
         }
@@ -123,7 +125,7 @@ public class Warehouse extends FactoryObject
     private void addAddItemMessage(MaterialPosition item)
     {
         var message = super.getName() + " Task: add item " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
-        this.factory.addLog(message, FactoryObjectTypes.Warehouse);
+        this.factory.addLog(message, FactoryObjectTypes.WarehouseStock);
     }
 
     private void addItemNotFoundMessage(WarehouseItem item)
@@ -135,6 +137,27 @@ public class Warehouse extends FactoryObject
     private void addItemRemovedMessage(MaterialPosition item)
     {
         var message = super.getName() + " Task: remove " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
-        this.factory.addLog(message, FactoryObjectTypes.Warehouse);
+        this.factory.addLog(message, FactoryObjectTypes.WarehouseStock);
+    }
+
+    private void addCompleteWarehouseStockMessage()
+    {
+        if(this.warehouseItems.isEmpty())
+            return;
+
+        var message = listToString(this.warehouseItems);
+        this.factory.addLog(message, FactoryObjectTypes.CompleteWarehouseStock);
+    }
+
+    private String listToString(List<MaterialPosition> list)
+    {
+        var stringResult = list.get(0).toString();
+
+        for(int i = 1; i < list.size(); i++)
+        {
+            stringResult += "\n" + list.get(i).toString();
+        }
+
+        return stringResult;
     }
 }

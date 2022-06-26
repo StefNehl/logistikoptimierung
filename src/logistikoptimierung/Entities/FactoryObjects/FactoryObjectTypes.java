@@ -8,4 +8,6 @@ public class FactoryObjectTypes
     public static final String Production = "Production";
     public static final String Transporter = "Transporter";
     public static final String Warehouse = "Warehouse";
+    public static final String WarehouseStock = "WarehouseStock";
+    public static final String CompleteWarehouseStock = "CompleteWarehouseStock";
 }
