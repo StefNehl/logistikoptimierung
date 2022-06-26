@@ -151,7 +151,7 @@ public class Warehouse extends FactoryObject
 
     private String listToString(List<MaterialPosition> list)
     {
-        var stringResult = list.get(0).toString();
+        var stringResult = "\n" + list.get(0).toString();
 
         for(int i = 1; i < list.size(); i++)
         {

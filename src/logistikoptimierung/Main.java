@@ -32,12 +32,12 @@ public class Main {
                 false,
                 false,
                 false,
-                true,
+                false,
                 true
                 );
 
-        //var runTimeInSeconds = 432000; //One week 60 * 60 * 24 * 5 = 144 000
-        var runTimeInSeconds = 1000;
+        var runTimeInSeconds = 432000; //One week 60 * 60 * 24 * 5 = 144 000
+        //var runTimeInSeconds = 10000;
         instance.getFactory().startFactory(factoryTaskList, runTimeInSeconds, factoryMessageSettings);
 
         System.out.println();
