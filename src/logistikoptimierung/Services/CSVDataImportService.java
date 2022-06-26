@@ -220,27 +220,36 @@ public class CSVDataImportService implements IDataService
             var productionTimeString = dataItem[4];
             var productionTime = convertStringToSeconds(productionTimeString);
 
-            var product = findWarehouseItem(productName, items);
-            var productionProcess = new ProductionProcess(
-                    product,
-                    productBatchSize,
-                    productionTime,
-                    currentProduction,
-                    bom);
-
-            int startCount = 5;
-            while (startCount < dataItem.length && !dataItem[startCount].isBlank())
+            var products = findWarehouseItem(productName, items);
+            for(var product : products)
             {
-                var materialBatchSize = Integer.parseInt(dataItem[startCount]);
-                var materialName = dataItem[startCount + 1];
+                var productionProcess = new ProductionProcess(
+                        product,
+                        productBatchSize,
+                        productionTime,
+                        currentProduction,
+                        bom);
 
-                var material = findWarehouseItem(materialName, items);
-                var materialPosition = new MaterialPosition(material, materialBatchSize);
-                bom.add(materialPosition);
-                startCount = startCount + 2;
+                int startCount = 5;
+                while (startCount < dataItem.length && !dataItem[startCount].isBlank())
+                {
+                    var materialBatchSize = Integer.parseInt(dataItem[startCount]);
+                    var materialName = dataItem[startCount + 1];
+
+                    var materials = findWarehouseItem(materialName, items);
+                    for(var material : materials )
+                    {
+                        var materialPosition = new MaterialPosition(material, materialBatchSize);
+                        bom.add(materialPosition);
+                        startCount = startCount + 2;
+                    }
+                }
+
+                currentProductionProcesses.add(productionProcess);
             }
 
-            currentProductionProcesses.add(productionProcess);
+
+
 
         }
         return productionList;
@@ -257,7 +266,7 @@ public class CSVDataImportService implements IDataService
             var product = findWarehouseItem(productName, items);
 
             var amount = Integer.parseInt(dataItem[3]);
-            var materialPosition = new MaterialPosition(product, amount);
+            var materialPosition = new MaterialPosition(product.get(0), amount);
 
             var income = Integer.parseInt(dataItem[4]);
             var transportType = dataItem[5];
@@ -276,14 +285,15 @@ public class CSVDataImportService implements IDataService
         return orders;
     }
 
-    private WarehouseItem findWarehouseItem(String name, List<WarehouseItem> items)
+    private List<WarehouseItem> findWarehouseItem(String name, List<WarehouseItem> items)
     {
+        var result = new ArrayList<WarehouseItem>();
         for(var item : items)
         {
             if(name.equals(item.getName()))
-                return item;
+                result.add(item);
         }
-        return null;
+        return result;
     }
 
     private int convertStringToSeconds(String timeString)

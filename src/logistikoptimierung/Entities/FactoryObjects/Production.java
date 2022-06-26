@@ -130,11 +130,11 @@ public class Production extends FactoryObject
         return true;
     }
 
-    public ProductionProcess getProductionProcessForProduct(Product productToProduce)
+    public ProductionProcess getProductionProcessForProduct(WarehouseItem item)
     {
         for(var process : productionProcesses)
         {
-            if(productToProduce.equals(process.getProductToProduce()))
+            if(item.getName().equals(process.getProductToProduce().getName()))
                 return process;
         }
         return null;

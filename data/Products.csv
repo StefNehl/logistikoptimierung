@@ -1,6 +1,5 @@
 ID;Rohstoffe
 ;Schmelzhütte
-16;Stahl
 17;Kupfer 
 ;Eisenhütte
 19;Eisenpulver
@@ -9,7 +8,6 @@ ID;Rohstoffe
 22;Kupferdraht
 23;Stahlblech
 ;Sägewerk
-24;Bauholz
 25;Fass
 26;Sperrholz
 27;Palette

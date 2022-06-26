@@ -153,7 +153,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
 
         var productToProduce = (Product)order.getProduct().item();
         var materialList = this.factory
-                .getMaterialPositionsForProduct(
+                .getMaterialPositionsForProductWithRespectOfBatchSize(
                         productToProduce,
                         order.getProduct().amount(),
                         true);
@@ -171,6 +171,12 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
         }
 
         return factorySteps;
+    }
+
+    private List<MaterialPosition> condenseMaterialList(List<MaterialPosition> materialList)
+    {
+        var newMaterialList = new ArrayList<MaterialPosition>();
+        return newMaterialList;
     }
 
     private List<FactoryStep> splitBomOnMachines(Order order)

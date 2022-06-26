@@ -173,55 +173,58 @@ public class Factory {
         }
     }
 
-    public List<MaterialPosition> getMaterialPositionsForProduct(Product product, int amount)
-    {
-        return getMaterialPositionsForProduct(product, amount, false);
-    }
-
-    public List<MaterialPosition> getMaterialPositionsForProduct(Product product, int amount,
-                                                                 boolean respectBatchSize)
+    public List<MaterialPosition> getMaterialPositionsForProductWithRespectOfBatchSize(Product product, int amount,
+                                                                                       boolean respectBatchSize)
     {
         var materialList = new ArrayList<MaterialPosition>();
-        addMaterialPositionRecursiveToList(product, amount, respectBatchSize, materialList);
+        addMaterialPositionRecursiveToListWithRespectOfBatchSize(product,1,  amount, materialList);
         return materialList;
     }
 
-    private void addMaterialPositionRecursiveToList(Product product,
-                                                    int productAmount,
-                                                    boolean respectBatchSize,
+    private void addMaterialPositionRecursiveToListWithRespectOfBatchSize(WarehouseItem item,
+                                                    int batchSize,
+                                                    int nrOfBatches,
                                                     List<MaterialPosition> materialPositions)
     {
-        for (var production : productions)
+        var process = getProductionProcessForWarehouseItem(item);
+        if(process != null)
         {
-            var process = production.getProductionProcessForProduct(product);
-            if(process != null)
+            var processBatchSizeForProduct = process.getProductionBatchSize();
+            var amountNeeded = batchSize * nrOfBatches;
+            var nrOfBatchesToProduce = (int) Math.ceil((double) amountNeeded / (double) processBatchSizeForProduct);
+            var amountToProduce = nrOfBatchesToProduce * processBatchSizeForProduct;
+
+            var newMaterialPosition = new MaterialPosition(item, amountToProduce);
+            materialPositions.add(newMaterialPosition);
+
+            for (var subItem : process.getMaterialPositions())
             {
-                for(var subProduct : process.getMaterialPositions())
+                var subProcess = getProductionProcessForWarehouseItem(subItem.item());
+                if(subProcess != null)
                 {
-                    var conversationRate = (process.getProductionBatchSize() / subProduct.amount());
-                    var amount = productAmount * conversationRate;
-
-                    if(respectBatchSize)
-                    {
-                        var nrOfBatches = (int)Math.ceil((double) amount / (double) process.getProductionBatchSize());
-                        amount = nrOfBatches * process.getProductionBatchSize();
-                    }
-
-                    if(subProduct.item().getItemType().equals(WarehouseItemTypes.Product))
-                    {
-                        addMaterialPositionRecursiveToList(
-                                (Product) subProduct.item(),
-                                amount,
-                                respectBatchSize,
-                                materialPositions);
-                    }
-                    else if(subProduct.item().getItemType().equals(WarehouseItemTypes.Material))
-                    {
-                        materialPositions.add(new MaterialPosition(subProduct.item(), amount));
-                    }
+                    addMaterialPositionRecursiveToListWithRespectOfBatchSize(subItem.item(),
+                            subItem.amount(),
+                            nrOfBatchesToProduce,
+                            materialPositions);
+                }
+                else
+                {
+                    var subMaterialPosition = new MaterialPosition(subItem.item(), subItem.amount() * nrOfBatchesToProduce);
+                    materialPositions.add(subMaterialPosition);
                 }
             }
         }
+    }
+
+    private ProductionProcess getProductionProcessForWarehouseItem(WarehouseItem item)
+    {
+        for (var production : productions)
+        {
+            var process = production.getProductionProcessForProduct(item);
+            if(process != null)
+                return process;
+        }
+        return null;
     }
 
     public List<Material> getSuppliedMaterials() {
