@@ -121,6 +121,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                 {
                     factorySteps.add(new FactoryStep(
                             factory,
+                            0,
                             item.getName(),
                             transporterAmount,
                             transporter.getName(),
@@ -239,6 +240,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
                 for(var step : stepTypes)
                 {
                     var newStep = new FactoryStep(factory,
+                            0,
                             process.getProductToProduce().getName(),
                             1,
                             process.getProduction().getName(),

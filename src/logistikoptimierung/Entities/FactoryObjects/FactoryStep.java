@@ -9,8 +9,9 @@ public class FactoryStep {
     private final String stepType;
     private final Factory factory;
     private final int amountOfItems;
+    private final long doTimeStep;
 
-    public FactoryStep(Factory factory, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
+    public FactoryStep(Factory factory, long doTimeStamp, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
     {
         for(var item : factory.getAvailableWarehouseItems())
         {
@@ -33,6 +34,7 @@ public class FactoryStep {
         this.stepType = stepType;
         this.factory = factory;
         this.amountOfItems = amountOfItems;
+        this.doTimeStep = doTimeStamp;
     }
 
     public boolean doStep()
@@ -40,6 +42,10 @@ public class FactoryStep {
         var completed = factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
         addStepMessage(completed);
         return completed;
+    }
+
+    public long getDoTimeStep() {
+        return doTimeStep;
     }
 
     public FactoryObject getFactoryObject() {
