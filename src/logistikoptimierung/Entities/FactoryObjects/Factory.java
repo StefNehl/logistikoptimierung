@@ -96,6 +96,8 @@ public class Factory {
             var copyOfSteps = new ArrayList<>(factorySteps);
             for (var step : copyOfSteps)
             {
+                if(step.getDoTimeStep() < this.currentTimeStep)
+                    continue;
                 if(handledFactoryObject.contains(step.getFactoryObject()))
                     continue;
                 handledFactoryObject.add(step.getFactoryObject());

@@ -176,6 +176,10 @@ public class Transporter extends FactoryObject
         return true;
     }
 
+    public long getBlockedUntilTimeStep() {
+        return blockedUntilTimeStep;
+    }
+
     private void addNoAvailableDriverLogMessage()
     {
         var message = super.getName() + ": no driver available for task: " + currentTask;

@@ -2,10 +2,8 @@ package logistikoptimierung;
 
 import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
 import logistikoptimierung.Services.CSVDataImportService;
-import logistikoptimierung.Services.FirstComeFirstServeOptimizer;
+import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
 
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
@@ -21,7 +19,7 @@ public class Main {
         var dataService = new CSVDataImportService();
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
 
-        var optimizer = new FirstComeFirstServeOptimizer(instance.getFactory());
+        var optimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
                 3);
 

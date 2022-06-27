@@ -1,4 +1,4 @@
-package logistikoptimierung.Services;
+package logistikoptimierung.Services.FirstComeFirstServeOptimizer;
 
 import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.*;
@@ -7,13 +7,20 @@ import logistikoptimierung.Entities.WarehouseItems.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirstComeFirstServeOptimizer implements IOptimizationService {
+public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
     private final Factory factory;
+    private List<TransporterPlanningItem> transporterPlanningItems;
 
-    public FirstComeFirstServeOptimizer(Factory factory)
+    public FirstComeFirstServeOptimizerMain(Factory factory)
     {
         this.factory = factory;
+        this.transporterPlanningItems = new ArrayList<>();
+
+        for (var transporter: this.factory.getTransporters())
+        {
+            transporterPlanningItems.add(new TransporterPlanningItem(transporter));
+        }
     }
 
     @Override
@@ -56,12 +63,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
 
     private List<FactoryStep> sendOrderToCustomerSteps(Order order)
     {
-        var stepTypes = new String[]
-                {
-                        FactoryStepTypes.ConcludeOrderTransportToCustomer
-                };
         var factorySteps = new ArrayList<>(getTransportationFactoryStepsForOneTask(
-                stepTypes,
                 order,
                 order.getProduct().amount(),
                 getFittingTransporters(order)));
@@ -69,33 +71,31 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
         return factorySteps;
     }
 
-    private List<Transporter> getFittingTransporters(WarehouseItem item)
+    private List<TransporterPlanningItem> getFittingTransporters(WarehouseItem item)
     {
-        var availableTransporters = this.factory.getTransporters();
-        var fittingTransporters = new ArrayList<Transporter>();
+        var fittingTransporters = new ArrayList<TransporterPlanningItem>();
 
-        for (var transporter : availableTransporters)
+        for (var transporterPlanningItem : this.transporterPlanningItems)
         {
             if(item.getItemType().equals(WarehouseItemTypes.Order))
             {
-                if(transporter.areTransportationConstraintsFulfilledForOrder((Order) item))
-                    fittingTransporters.add(transporter);
+                if(transporterPlanningItem.getTransporter().areTransportationConstraintsFulfilledForOrder((Order) item))
+                    fittingTransporters.add(transporterPlanningItem);
             }
 
             if(item.getItemType().equals(WarehouseItemTypes.Material))
             {
-                if(transporter.areTransportationConstraintsFulfilledForMaterial((Material) item))
-                    fittingTransporters.add(transporter);
+                if(transporterPlanningItem.getTransporter().areTransportationConstraintsFulfilledForMaterial((Material) item))
+                    fittingTransporters.add(transporterPlanningItem);
             }
         }
 
         return fittingTransporters;
     }
 
-    private List<FactoryStep> getTransportationFactoryStepsForOneTask(String[] stepTypes,
-                                                                      WarehouseItem item,
+    private List<FactoryStep> getTransportationFactoryStepsForOneTask(WarehouseItem item,
                                                                       int amountOfItems,
-                                                                      List<Transporter> fittingTransporters)
+                                                                      List<TransporterPlanningItem> fittingTransporters)
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var remainingAmount = amountOfItems;
@@ -105,34 +105,70 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
 
         while(remainingAmount != 0)
         {
-            for(var transporter : fittingTransporters)
+            var transporterPlanningItem = findTransporterWhichEarliestFree(fittingTransporters);
+            var transporterAmount = 0;
+            if(transporterPlanningItem.getTransporter().getCapacity() >= remainingAmount)
+                transporterAmount = remainingAmount;
+            else
             {
-                var transporterAmount = 0;
-                if(transporter.getCapacity() >= remainingAmount)
-                    transporterAmount = remainingAmount;
-                else
-                {
-                    transporterAmount = transporter.getCapacity();
-                }
-
-                remainingAmount -= transporterAmount;
-
-                for(var stepType : stepTypes)
-                {
-                    factorySteps.add(new FactoryStep(
-                            factory,
-                            0,
-                            item.getName(),
-                            transporterAmount,
-                            transporter.getName(),
-                            stepType));
-                }
-
-                if(remainingAmount == 0)
-                    break;
+                transporterAmount = transporterPlanningItem.getTransporter().getCapacity();
             }
+
+            remainingAmount -= transporterAmount;
+            var travelTime = 0;
+
+            var factoryStepsToDo = new ArrayList<String>();
+            if(item instanceof Material)
+            {
+                travelTime = ((Material) item).getTravelTime();
+
+                factorySteps.add(new FactoryStep(
+                        factory,
+                        transporterPlanningItem.getBlockedTime(),
+                        item.getName(),
+                        transporterAmount,
+                        transporterPlanningItem.getTransporter().getName(),
+                        FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse));
+
+                factorySteps.add(new FactoryStep(
+                        factory,
+                        transporterPlanningItem.getBlockedTime() + travelTime,
+                        item.getName(),
+                        transporterAmount,
+                        transporterPlanningItem.getTransporter().getName(),
+                        FactoryStepTypes.MoveMaterialFromTransporterToWarehouse));
+            }
+
+            if(item instanceof Order)
+            {
+                travelTime = ((Order) item).getTravelTime();
+                factorySteps.add(new FactoryStep(
+                        factory,
+                        transporterPlanningItem.getBlockedTime(),
+                        item.getName(),
+                        transporterAmount,
+                        transporterPlanningItem.getTransporter().getName(),
+                        FactoryStepTypes.ConcludeOrderTransportToCustomer));
+            }
+
+            transporterPlanningItem.increaseBlockedTime(travelTime);
+
+            if(remainingAmount == 0)
+                break;
         }
         return factorySteps;
+    }
+
+    private TransporterPlanningItem findTransporterWhichEarliestFree(List<TransporterPlanningItem> transporters)
+    {
+        TransporterPlanningItem freeTransporter = transporters.get(0);
+        for (var transporter : transporters)
+        {
+            if(transporter.getBlockedTime() < freeTransporter.getBlockedTime())
+                freeTransporter = transporter;
+
+        }
+        return freeTransporter;
     }
 
     private List<FactoryStep> splitBomOnTransporters(Order order)
@@ -142,11 +178,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
         //Only get Material from the Supplier
         if(order.getProduct().item().getItemType().equals(WarehouseItemTypes.Material))
         {
-            var stepTypes = new String[]{
-                    FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse,
-                    FactoryStepTypes.MoveMaterialFromTransporterToWarehouse
-            };
-            factorySteps.addAll(getTransportationFactoryStepsForOneTask(stepTypes,
+            factorySteps.addAll(getTransportationFactoryStepsForOneTask(
                     order.getProduct().item(),
                     order.getProduct().amount(),
                     getFittingTransporters(order.getProduct().item())));
@@ -170,11 +202,7 @@ public class FirstComeFirstServeOptimizer implements IOptimizationService {
             if(process != null)
                 continue;
 
-            var stepTypes = new String[]{
-                    FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse,
-                    FactoryStepTypes.MoveMaterialFromTransporterToWarehouse
-            };
-            factorySteps.addAll(getTransportationFactoryStepsForOneTask(stepTypes,
+            factorySteps.addAll(getTransportationFactoryStepsForOneTask(
                     materialPosition.item(),
                     materialPosition.amount(),
                     getFittingTransporters(materialPosition.item())));
