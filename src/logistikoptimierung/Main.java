@@ -21,7 +21,7 @@ public class Main {
 
         var optimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
-                1);
+                5);
 
         var factoryMessageSettings = new FactoryMessageSettings(
                 false,
