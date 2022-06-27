@@ -21,7 +21,7 @@ public class Main {
 
         var optimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
-                3);
+                1);
 
         var factoryMessageSettings = new FactoryMessageSettings(
                 false,
@@ -46,7 +46,7 @@ public class Main {
         System.out.println("**********************************************");
         System.out.println();
 
-        instance.getFactory().printLogMessageFromTo(2017, 2200);
+        //instance.getFactory().printLogMessageFromTo(2017, 2200);
     }
 
     private static String ConvertSecondsToTime(long seconds)

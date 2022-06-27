@@ -46,7 +46,7 @@ public class Factory {
         this.currentIncome = 0;
 
 
-        this.startTime = 1;
+        this.startTime = 0;
         this.warehouse = new Warehouse("WH", warehouseCapacity, this);
         this.productions = new ArrayList<>(productions);
         for(var production : this.productions)
@@ -92,15 +92,11 @@ public class Factory {
             }
 
             this.currentTimeStep = i;
-            var handledFactoryObject = new ArrayList<FactoryObject>();
             var copyOfSteps = new ArrayList<>(factorySteps);
             for (var step : copyOfSteps)
             {
-                if(step.getDoTimeStep() < this.currentTimeStep)
+                if(step.getDoTimeStep() > this.currentTimeStep)
                     continue;
-                if(handledFactoryObject.contains(step.getFactoryObject()))
-                    continue;
-                handledFactoryObject.add(step.getFactoryObject());
                 if(step.doStep())
                 {
                     factorySteps.remove(step);
@@ -109,6 +105,7 @@ public class Factory {
                 }
             }
         }
+        this.getWarehouse().addCompleteWarehouseStockMessage();
     }
 
     public long getCurrentTimeStep() {
@@ -123,6 +120,11 @@ public class Factory {
         return transporters;
     }
 
+    public List<Production> getProductions()
+    {
+        return productions;
+    }
+
     public int getNrOfDrivers()
     {
         return drivers.size();
@@ -132,7 +134,7 @@ public class Factory {
     {
         for(var driver : drivers)
         {
-            if(currentTimeStep > driver.getBlockedUntilTimeStep())
+            if(currentTimeStep >= driver.getBlockedUntilTimeStep())
                 return driver;
         }
 
@@ -171,8 +173,7 @@ public class Factory {
         }
     }
 
-    public List<MaterialPosition> getMaterialPositionsForProductWithRespectOfBatchSize(Product product, int amount,
-                                                                                       boolean respectBatchSize)
+    public List<MaterialPosition> getMaterialPositionsForProductWithRespectOfBatchSize(Product product, int amount)
     {
         var materialList = new ArrayList<MaterialPosition>();
         addMaterialPositionRecursiveToListWithRespectOfBatchSize(product,1,  amount, materialList);

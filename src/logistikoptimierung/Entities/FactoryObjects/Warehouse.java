@@ -140,7 +140,7 @@ public class Warehouse extends FactoryObject
         this.factory.addLog(message, FactoryObjectTypes.WarehouseStock);
     }
 
-    private void addCompleteWarehouseStockMessage()
+    public void addCompleteWarehouseStockMessage()
     {
         if(this.warehouseItems.isEmpty())
             return;

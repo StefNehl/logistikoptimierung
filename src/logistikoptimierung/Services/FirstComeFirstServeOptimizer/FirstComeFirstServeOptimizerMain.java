@@ -11,6 +11,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
     private final Factory factory;
     private List<TransporterPlanningItem> transporterPlanningItems;
+    private List<ProductionPlanningItem> productionPlanningItems;
 
     public FirstComeFirstServeOptimizerMain(Factory factory)
     {
@@ -20,6 +21,13 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         for (var transporter: this.factory.getTransporters())
         {
             transporterPlanningItems.add(new TransporterPlanningItem(transporter));
+        }
+
+        this.productionPlanningItems = new ArrayList<>();
+
+        for(var production : this.factory.getProductions())
+        {
+            productionPlanningItems.add(new ProductionPlanningItem(production));
         }
     }
 
@@ -50,23 +58,35 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         if(productToProduce.getItemType().equals(WarehouseItemTypes.Material))
         {
             factorySteps.addAll(splitBomOnTransporters(order));
-            factorySteps.addAll(sendOrderToCustomerSteps(order));
+            factorySteps.addAll(sendOrderToCustomerSteps(order, findLatestTimeStamp(factorySteps)));
             return factorySteps;
         }
 
         factorySteps.addAll(splitBomOnTransporters(order));
-        factorySteps.addAll(splitBomOnMachines(order));
-        factorySteps.addAll(sendOrderToCustomerSteps(order));
+        factorySteps.addAll(splitBomOnMachines(order, findLatestTimeStamp(factorySteps)));
+        factorySteps.addAll(sendOrderToCustomerSteps(order, findLatestTimeStamp(factorySteps)));
 
         return factorySteps;
     }
 
-    private List<FactoryStep> sendOrderToCustomerSteps(Order order)
+    private long findLatestTimeStamp(List<FactoryStep> factorySteps)
+    {
+        long timeStamp = 0;
+        for(var step : factorySteps)
+        {
+            if(step.getDoTimeStep() > timeStamp)
+                timeStamp = step.getDoTimeStep();
+        }
+        return timeStamp;
+    }
+
+    private List<FactoryStep> sendOrderToCustomerSteps(Order order, long startTimeStamp)
     {
         var factorySteps = new ArrayList<>(getTransportationFactoryStepsForOneTask(
                 order,
                 order.getProduct().amount(),
-                getFittingTransporters(order)));
+                getFittingTransporters(order),
+                startTimeStamp));
 
         return factorySteps;
     }
@@ -95,7 +115,8 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
     private List<FactoryStep> getTransportationFactoryStepsForOneTask(WarehouseItem item,
                                                                       int amountOfItems,
-                                                                      List<TransporterPlanningItem> fittingTransporters)
+                                                                      List<TransporterPlanningItem> fittingTransporters,
+                                                                      long startTimeStamp)
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var remainingAmount = amountOfItems;
@@ -117,7 +138,6 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             remainingAmount -= transporterAmount;
             var travelTime = 0;
 
-            var factoryStepsToDo = new ArrayList<String>();
             if(item instanceof Material)
             {
                 travelTime = ((Material) item).getTravelTime();
@@ -144,7 +164,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 travelTime = ((Order) item).getTravelTime();
                 factorySteps.add(new FactoryStep(
                         factory,
-                        transporterPlanningItem.getBlockedTime(),
+                        startTimeStamp,
                         item.getName(),
                         transporterAmount,
                         transporterPlanningItem.getTransporter().getName(),
@@ -181,7 +201,8 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             factorySteps.addAll(getTransportationFactoryStepsForOneTask(
                     order.getProduct().item(),
                     order.getProduct().amount(),
-                    getFittingTransporters(order.getProduct().item())));
+                    getFittingTransporters(order.getProduct().item()),
+                    0));
 
             return factorySteps;
         }
@@ -190,8 +211,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         var materialList = this.factory
                 .getMaterialPositionsForProductWithRespectOfBatchSize(
                         productToProduce,
-                        order.getProduct().amount(),
-                        true);
+                        order.getProduct().amount());
 
         var condensedMaterialList = condenseMaterialList(materialList);
 
@@ -205,7 +225,8 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             factorySteps.addAll(getTransportationFactoryStepsForOneTask(
                     materialPosition.item(),
                     materialPosition.amount(),
-                    getFittingTransporters(materialPosition.item())));
+                    getFittingTransporters(materialPosition.item()),
+                    0));
         }
 
         return factorySteps;
@@ -244,42 +265,103 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return null;
     }
 
-    private List<FactoryStep> splitBomOnMachines(Order order)
+    private List<FactoryStep> splitBomOnMachines(Order order, long startTimeStamp)
     {
         var factorySteps = new ArrayList<FactoryStep>();
-        var processToProduce = this.factory.getProductionProcessesForProduct((Product) order.getProduct().item());
+        var processesToProduce = this.factory
+                .getProductionProcessesForProduct((Product) order.getProduct().item());
 
-        for(int i = processToProduce.size()-1; i >= 0; i--)
+        var fittingProcessPlaningItems = new ProductionPlanningItem[processesToProduce.size()];
+
+        for(int i = 0; i < processesToProduce.size(); i++)
         {
-            var process = processToProduce.get(i);
-            var amountNeeded = order.getProduct().amount();
-            var batchSizeOfProduct = process.getProductionBatchSize();
-            var nrOfBatchesNeeded = (int)Math.ceil((double) amountNeeded / (double)batchSizeOfProduct);
+            var process = processesToProduce.get(i);
+            for(var processPlaningItem : this.productionPlanningItems)
+            {
+                if(process.getProduction().equals(processPlaningItem.getProduction()))
+                    fittingProcessPlaningItems[i] = processPlaningItem;
+            }
+        }
+
+        var materialToProduces = this.factory
+                .getMaterialPositionsForProductWithRespectOfBatchSize((Product) order.getProduct().item(),
+                        order.getProduct().amount());
+
+
+        for(int i = fittingProcessPlaningItems.length-1; i >= 0; i--)
+        {
+            var processPlaningItem = fittingProcessPlaningItems[i];
+            var process = processesToProduce.get(i);
+
+            var amountNeeded = 0;
+            var batchSizeOfProduct = 0;
+            var nrOfBatchesNeeded = 0;
+            for(var productToProduce : materialToProduces)
+            {
+                if(process.getProductToProduce().equals(productToProduce.item()))
+                {
+                    amountNeeded = productToProduce.amount();
+                    batchSizeOfProduct = process.getProductionBatchSize();
+                    nrOfBatchesNeeded = (int)Math.ceil((double) amountNeeded / (double)batchSizeOfProduct);
+                    break;
+                }
+            }
 
             for(int j = 0; j < nrOfBatchesNeeded; j++)
             {
-                var stepTypes = new String[]{
-                        FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer,
-                        FactoryStepTypes.Produce,
-                        FactoryStepTypes.MoveProductToOutputBuffer,
-                        FactoryStepTypes.MoveProductFromOutputBufferToWarehouse
-                };
+                var productionStart = processPlaningItem.getBlockedTime() + startTimeStamp;
+                var productionTime = process.getProductionTime();
 
-                for(var step : stepTypes)
-                {
-                    var newStep = new FactoryStep(factory,
-                            0,
-                            process.getProductToProduce().getName(),
-                            1,
-                            process.getProduction().getName(),
-                            step);
+                var newStep = new FactoryStep(factory,
+                        productionStart,
+                        process.getProductToProduce().getName(),
+                        1,
+                        process.getProduction().getName(),
+                        FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer);
+                factorySteps.add(newStep);
 
-                    factorySteps.add(newStep);
-                }
+
+                newStep = new FactoryStep(factory,
+                        productionStart,
+                        process.getProductToProduce().getName(),
+                        1,
+                        process.getProduction().getName(),
+                        FactoryStepTypes.Produce);
+                factorySteps.add(newStep);
+
+
+                newStep = new FactoryStep(factory,
+                        productionStart + productionTime,
+                        process.getProductToProduce().getName(),
+                        1,
+                        process.getProduction().getName(),
+                        FactoryStepTypes.MoveProductToOutputBuffer);
+                factorySteps.add(newStep);
+
+                newStep = new FactoryStep(factory,
+                        productionStart + productionTime,
+                        process.getProductToProduce().getName(),
+                        1,
+                        process.getProduction().getName(),
+                        FactoryStepTypes.MoveProductFromOutputBufferToWarehouse);
+                factorySteps.add(newStep);
+
             }
         }
 
         return factorySteps;
+    }
+
+    private ProductionPlanningItem findProductionWhichEarliestFree(List<ProductionPlanningItem> productions)
+    {
+        ProductionPlanningItem freeProduction = productions.get(0);
+        for (var production : productions)
+        {
+            if(production.getBlockedTime() < freeProduction.getBlockedTime())
+                freeProduction = production;
+
+        }
+        return freeProduction;
     }
 }
 
