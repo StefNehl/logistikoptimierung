@@ -318,8 +318,29 @@ public class Factory {
     }
 
     public void printAllLogMessage() {
+        printLogMessageFromTo(-1, -1);
+    }
+
+    public void printLogMessageFromTo(long fromTimeStamp, long toTimeStamp)
+    {
+        if(logMessages.isEmpty()) {
+            System.out.println("No logs");
+            return;
+        }
+
+        if(fromTimeStamp == -1)
+            fromTimeStamp = startTime;
+
+        if(toTimeStamp == -1)
+        {
+            var indexOfLastItem = logMessages.size() -1;
+            var lastItem = logMessages.get(indexOfLastItem);
+            toTimeStamp = lastItem.timeStep();
+        }
+
         for (var message : this.logMessages)
         {
+            if(message.timeStep() > fromTimeStamp && message.timeStep() < toTimeStamp)
             System.out.println(message);
         }
     }

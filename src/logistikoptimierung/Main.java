@@ -22,7 +22,8 @@ public class Main {
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
 
         var optimizer = new FirstComeFirstServeOptimizer(instance.getFactory());
-        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),1);
+        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
+                3);
 
         var factoryMessageSettings = new FactoryMessageSettings(
                 false,
@@ -46,6 +47,8 @@ public class Main {
         System.out.println("Runtime: " +  ConvertSecondsToTime(instance.getFactory().getCurrentTimeStep()));
         System.out.println("**********************************************");
         System.out.println();
+
+        instance.getFactory().printLogMessageFromTo(2017, 2200);
     }
 
     private static String ConvertSecondsToTime(long seconds)
