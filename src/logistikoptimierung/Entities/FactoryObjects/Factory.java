@@ -101,7 +101,7 @@ public class Factory {
                 {
                     factorySteps.remove(step);
                     if(factorySteps.isEmpty())
-                        return;
+                        break;
                 }
             }
         }
