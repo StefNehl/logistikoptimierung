@@ -69,6 +69,9 @@ public class Transporter extends FactoryObject
 
                 return getSpecificAmountOfItemsFromOrderToCustomer((Order)item, amountOfItems);
             }
+            case FactoryStepTypes.TransporterClosesOrderFromCustomer -> {
+
+            }
         }
         return true;
     }
@@ -169,6 +172,8 @@ public class Transporter extends FactoryObject
         }
 
         blockedUntilTimeStep = order.getTravelTime();
+        this.getFactory().getWarehouse().removeItemFromWarehouse(
+                new MaterialPosition(order.getProduct().item(), amountOfItems));
         order.deductProductAmount(amountOfItems);
 
         if(order.getProduct().amount() <= 0)

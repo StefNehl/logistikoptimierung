@@ -104,6 +104,9 @@ public class Factory {
                         break;
                 }
             }
+            if(factorySteps.isEmpty())
+                break;
+
         }
         this.getWarehouse().addCompleteWarehouseStockMessage();
     }
