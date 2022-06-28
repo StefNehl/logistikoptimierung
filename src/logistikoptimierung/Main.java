@@ -3,6 +3,7 @@ package logistikoptimierung;
 import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
 import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
+import logistikoptimierung.Services.ProductionWeightedOptimization.ProductionWeightedOptimizationMain;
 
 import java.util.concurrent.TimeUnit;
 
@@ -10,7 +11,9 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
-        TestCSVImport();
+        //TestCSVImport();
+
+        TestProductionWeightedOptimization();
     }
 
     private static void TestCSVImport()
@@ -21,21 +24,21 @@ public class Main {
 
         var optimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
-                5);
+                1);
 
         var factoryMessageSettings = new FactoryMessageSettings(
-                false,
-                false,
                 true,
                 true,
-                false,
-                false,
-                false,
-                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
                 true
                 );
 
-        var runTimeInSeconds = 432000; //One week 60 * 60 * 24 * 5 = 144 000
+        var runTimeInSeconds = 100; //One week 60 * 60 * 24 * 5 = 144 000
         //var runTimeInSeconds = 10000;
         instance.getFactory().startFactory(factoryTaskList, runTimeInSeconds, factoryMessageSettings);
 
@@ -47,6 +50,23 @@ public class Main {
         System.out.println();
 
         //instance.getFactory().printLogMessageFromTo(2017, 2200);
+    }
+
+    private static void TestProductionWeightedOptimization()
+    {
+        System.out.println("Test with csv import");
+        var dataService = new CSVDataImportService();
+        var instance = dataService.loadData(CSVDataImportService.CONTRACT_4);
+
+        var optimizer = new ProductionWeightedOptimizationMain(instance.getFactory());
+        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),5);
+
+        System.out.println();
+        System.out.println("**********************************************");
+        System.out.println("End income: " + instance.getFactory().getCurrentIncome());
+        System.out.println("Runtime: " +  ConvertSecondsToTime(instance.getFactory().getCurrentTimeStep()));
+        System.out.println("**********************************************");
+        System.out.println();
     }
 
     private static String ConvertSecondsToTime(long seconds)

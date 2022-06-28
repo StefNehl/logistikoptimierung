@@ -156,7 +156,7 @@ public class Factory {
         return this.warehouse;
     }
 
-    public List<ProductionProcess> getProductionProcessesForProduct(Product product)
+    public List<ProductionProcess> getProductionProcessesForProduct(WarehouseItem product)
     {
         var processList = new ArrayList<ProductionProcess>();
         addProcessesRecursiveToList(product, processList);
@@ -176,7 +176,7 @@ public class Factory {
         }
     }
 
-    public List<MaterialPosition> getMaterialPositionsForProductWithRespectOfBatchSize(Product product, int amount)
+    public List<MaterialPosition> getMaterialPositionsForProductWithRespectOfBatchSize(WarehouseItem product, int amount)
     {
         var materialList = new ArrayList<MaterialPosition>();
         addMaterialPositionRecursiveToListWithRespectOfBatchSize(product,1,  amount, materialList);
@@ -231,6 +231,17 @@ public class Factory {
 
     public List<Material> getSuppliedMaterials() {
         return suppliedMaterials;
+    }
+
+
+    public boolean checkIfItemHasASupplier(WarehouseItem item)
+    {
+        for (var suppliedMaterial : this.suppliedMaterials)
+        {
+            if(suppliedMaterial.getName().equals(item.getName()))
+                return true;
+        }
+        return false;
     }
 
     public List<Product> getAvailableProducts() {

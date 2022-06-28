@@ -247,10 +247,6 @@ public class CSVDataImportService implements IDataService
 
                 currentProductionProcesses.add(productionProcess);
             }
-
-
-
-
         }
         return productionList;
     }
@@ -262,7 +258,7 @@ public class CSVDataImportService implements IDataService
         for(var dataItem : data)
         {
             var area = dataItem[0];
-            var productName = dataItem[2];
+            var productName = dataItem[2].trim();
             var product = findWarehouseItem(productName, items);
 
             var amount = Integer.parseInt(dataItem[3]);
