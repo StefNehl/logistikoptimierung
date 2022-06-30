@@ -3,6 +3,7 @@ package logistikoptimierung;
 import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
 import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
+import logistikoptimierung.Services.ProductionProcessOptimization.ProductionProcessOptimization;
 import logistikoptimierung.Services.ProductionWeightedOptimization.ProductionWeightedOptimizationMain;
 
 import java.util.concurrent.TimeUnit;
@@ -13,7 +14,7 @@ public class Main {
 	// write your code here
         //TestCSVImport();
 
-        TestProductionWeightedOptimization();
+        TestProductionProcessOptimization();
     }
 
     private static void TestCSVImport()
@@ -52,14 +53,16 @@ public class Main {
         //instance.getFactory().printLogMessageFromTo(2017, 2200);
     }
 
-    private static void TestProductionWeightedOptimization()
+    private static void TestProductionProcessOptimization()
     {
         System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
-        var instance = dataService.loadData(CSVDataImportService.CONTRACT_4);
+        var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
 
-        var optimizer = new ProductionWeightedOptimizationMain(instance.getFactory());
-        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),5);
+        var optimizer = new ProductionProcessOptimization(instance.getFactory());
+        var factoryTaskList = optimizer.optimize(instance.getFactory()
+                .getOrderList(),
+                7);
 
         System.out.println();
         System.out.println("**********************************************");
