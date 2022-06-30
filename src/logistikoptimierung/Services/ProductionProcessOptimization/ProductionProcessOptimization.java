@@ -29,40 +29,49 @@ public class ProductionProcessOptimization implements IOptimizationService
         var factorySteps = new ArrayList<FactoryStep>();
         var subOrderList = new ArrayList<Order>();
 
-
         for(int i = 0; i < nrOfOrdersToOptimize; i++)
         {
             subOrderList.add(orderList.get(i));
         }
 
-        optimizeProcesses(subOrderList);
+        createProcessList(subOrderList);
+        setProcessDepthForPlanningItems();
         optimizeBatches(subOrderList);
         removeDoubleEntriesFromPlaningItemList();
+        calculateStartAndEndTimes();
 
 
         return factorySteps;
     }
 
-    private void optimizeProcesses(List<Order> orderList)
+    private void createProcessList(List<Order> orderList)
     {
         for (var production : this.factory.getProductions())
         {
             productionPlanningItems.add(new ProductionPlanningItem(production));
         }
 
+        var orderCount = 1;
         for (var order : orderList)
         {
             var processes = this.factory.getProductionProcessesForProduct(
                     order.getProduct().item());
 
-            for (var process : processes)
+            var filteredProcesses = new ArrayList<ProductionProcess>();
+            for(var process : processes)
             {
                 if(this.factory.checkIfItemHasASupplier(process.getProductToProduce()))
                     continue;
-
-                var planningItem = getProductionPlanningItemForProcess(process);
-                planningItem.getProcessPlanningItems().add(new ProcessPlaningItem(process, planningItem.getProcessPlanningItems().size() + 1));
+                filteredProcesses.add(process);
             }
+
+            for (var process : filteredProcesses)
+            {
+                var planningItem = getProductionPlanningItemForProcess(process);
+                planningItem.getProcessPlanningItems()
+                        .add(new ProcessPlaningItem(process, orderCount));
+            }
+            orderCount++;
         }
     }
 
@@ -79,22 +88,33 @@ public class ProductionProcessOptimization implements IOptimizationService
         return null;
     }
 
+    private void setProcessDepthForPlanningItems()
+    {
+        for(var planingItem : this.getFlatProcessList())
+        {
+            var depth = this.getProcessDepthRecursive(planingItem.getProcess().getProductToProduce());
+            planingItem.setProcessDepth(depth);
+        }
+
+    }
+
+    private int getProcessDepthRecursive(WarehouseItem item)
+    {
+        if(this.factory.checkIfItemHasASupplier(item))
+            return 0;
+
+        var process = this.factory.getProductionProcessForWarehouseItem(item);
+        for (var position : process.getMaterialPositions())
+        {
+            return getProcessDepthRecursive(position.item()) + 1;
+
+        }
+        return 0;
+    }
+
     private void optimizeBatches(List<Order> orderList)
     {
         var flatProcessList = getFlatProcessList();
-
-        for(var processItem : flatProcessList)
-        {
-            var processes = this.factory.getProductionProcessesForProduct(processItem.getProcess().getProductToProduce());
-            for (var process: processes)
-            {
-                if(this.factory.checkIfItemHasASupplier(process.getProductToProduce()))
-                    continue;
-
-                processItem.increaseProcessDepthByOne();
-            }
-        }
-
         flatProcessList.sort(Comparator.comparingInt(ProcessPlaningItem::getProcessDepth));
 
         for(int i = flatProcessList.size() - 1; i >= 0; i--)
@@ -164,7 +184,11 @@ public class ProductionProcessOptimization implements IOptimizationService
             var hashSet = new HashSet<ProcessPlaningItem>(production.getProcessPlanningItems());
             production.getProcessPlanningItems().clear();
             production.getProcessPlanningItems().addAll(hashSet);
-            production.getProcessPlanningItems().sort((i1, i2) -> Integer.compare(i1.getProductionOrder(), i2.getProductionOrder()));
+            production.getProcessPlanningItems().sort((i1, i2) -> Integer.compare(i1.getOrderNr(), i2.getOrderNr()));
         }
+    }
+
+    private void calculateStartAndEndTimes()
+    {
     }
 }

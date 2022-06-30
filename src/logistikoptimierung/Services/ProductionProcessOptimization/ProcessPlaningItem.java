@@ -5,24 +5,25 @@ import logistikoptimierung.Entities.FactoryObjects.ProductionProcess;
 public class ProcessPlaningItem
 {
     private ProductionProcess process;
+    private int orderNr;
     private int processDepth;
     private int nrOfBatches;
     private long startTimeStamp;
     private long endTimeStamp;
-    private int productionOrder;
 
-    public ProcessPlaningItem(ProductionProcess process, int productionOrder)
+
+    public ProcessPlaningItem(ProductionProcess process, int orderNr)
     {
         this.process = process;
-        this.productionOrder = productionOrder;
+        this.orderNr = orderNr;
     }
 
     public ProductionProcess getProcess() {
         return process;
     }
 
-    public int getProductionOrder() {
-        return productionOrder;
+    public int getOrderNr() {
+        return orderNr;
     }
 
     public int getNrOfBatches() {
@@ -53,9 +54,8 @@ public class ProcessPlaningItem
         return processDepth;
     }
 
-    public void increaseProcessDepthByOne()
-    {
-        this.processDepth++;
+    public void setProcessDepth(int value){
+        this.processDepth = value;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ProcessPlaningItem
     {
         return this.process.getProductToProduce().getName() +
                 " Order: " +
-                this.productionOrder +
+                this.orderNr +
                 " Depth: " +
                 this.getProcessDepth() +
                 " Nr of B: " +
