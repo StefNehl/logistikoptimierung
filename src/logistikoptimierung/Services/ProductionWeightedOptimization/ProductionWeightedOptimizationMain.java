@@ -144,7 +144,7 @@ public class ProductionWeightedOptimizationMain implements IOptimizationService
     {
         for(var item : items)
         {
-            if(item.getProduct().getName().equals(item.getProduct().getName()))
+            if(item.getProduct().getName().equals(itemToSearch.getName()))
                 return item;
 
         }
