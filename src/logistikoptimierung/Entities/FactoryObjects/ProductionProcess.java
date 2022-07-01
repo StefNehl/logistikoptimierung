@@ -46,4 +46,14 @@ public class ProductionProcess
     public List<MaterialPosition> getMaterialPositions() {
         return materialPositions;
     }
+
+    public int getAmountFromMaterialPositions(WarehouseItem item)
+    {
+        for(var position : this.materialPositions)
+        {
+            if(position.item().equals(item))
+                return position.amount();
+        }
+        return 0;
+    }
 }

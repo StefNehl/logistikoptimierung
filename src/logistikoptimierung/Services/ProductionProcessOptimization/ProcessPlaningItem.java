@@ -7,7 +7,6 @@ public class ProcessPlaningItem
     private ProductionProcess process;
     private int orderNr;
     private int processDepth;
-    private int nrOfBatches;
     private long startTimeStamp;
     private long endTimeStamp;
 
@@ -24,14 +23,6 @@ public class ProcessPlaningItem
 
     public int getOrderNr() {
         return orderNr;
-    }
-
-    public int getNrOfBatches() {
-        return nrOfBatches;
-    }
-
-    public void setNrOfBatches(int nrOfBatches) {
-        this.nrOfBatches = nrOfBatches;
     }
 
     public long getStartTimeStamp() {
@@ -63,7 +54,6 @@ public class ProcessPlaningItem
     {
         var objectString = this.process.getProductToProduce().getName() +
                 this.processDepth +
-                this.nrOfBatches +
                 this.startTimeStamp +
                 this.endTimeStamp;
 
@@ -90,8 +80,6 @@ public class ProcessPlaningItem
                 this.orderNr +
                 " Depth: " +
                 this.getProcessDepth() +
-                " Nr of B: " +
-                this.getNrOfBatches() +
                 " Time: " +
                 this.getStartTimeStamp() +
                 " - " +

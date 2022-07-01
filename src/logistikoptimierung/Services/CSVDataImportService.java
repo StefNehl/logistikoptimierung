@@ -271,7 +271,7 @@ public class CSVDataImportService implements IDataService
             //Convert minutes to seconds
             var transportTime = Integer.parseInt(dataItem[7]) * 60;
 
-            var order = new Order("Order " + count, area, materialPosition,
+            var order = new Order("Order " + count, count, area, materialPosition,
                     income, transportType, engine, transportTime);
 
             orders.add(order);

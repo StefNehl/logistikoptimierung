@@ -35,8 +35,8 @@ public class ProductionProcessOptimization implements IOptimizationService
 
         createProcessList(subOrderList);
         setProcessDepthForPlanningItems();
-        optimizeBatches(subOrderList);
         removeDoubleEntriesFromPlaningItemList();
+        optimizeBatches(subOrderList);
         calculateStartAndEndTimes();
 
 
@@ -116,32 +116,68 @@ public class ProductionProcessOptimization implements IOptimizationService
         var flatProcessList = getFlatProcessList();
         flatProcessList.sort(Comparator.comparingInt(ProcessPlaningItem::getProcessDepth));
 
+        var newProcessPlaningItemList = new ArrayList<ProcessPlaningItem>();
+
         for(int i = flatProcessList.size() - 1; i >= 0; i--)
         {
             var planningItem = flatProcessList.get(i);
             var amountToProduce = 0;
-            var nrOfBatchesFromParentProduct = 0;
 
             var parentPlanningItems = getParentProcessesPlanningItemFromProduct(planningItem
                     .getProcess()
-                    .getProductToProduce(), flatProcessList);
+                    .getProductToProduce(),
+                    newProcessPlaningItemList);
+
+            var orderMap = new HashMap<Integer, Integer>();
 
             for (var parentItem : parentPlanningItems)
             {
-                nrOfBatchesFromParentProduct += parentItem.getNrOfBatches();
+                var amountForParentItem = parentItem.getProcess().getAmountFromMaterialPositions(
+                        planningItem.getProcess().getProductToProduce());
+                amountToProduce += amountForParentItem;
+                orderMap.put(parentItem.getOrderNr(), amountForParentItem);
             }
-
-            //nrOfBatchesFromParentProduct == 0  no other item has been processed
-            amountToProduce += nrOfBatchesFromParentProduct * planningItem.getProcess().getProductionBatchSize();
 
             for(var order : orderList)
             {
                 if(planningItem.getProcess().getProductToProduce().equals(order.getProduct().item()))
+                {
                     amountToProduce += order.getProduct().amount();
+                    orderMap.put(order.getOrderNr(), order.getProduct().amount());
+                }
             }
 
             var nrOfBatches = (int)Math.ceil((double) amountToProduce / (double) planningItem.getProcess().getProductionBatchSize());
-            planningItem.setNrOfBatches(nrOfBatches);
+
+            var batchCount = 0;
+            for(var orderKey : orderMap.keySet())
+            {
+                var orderAmount = orderMap.get(orderKey);
+                var amountFromBatch = 0;
+                while (orderAmount > amountFromBatch )
+                {
+                    if(batchCount == nrOfBatches)
+                        break;
+
+                    var batchSize = planningItem.getProcess().getProductionBatchSize();
+                    var newPlaningItem = new ProcessPlaningItem(planningItem.getProcess(), orderKey);
+                    newPlaningItem.setProcessDepth(planningItem.getProcessDepth());
+                    newProcessPlaningItemList.add(newPlaningItem);
+                    amountFromBatch += batchSize;
+                    batchCount++;
+                }
+            }
+        }
+
+        //merge new planing list to old one
+        for(var production : productionPlanningItems)
+        {
+            production.getProcessPlanningItems().clear();
+            for(var newProcessItem : newProcessPlaningItemList)
+            {
+                if(newProcessItem.getProcess().getProduction().equals(production.getProduction()))
+                    production.getProcessPlanningItems().add(newProcessItem);
+            }
         }
     }
 
@@ -195,7 +231,7 @@ public class ProductionProcessOptimization implements IOptimizationService
         {
             var lowestItem = getPlaningItemWithLowestOrderAndDepth(processesToDo);
 
-            long assemblyTime = lowestItem.getNrOfBatches() * lowestItem.getProcess().getProductionTime();
+            long assemblyTime = lowestItem.getProcess().getProductionTime();
             long startTime = 0;
             var productionPlanningItem = getProductionPlanningItemForProcess(lowestItem
                     .getProcess());
@@ -203,7 +239,7 @@ public class ProductionProcessOptimization implements IOptimizationService
                     productionPlanningItem.getProcessPlanningItems());
 
             if(lastProcessInProduction != null)
-                startTime = lastProcessInProduction.getEndTimeStamp() + 1;
+                startTime = lastProcessInProduction.getEndTimeStamp();
 
 
             if(lowestItem.getProcessDepth() > 1)
@@ -212,6 +248,7 @@ public class ProductionProcessOptimization implements IOptimizationService
                 startTime = Math.max(startTime, preProcessItem.getEndTimeStamp());
             }
 
+            startTime++;
             lowestItem.setStartTimeStamp(startTime);
             lowestItem.setEndTimeStamp(startTime + assemblyTime);
             processesToDo.remove(lowestItem);

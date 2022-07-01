@@ -8,8 +8,11 @@ public class Order extends WarehouseItem
     private final String transportType;
     private final String engine;
     private final int travelTime;
+    private final int orderNr;
 
-    public Order(String orderId, String area,
+    public Order(String orderId,
+                 int orderNr,
+                 String area,
                  MaterialPosition product,
                  double income, String transportType,
                  String engine, int travelTime)
@@ -21,6 +24,11 @@ public class Order extends WarehouseItem
         this.transportType = transportType;
         this.engine = engine;
         this.travelTime = travelTime;
+        this.orderNr = orderNr;
+    }
+
+    public int getOrderNr() {
+        return orderNr;
     }
 
     public String getArea() {
