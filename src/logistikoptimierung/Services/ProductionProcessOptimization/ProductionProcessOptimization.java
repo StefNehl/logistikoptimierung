@@ -296,7 +296,8 @@ public class ProductionProcessOptimization implements IOptimizationService
         {
             for(var item : getFlatProcessList())
             {
-                if(item.getProcess().getProductToProduce().equals(product.item()))
+                if(item.getProcess().getProductToProduce().equals(product.item()) &&
+                        item.getOrderNr() == processPlaningItem.getOrderNr())
                 {
                     if(itemWithHighestEndTime == null)
                     {
