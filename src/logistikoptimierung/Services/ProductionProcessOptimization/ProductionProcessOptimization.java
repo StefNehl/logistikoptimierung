@@ -5,7 +5,6 @@ import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
 import logistikoptimierung.Entities.FactoryObjects.ProductionProcess;
 import logistikoptimierung.Entities.WarehouseItems.Order;
-import logistikoptimierung.Entities.WarehouseItems.Product;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.*;
@@ -190,5 +189,91 @@ public class ProductionProcessOptimization implements IOptimizationService
 
     private void calculateStartAndEndTimes()
     {
+        var processesToDo = new ArrayList<>(this.getFlatProcessList());
+
+        while (!processesToDo.isEmpty())
+        {
+            var lowestItem = getPlaningItemWithLowestOrderAndDepth(processesToDo);
+
+            long assemblyTime = lowestItem.getNrOfBatches() * lowestItem.getProcess().getProductionTime();
+            long startTime = 0;
+            var productionPlanningItem = getProductionPlanningItemForProcess(lowestItem
+                    .getProcess());
+            var lastProcessInProduction = getProcessPlaningItemWithHighestEndTimeGreaterThanZero(
+                    productionPlanningItem.getProcessPlanningItems());
+
+            if(lastProcessInProduction != null)
+                startTime = lastProcessInProduction.getEndTimeStamp() + 1;
+
+
+            if(lowestItem.getProcessDepth() > 1)
+            {
+                var preProcessItem = getPreProcessPlaningItemWithHighestEndTime(lowestItem);
+                startTime = Math.max(startTime, preProcessItem.getEndTimeStamp());
+            }
+
+            lowestItem.setStartTimeStamp(startTime);
+            lowestItem.setEndTimeStamp(startTime + assemblyTime);
+            processesToDo.remove(lowestItem);
+
+        }
+    }
+
+    private ProcessPlaningItem getPlaningItemWithLowestOrderAndDepth(List<ProcessPlaningItem> processPlaningItems)
+    {
+        if(processPlaningItems.isEmpty())
+            return null;
+
+        ProcessPlaningItem lowestItem = processPlaningItems.get(0);
+        for(var item : processPlaningItems)
+        {
+            if(item.getProcessDepth() < lowestItem.getProcessDepth())
+                lowestItem = item;
+
+            if(item.getProcessDepth() <= lowestItem.getProcessDepth() &&
+                item.getOrderNr() < lowestItem.getOrderNr())
+                lowestItem = item;
+        }
+        return lowestItem;
+    }
+
+    private ProcessPlaningItem getProcessPlaningItemWithHighestEndTimeGreaterThanZero(List<ProcessPlaningItem> processPlaningItems)
+    {
+        ProcessPlaningItem highestEndTimeProcess = null;
+        for(var item : processPlaningItems)
+        {
+            if(highestEndTimeProcess == null && item.getEndTimeStamp() > 0)
+                highestEndTimeProcess = item;
+
+            if(highestEndTimeProcess != null && item.getEndTimeStamp() > highestEndTimeProcess.getEndTimeStamp())
+                highestEndTimeProcess = item;
+        }
+
+        return highestEndTimeProcess;
+    }
+
+    private ProcessPlaningItem getPreProcessPlaningItemWithHighestEndTime(ProcessPlaningItem processPlaningItem)
+    {
+        ProcessPlaningItem itemWithHighestEndTime = null;
+        for(var product : processPlaningItem.getProcess().getMaterialPositions())
+        {
+            for(var item : getFlatProcessList())
+            {
+                if(item.getProcess().getProductToProduce().equals(product.item()))
+                {
+                    if(itemWithHighestEndTime == null)
+                    {
+                        itemWithHighestEndTime = item;
+                        continue;
+                    }
+
+                    if(item.getEndTimeStamp() > itemWithHighestEndTime.getEndTimeStamp())
+                        itemWithHighestEndTime = item;
+
+                }
+            }
+        }
+
+        return itemWithHighestEndTime;
     }
 }
