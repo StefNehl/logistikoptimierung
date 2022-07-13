@@ -4,6 +4,8 @@ import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
 import logistikoptimierung.Entities.FactoryObjects.ProductionProcess;
+import logistikoptimierung.Entities.WarehouseItems.Material;
+import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
@@ -13,11 +15,15 @@ public class EnumeratedCalculationMain implements IOptimizationService
 {
     private final Factory factory;
     private List<ProductionPlanningItem> productionPlanningItems;
+    private List<MaterialPosition> acquiringPlanningItems;
+    private List<MaterialPosition> deliverPlanningItems;
 
     public EnumeratedCalculationMain(Factory factory)
     {
         this.factory = factory;
         this.productionPlanningItems = new ArrayList<>();
+        this.acquiringPlanningItems = new ArrayList<>();
+        this.deliverPlanningItems = new ArrayList<>();
     }
 
     @Override
@@ -42,6 +48,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
         setProcessDepthForPlanningItems();
         removeDoubleEntriesFromPlaningItemList();
         getProcessesForEveryBatchAndOrderAfterDepth(subOrderList);
+        addAcquiringPlaningItemsForEveryBatch();
+        addDeliveryPlanningItems(subOrderList);
     }
 
     private void createProcessList(List<Order> orderList)
@@ -107,7 +115,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
         for (var position : process.getMaterialPositions())
         {
             return getProcessDepthRecursive(position.item()) + 1;
-
         }
         return 0;
     }
@@ -220,6 +227,31 @@ public class EnumeratedCalculationMain implements IOptimizationService
             production.getProcessPlanningItems().clear();
             production.getProcessPlanningItems().addAll(hashSet);
             production.getProcessPlanningItems().sort((i1, i2) -> Integer.compare(i1.getOrderNr(), i2.getOrderNr()));
+        }
+    }
+
+    private void addAcquiringPlaningItemsForEveryBatch()
+    {
+        for(var processPlaningItem : getFlatProcessList())
+        {
+            var materialPositions = processPlaningItem.getProcess().getMaterialPositions();
+
+            for(var materialPosition : materialPositions)
+            {
+                if(!this.factory.checkIfItemHasASupplier(materialPosition.item()))
+                    continue;
+
+                acquiringPlanningItems.add(new MaterialPosition(materialPosition.item(), materialPosition.amount()));
+            }
+        }
+    }
+
+    private void addDeliveryPlanningItems(List<Order> subOrderList)
+    {
+        for (var order : subOrderList)
+        {
+            deliverPlanningItems.add(new MaterialPosition(order.getProduct().item(),
+                    order.getProduct().amount()));
         }
     }
 
