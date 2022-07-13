@@ -2,16 +2,30 @@ package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FactoryStep {
 
     private WarehouseItem itemToManipulate;
     private FactoryObject factoryObject;
-    private final String stepType;
-    private final Factory factory;
-    private final int amountOfItems;
-    private final long doTimeStep;
+    private String stepType;
+    private Factory factory;
+    private int amountOfItems;
+    private long doTimeStep;
+    private List<FactoryStep> factoryStepsToDoBefore;
 
     public FactoryStep(Factory factory, long doTimeStamp, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
+    {
+        initFactoryStep(factory, doTimeStamp, new ArrayList<>(), itemToManipulate, amountOfItems, factoryObjectName, stepType);
+    }
+
+    public FactoryStep(Factory factory, long doTimeStamp, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
+    {
+        initFactoryStep(factory, doTimeStamp, factoryStepsToDoBefore, itemToManipulate, amountOfItems, factoryObjectName, stepType);
+    }
+
+    private void initFactoryStep(Factory factory, long doTimeStamp, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
     {
         for(var item : factory.getAvailableWarehouseItems())
         {
@@ -35,6 +49,7 @@ public class FactoryStep {
         this.factory = factory;
         this.amountOfItems = amountOfItems;
         this.doTimeStep = doTimeStamp;
+        this.factoryStepsToDoBefore = factoryStepsToDoBefore;
     }
 
     public boolean doStep()

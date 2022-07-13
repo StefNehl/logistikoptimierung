@@ -2,6 +2,7 @@ package logistikoptimierung;
 
 import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
 import logistikoptimierung.Services.CSVDataImportService;
+import logistikoptimierung.Services.EnumeratedCalculation.EnumeratedCalculationMain;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
 import logistikoptimierung.Services.ProductionProcessOptimization.ProductionProcessOptimization;
 import logistikoptimierung.Services.ProductionWeightedOptimization.ProductionWeightedOptimizationMain;
@@ -39,8 +40,8 @@ public class Main {
                 true
                 );
 
-        var runTimeInSeconds = 100; //One week 60 * 60 * 24 * 5 = 144 000
-        //var runTimeInSeconds = 10000;
+        //var runTimeInSeconds = 100; //One week 60 * 60 * 24 * 5 = 144 000
+        var runTimeInSeconds = 10000;
         instance.getFactory().startFactory(factoryTaskList, runTimeInSeconds, factoryMessageSettings);
 
         System.out.println();
@@ -59,7 +60,8 @@ public class Main {
         var dataService = new CSVDataImportService();
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
 
-        var optimizer = new ProductionProcessOptimization(instance.getFactory());
+        var optimizer = new EnumeratedCalculationMain(instance.getFactory());
+        //var optimizer = new ProductionProcessOptimization(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory()
                 .getOrderList(),
                 7);
