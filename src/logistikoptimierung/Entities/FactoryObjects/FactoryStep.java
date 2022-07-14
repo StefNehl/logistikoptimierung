@@ -68,9 +68,19 @@ public class FactoryStep {
         return factoryObject;
     }
 
+    public WarehouseItem getItemToManipulate()
+    {
+        return this.itemToManipulate;
+    }
+
+    public int getAmountOfItems()
+    {
+        return this.amountOfItems;
+    }
+
     private void addStepMessage(boolean completed)
     {
-        factory.addLog(this.toString() + " Completed: " + completed, FactoryObjectTypes.FactoryStep, completed);
+        this.factory.addLog(this.toString() + " Completed: " + completed, FactoryObjectTypes.FactoryStep, completed);
     }
 
     @Override

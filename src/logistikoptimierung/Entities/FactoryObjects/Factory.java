@@ -67,7 +67,7 @@ public class Factory {
         this.orderList = orderList;
     }
 
-    public void startFactory(List<FactoryStep> factorySteps, long runTime, FactoryMessageSettings factoryMessageSettings)
+    public long startFactory(List<FactoryStep> factorySteps, long maxRunTime, FactoryMessageSettings factoryMessageSettings)
     {
         logMessages.clear();
         this.printDriverMessages = factoryMessageSettings.printDriverMessages();
@@ -83,7 +83,7 @@ public class Factory {
         int hourCount = 1;
         addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
 
-        for(long i = startTime; i <= runTime; i++)
+        for(long i = startTime; i <= maxRunTime; i++)
         {
             if(i % oneHourInSeconds == 0)
             {
@@ -105,10 +105,11 @@ public class Factory {
                 }
             }
             if(factorySteps.isEmpty())
-                break;
+                return i;
 
         }
         this.getWarehouse().addCompleteWarehouseStockMessage();
+        return maxRunTime;
     }
 
     public long getCurrentTimeStep() {
@@ -131,6 +132,11 @@ public class Factory {
     public int getNrOfDrivers()
     {
         return drivers.size();
+    }
+
+    public List<Driver> getDrivers()
+    {
+        return this.drivers;
     }
 
     public Driver getNotBlockedDriver()

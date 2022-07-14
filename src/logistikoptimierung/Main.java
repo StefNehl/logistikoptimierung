@@ -60,7 +60,19 @@ public class Main {
         var dataService = new CSVDataImportService();
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
 
-        var optimizer = new EnumeratedCalculationMain(instance.getFactory());
+        var factoryMessageSettings = new FactoryMessageSettings(
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+        );
+
+        var optimizer = new EnumeratedCalculationMain(instance.getFactory(), factoryMessageSettings);
         //var optimizer = new ProductionProcessOptimization(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory()
                 .getOrderList(),
