@@ -4,7 +4,6 @@ import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
 import logistikoptimierung.Entities.FactoryObjects.ProductionProcess;
-import logistikoptimierung.Entities.WarehouseItems.Material;
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
@@ -14,16 +13,18 @@ import java.util.*;
 public class EnumeratedCalculationMain implements IOptimizationService
 {
     private final Factory factory;
-    private List<ProductionPlanningItem> productionPlanningItems;
+    private List<ProductionPlanningItem> productionItem;
     private List<MaterialPosition> acquiringPlanningItems;
     private List<MaterialPosition> deliverPlanningItems;
+    private List<MaterialPosition> allPlanningItems;
 
     public EnumeratedCalculationMain(Factory factory)
     {
         this.factory = factory;
-        this.productionPlanningItems = new ArrayList<>();
+        this.productionItem = new ArrayList<>();
         this.acquiringPlanningItems = new ArrayList<>();
         this.deliverPlanningItems = new ArrayList<>();
+        this.allPlanningItems = new ArrayList<>();
     }
 
     @Override
@@ -38,7 +39,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         getAllNeededFactoryPlanningItemsForOrder(subOrderList);
 
-
         return null;
     }
 
@@ -50,13 +50,23 @@ public class EnumeratedCalculationMain implements IOptimizationService
         getProcessesForEveryBatchAndOrderAfterDepth(subOrderList);
         addAcquiringPlaningItemsForEveryBatch();
         addDeliveryPlanningItems(subOrderList);
+
+        for(var item : this.acquiringPlanningItems)
+            this.allPlanningItems.add(item);
+
+        for (var item : this.getFlatProcessList())
+            this.allPlanningItems.add(new MaterialPosition(item.getProcess().getProductToProduce(),
+                    1));
+
+        for(var item : this.deliverPlanningItems)
+            this.allPlanningItems.add(item);
     }
 
     private void createProcessList(List<Order> orderList)
     {
         for (var production : this.factory.getProductions())
         {
-            productionPlanningItems.add(new ProductionPlanningItem(production));
+            productionItem.add(new ProductionPlanningItem(production));
         }
 
         var orderCount = 1;
@@ -85,7 +95,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
     private ProductionPlanningItem getProductionPlanningItemForProcess(ProductionProcess process)
     {
-        for (var item : this.productionPlanningItems)
+        for (var item : this.productionItem)
         {
             var prodItem = item.getProduction().getProductionProcessForProduct(
                     process.getProductToProduce());
@@ -178,7 +188,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         }
 
         //merge new planing list to old one
-        for(var production : productionPlanningItems)
+        for(var production : productionItem)
         {
             production.getProcessPlanningItems().clear();
             for(var newProcessItem : newProcessPlaningItemList)
@@ -209,7 +219,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     {
         var result = new ArrayList<ProcessPlaningItem>();
 
-        for (var production : this.productionPlanningItems)
+        for (var production : this.productionItem)
         {
             for (var process : production.getProcessPlanningItems())
             {
@@ -221,7 +231,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
     private void removeDoubleEntriesFromPlaningItemList()
     {
-        for(var production : this.productionPlanningItems)
+        for(var production : this.productionItem)
         {
             var hashSet = new HashSet<ProcessPlaningItem>(production.getProcessPlanningItems());
             production.getProcessPlanningItems().clear();
@@ -252,6 +262,15 @@ public class EnumeratedCalculationMain implements IOptimizationService
         {
             deliverPlanningItems.add(new MaterialPosition(order.getProduct().item(),
                     order.getProduct().amount()));
+        }
+    }
+
+    private void createFactoryStepsRecursive(List<FactoryStep> factorySteps)
+    {
+        for(var planningItem : productionItem)
+        {
+            //Add one item for every production
+
         }
     }
 

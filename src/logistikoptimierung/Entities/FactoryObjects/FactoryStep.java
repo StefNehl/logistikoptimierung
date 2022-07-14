@@ -20,8 +20,9 @@ public class FactoryStep {
         initFactoryStep(factory, doTimeStamp, new ArrayList<>(), itemToManipulate, amountOfItems, factoryObjectName, stepType);
     }
 
-    public FactoryStep(Factory factory, long doTimeStamp, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
+    public FactoryStep(Factory factory, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
     {
+        var doTimeStamp = 0;
         initFactoryStep(factory, doTimeStamp, factoryStepsToDoBefore, itemToManipulate, amountOfItems, factoryObjectName, stepType);
     }
 
