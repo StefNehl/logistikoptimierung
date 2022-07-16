@@ -61,22 +61,22 @@ public class Main {
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
 
         var factoryMessageSettings = new FactoryMessageSettings(
+                false,
+                false,
+                false,
                 true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true
+                false,
+                false,
+                false,
+                false,
+                false
         );
 
         var optimizer = new EnumeratedCalculationMain(instance.getFactory(), factoryMessageSettings);
         //var optimizer = new ProductionProcessOptimization(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory()
                 .getOrderList(),
-                7);
+                1);
 
         System.out.println();
         System.out.println("**********************************************");

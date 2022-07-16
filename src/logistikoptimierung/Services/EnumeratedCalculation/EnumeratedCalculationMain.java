@@ -19,6 +19,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private FactoryMessageSettings factoryMessageSettings;
 
     private List<Transporter> availableTransporters;
+    private List<Transporter> sortedTransportList;
     private List<Driver> availableDrivers;
     private List<DriverPoolItem> driverPoolItems;
 
@@ -36,9 +37,10 @@ public class EnumeratedCalculationMain implements IOptimizationService
         this.allPlanningItems = new ArrayList<>();
         this.factoryMessageSettings = factoryMessageSettings;
 
-
         this.availableDrivers = new ArrayList<>(this.factory.getDrivers());
         this.availableTransporters = new ArrayList<>(this.factory.getTransporters());
+        this.sortedTransportList = new ArrayList<>(this.availableTransporters);
+        this.sortedTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
         this.driverPoolItems = new ArrayList<>(this.factory.getNrOfDrivers());
     }
 
@@ -57,7 +59,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var stepToDo = new ArrayList<FactoryStep>();
         getPlanningSolutionRecursive(stepToDo, this.allPlanningItems);
 
-        return null;
+        return bestSolution;
     }
 
     private void getPlanningSolutionRecursive(List<FactoryStep> stepsToDo, List<PlanningItem> planningItems)
@@ -87,7 +89,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
                     //abort complete solution because no material for the production in the warehouse
                     if(newSteps == null)
+                    {
+                        System.out.println("Solution aborted");
                         return;
+                    }
+
                     stepsToAdd.addAll(newSteps);
                 }
             }
@@ -222,25 +228,27 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
     private Transporter getTransporterWithSmallestDifferenceFromAmountAndHigherCapacity(WarehouseItem item, int amount)
     {
-        var sortedTransportList = new ArrayList<>(this.availableTransporters);
-        sortedTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
-
         Transporter fittingTransporterWithHighestCapacity = null;
 
-        for(var transporter : sortedTransportList)
+        for(var transporter : this.sortedTransportList)
         {
             if(item instanceof Material)
             {
                 if(!transporter.areTransportationConstraintsFulfilledForMaterial((Material) item))
                     continue;
-
-                if(transporter.getCapacity() > amount)
-                    return transporter;
-
-                if(fittingTransporterWithHighestCapacity == null ||
-                        fittingTransporterWithHighestCapacity.getCapacity() < transporter.getCapacity())
-                    fittingTransporterWithHighestCapacity = transporter;
             }
+            else if(item instanceof  Order)
+            {
+                if(!transporter.areTransportationConstraintsFulfilledForOrder((Order) item))
+                    continue;
+            }
+
+            if(transporter.getCapacity() > amount)
+                return transporter;
+
+            if(fittingTransporterWithHighestCapacity == null ||
+                    fittingTransporterWithHighestCapacity.getCapacity() < transporter.getCapacity())
+                fittingTransporterWithHighestCapacity = transporter;
         }
 
         if(fittingTransporterWithHighestCapacity != null)
@@ -262,8 +270,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
             var isMaterialAcquired = false;
             for(var step : stepsToDo)
             {
-                if(step.getItemToManipulate().equals(materialPosition.item()) &&
-                    step.getAmountOfItems() > materialPosition.amount())
+                if(step.getItemToManipulate().getName().equals(materialPosition.item().getName()) &&
+                    step.getAmountOfItems() >= materialPosition.amount())
                 {
                     isMaterialAcquired = true;
                     break;
@@ -533,7 +541,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     {
         for (var order : subOrderList)
         {
-            deliverPlanningItems.add(new MaterialPosition(order.getProduct().item(),
+            deliverPlanningItems.add(new MaterialPosition(order,
                     order.getProduct().amount()));
         }
     }
