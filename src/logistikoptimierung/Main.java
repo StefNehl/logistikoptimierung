@@ -4,8 +4,6 @@ import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
 import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.EnumeratedCalculation.EnumeratedCalculationMain;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
-import logistikoptimierung.Services.ProductionProcessOptimization.ProductionProcessOptimization;
-import logistikoptimierung.Services.ProductionWeightedOptimization.ProductionWeightedOptimizationMain;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,12 +11,12 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
-        TestCSVImport();
+        //TestFirstComeFirstServe();
 
-        //TestProductionProcessOptimization();
+        TestProductionProcessOptimization();
     }
 
-    private static void TestCSVImport()
+    private static void TestFirstComeFirstServe()
     {
         System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
@@ -65,8 +63,8 @@ public class Main {
                 false,
                 true,
                 true,
-                true,
-                true,
+                false,
+                false,
                 false,
                 false,
                 false

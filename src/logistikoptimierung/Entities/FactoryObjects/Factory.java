@@ -100,10 +100,9 @@ public class Factory {
                 if(step.doStep())
                 {
                     factorySteps.remove(step);
-                    if(factorySteps.isEmpty())
-                        return i;
                 }
             }
+
             if(factorySteps.isEmpty())
                 return i;
 

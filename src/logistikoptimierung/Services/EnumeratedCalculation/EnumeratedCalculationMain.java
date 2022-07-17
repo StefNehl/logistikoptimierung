@@ -302,22 +302,17 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 return null;
         }
 
-
-        for (var materialPosition : process.getMaterialPositions())
-        {
-            var newStep = new FactoryStep(this.factory, 0,
-                    materialPosition.item().getName(),
-                    materialPosition.amount(),
-                    process.getProduction().getName(),
-                    FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer);
-
-            steps.add(newStep);
-        }
-
-
         var newStep = new FactoryStep(this.factory, 0,
                 planningItem.item().getName(),
-                planningItem.amount(),
+                1,
+                process.getProduction().getName(),
+                FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer);
+
+        steps.add(newStep);
+
+        newStep = new FactoryStep(this.factory, 0,
+                planningItem.item().getName(),
+                1,
                 process.getProduction().getName(),
                 FactoryStepTypes.Produce);
 
@@ -325,7 +320,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         newStep = new FactoryStep(this.factory, 0,
                 planningItem.item().getName(),
-                planningItem.amount(),
+                1,
                 process.getProduction().getName(),
                 FactoryStepTypes.MoveProductToOutputBuffer);
 
