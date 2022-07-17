@@ -112,6 +112,11 @@ public class Warehouse extends FactoryObject
         return false;
     }
 
+    public void resetWarehouse()
+    {
+        this.warehouseItems.clear();
+    }
+
     public List<MaterialPosition> getWarehouseItems() {
         return warehouseItems;
     }

@@ -10,7 +10,7 @@ public class Factory {
     private final String name;
     private long currentTimeStep;
     private double currentIncome;
-    private final long startTime;
+    private long startTime;
 
     private final Warehouse warehouse;
     private final List<Production> productions;
@@ -101,7 +101,7 @@ public class Factory {
                 {
                     factorySteps.remove(step);
                     if(factorySteps.isEmpty())
-                        break;
+                        return i;
                 }
             }
             if(factorySteps.isEmpty())
@@ -110,6 +110,30 @@ public class Factory {
         }
         this.getWarehouse().addCompleteWarehouseStockMessage();
         return maxRunTime;
+    }
+
+    public void resetFactory()
+    {
+        this.currentTimeStep = 0;
+        this.currentIncome = 0;
+        this.startTime = 0;
+
+        this.warehouse.resetWarehouse();
+
+        for (var production : productions)
+        {
+            production.resetProduction();
+        }
+
+        for(var transporter : transporters)
+        {
+            transporter.resetTransporter();
+        }
+
+        for(var driver : drivers)
+        {
+            driver.resetDriver();
+        }
     }
 
     public long getCurrentTimeStep() {

@@ -67,6 +67,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
         if(planningItems.isEmpty())
         {
             var result = this.factory.startFactory(stepsToDo, 10000, factoryMessageSettings);
+            this.factory.resetFactory();
+            System.out.println(result);
             if(result < bestTimeSolution) {
                 bestTimeSolution = result;
                 bestSolution = new ArrayList<>(stepsToDo);

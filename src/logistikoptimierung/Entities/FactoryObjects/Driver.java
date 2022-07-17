@@ -27,6 +27,12 @@ public class Driver extends FactoryObject
         return true;
     }
 
+    public void resetDriver()
+    {
+        this.blockedUntilTimeStep = 0;
+        this.currentTask = "";
+    }
+
     public int getBlockedUntilTimeStep() {
         return blockedUntilTimeStep;
     }

@@ -76,6 +76,12 @@ public class Transporter extends FactoryObject
         return true;
     }
 
+    public void resetTransporter()
+    {
+        this.blockedUntilTimeStep = 0;
+        this.currentTask = "";
+    }
+
     public String getArea() { return area; }
 
     public String getType() {
@@ -184,6 +190,8 @@ public class Transporter extends FactoryObject
     public long getBlockedUntilTimeStep() {
         return blockedUntilTimeStep;
     }
+
+
 
     private void addNoAvailableDriverLogMessage()
     {

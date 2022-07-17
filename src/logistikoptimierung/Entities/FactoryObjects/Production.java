@@ -13,6 +13,8 @@ public class Production extends FactoryObject
     private final List<ProductionProcess> productionProcesses;
     private int remainingNrOfInputBufferBatches;
     private int remainingNrOfOutputBufferBatches;
+    private int maxNrOfInputBufferBatches;
+    private int maxNrOfOutputBufferBatches;
 
     private Set<ProductionProcess> processesInInputBuffer = new HashSet<>();
     private MaterialPosition productInProduction;
@@ -31,6 +33,8 @@ public class Production extends FactoryObject
         this.productionProcesses = productionProcesses;
         this.remainingNrOfInputBufferBatches = maxNrOfInputBufferBatches;
         this.remainingNrOfOutputBufferBatches = maxNrOfOutputBufferBatches;
+        this.maxNrOfInputBufferBatches = maxNrOfInputBufferBatches;
+        this.maxNrOfOutputBufferBatches = maxNrOfOutputBufferBatches;
         this.blockedUntilTimeStep = 0;
     }
 
@@ -162,6 +166,18 @@ public class Production extends FactoryObject
         addProduceItemMessage(productToProduce);
 
         return new MaterialPosition(productToProduce, processInInput.getProductionBatchSize());
+    }
+
+    public void resetProduction()
+    {
+        this.remainingNrOfInputBufferBatches = this.maxNrOfInputBufferBatches;
+        this.remainingNrOfOutputBufferBatches = this.maxNrOfOutputBufferBatches;
+        this.blockedUntilTimeStep = 0;
+        this.currentTask = "";
+        this.productInProduction = null;
+        this.productsInOutputBuffer.clear();
+        this.processesInInputBuffer.clear();
+
     }
 
     private void addPProcessNotFoundMessage(WarehouseItem product)
