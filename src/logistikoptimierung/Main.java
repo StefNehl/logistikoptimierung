@@ -13,9 +13,9 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
-        //TestCSVImport();
+        TestCSVImport();
 
-        TestProductionProcessOptimization();
+        //TestProductionProcessOptimization();
     }
 
     private static void TestCSVImport()
@@ -63,10 +63,10 @@ public class Main {
         var factoryMessageSettings = new FactoryMessageSettings(
                 false,
                 false,
-                false,
                 true,
-                false,
-                false,
+                true,
+                true,
+                true,
                 false,
                 false,
                 false

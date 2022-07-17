@@ -169,12 +169,20 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                         transporterAmount,
                         transporterPlanningItem.getTransporter().getName(),
                         FactoryStepTypes.ConcludeOrderTransportToCustomer));
+
+                if(remainingAmount == 0)
+                {
+                    factorySteps.add(new FactoryStep(
+                            factory,
+                            startTimeStamp,
+                            item.getName(),
+                            transporterAmount,
+                            transporterPlanningItem.getTransporter().getName(),
+                            FactoryStepTypes.TransporterClosesOrderFromCustomer));
+                }
             }
 
             transporterPlanningItem.increaseBlockedTime(travelTime);
-
-            if(remainingAmount == 0)
-                break;
         }
         return factorySteps;
     }
