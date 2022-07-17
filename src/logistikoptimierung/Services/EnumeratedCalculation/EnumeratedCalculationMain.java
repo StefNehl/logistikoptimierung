@@ -66,7 +66,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
         {
             var result = this.factory.startFactory(stepsToDo, 10000, factoryMessageSettings);
             this.factory.resetFactory();
-            System.out.println(result);
             if(result < bestTimeSolution) {
                 bestTimeSolution = result;
                 bestSolution = new ArrayList<>(stepsToDo);
@@ -90,7 +89,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                     //abort complete solution because no material for the production in the warehouse
                     if(newSteps == null)
                     {
-                        System.out.println("Solution aborted");
+                        //System.out.println("Solution aborted");
                         return;
                     }
 

@@ -83,6 +83,7 @@ public class Factory {
         int hourCount = 1;
         addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
 
+        var copyOfSteps = new ArrayList<>(factorySteps);
         for(long i = startTime; i <= maxRunTime; i++)
         {
             if(i % oneHourInSeconds == 0)
@@ -92,18 +93,17 @@ public class Factory {
             }
 
             this.currentTimeStep = i;
-            var copyOfSteps = new ArrayList<>(factorySteps);
-            for (var step : copyOfSteps)
+            var remainingSteps = new ArrayList<>(copyOfSteps);
+            for (var step : remainingSteps)
             {
                 if(step.getDoTimeStep() > this.currentTimeStep)
                     continue;
+
                 if(step.doStep())
-                {
-                    factorySteps.remove(step);
-                }
+                    copyOfSteps.remove(step);
             }
 
-            if(factorySteps.isEmpty())
+            if(copyOfSteps.isEmpty())
                 return i;
 
         }

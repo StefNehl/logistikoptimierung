@@ -1,5 +1,6 @@
 package logistikoptimierung;
 
+import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
 import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.EnumeratedCalculation.EnumeratedCalculationMain;
@@ -11,12 +12,25 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
-        //TestFirstComeFirstServe();
 
-        TestProductionProcessOptimization();
+        var factoryMessageSettings = new FactoryMessageSettings(
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false
+        );
+
+        TestFirstComeFirstServe(factoryMessageSettings);
+
+        TestProductionProcessOptimization(factoryMessageSettings);
     }
 
-    private static void TestFirstComeFirstServe()
+    private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings)
     {
         System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
@@ -25,18 +39,6 @@ public class Main {
         var optimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
                 1);
-
-        var factoryMessageSettings = new FactoryMessageSettings(
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true
-                );
 
         //var runTimeInSeconds = 100; //One week 60 * 60 * 24 * 5 = 144 000
         var runTimeInSeconds = 10000;
@@ -52,29 +54,19 @@ public class Main {
         //instance.getFactory().printLogMessageFromTo(2017, 2200);
     }
 
-    private static void TestProductionProcessOptimization()
+    private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings)
     {
         System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
 
-        var factoryMessageSettings = new FactoryMessageSettings(
-                false,
-                false,
-                true,
-                true,
-                false,
-                false,
-                false,
-                false,
-                false
-        );
-
         var optimizer = new EnumeratedCalculationMain(instance.getFactory(), factoryMessageSettings);
-        //var optimizer = new ProductionProcessOptimization(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory()
                 .getOrderList(),
                 1);
+
+        var runTimeInSeconds = 10000;
+        instance.getFactory().startFactory(factoryTaskList, runTimeInSeconds, factoryMessageSettings);
 
         System.out.println();
         System.out.println("**********************************************");
