@@ -70,7 +70,13 @@ public class Transporter extends FactoryObject
                 return getSpecificAmountOfItemsFromOrderToCustomer((Order)item, amountOfItems);
             }
             case FactoryStepTypes.TransporterClosesOrderFromCustomer -> {
-
+                var order = (Order)item;
+                if(order.getProduct().amount() <= 0)
+                {
+                    this.getFactory().increaseIncome(order.getIncome());
+                    return true;
+                }
+                return false;
             }
         }
         return true;
@@ -182,8 +188,6 @@ public class Transporter extends FactoryObject
                 new MaterialPosition(order.getProduct().item(), amountOfItems));
         order.deductProductAmount(amountOfItems);
 
-        if(order.getProduct().amount() <= 0)
-            this.getFactory().increaseIncome(order.getIncome());
         return true;
     }
 
