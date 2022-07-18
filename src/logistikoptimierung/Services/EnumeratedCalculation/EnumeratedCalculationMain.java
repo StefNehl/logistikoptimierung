@@ -22,8 +22,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private List<Driver> availableDrivers;
     private List<DriverPoolItem> driverPoolItems;
 
-    private long bestTimeSolution = Long.MAX_VALUE;
+    private long bestTimeSolution;
     private List<FactoryStep> bestSolution = new ArrayList<>();
+    private long nrOfSimulations = 0;
 
 
 
@@ -54,6 +55,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         getAllNeededFactoryPlanningItemsForOrder(subOrderList);
 
+        nrOfSimulations = 0;
         var stepToDo = new ArrayList<FactoryStep>();
         getPlanningSolutionRecursive(stepToDo, this.allPlanningItems);
 
@@ -66,12 +68,16 @@ public class EnumeratedCalculationMain implements IOptimizationService
         {
             var result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
             this.factory.resetFactory();
-            System.out.println(result);
+            nrOfSimulations++;
+
+            if(nrOfSimulations % 100 == 0)
+                System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result);
 
             if(result < bestTimeSolution)
             {
                 bestTimeSolution = result;
                 bestSolution = new ArrayList<>(stepsToDo);
+                System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result);
             }
         }
 
@@ -83,11 +89,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 case Acquire -> {
                     stepsToAdd = getAcquireTransportSteps(planningItem);
                 }
-                case Deliver -> {
-                    stepsToAdd = getDeliverTransporters(stepsToDo, planningItem);
-                }
                 case Produce -> {
                     stepsToAdd = getProductionSteps(stepsToDo, planningItem);
+                }
+                case Deliver -> {
+                    stepsToAdd = getDeliverTransporters(stepsToDo, planningItem);
                 }
             }
 
@@ -163,7 +169,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         Transporter lastTransport = null;
         var lastAmountToTransport = 0;
-        while (amount >= 0)
+        while (amount > 0)
         {
             //Driver list is empty take release first driver from pool
             if(this.availableDrivers.isEmpty())
@@ -195,7 +201,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             steps.add(newStep);
 
-            var newDriver = this.availableDrivers.get(0);
+            var newDriver = this.availableDrivers.remove(0);
             var newPoolItem = new DriverPoolItem(newDriver, bestTransporter);
             driverPoolItems.add(newPoolItem);
             amount -= bestTransporter.getCapacity();

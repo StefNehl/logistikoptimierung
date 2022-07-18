@@ -24,19 +24,22 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 2;
+        int nrOfOrderToOptimize = 1;
+        String contractList = CSVDataImportService.CONTRACT_3;
         long maxRuntimeInSeconds = 100000;
 
-        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds);
+        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
 
-        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds);
+        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
     }
 
-    private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings, int nrOfOrderToOptimize, long maxRuntimeInSeconds)
+    private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings,
+                                                int nrOfOrderToOptimize,
+                                                long maxRuntimeInSeconds,
+                                                String contractList)
     {
-        System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
-        var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
+        var instance = dataService.loadData(contractList);
 
         var optimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
@@ -49,11 +52,13 @@ public class Main
         //instance.getFactory().printLogMessageFromTo(2017, 2200);
     }
 
-    private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings, int nrOfOrderToOptimize, long maxRuntimeInSeconds)
+    private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings,
+                                                          int nrOfOrderToOptimize,
+                                                          long maxRuntimeInSeconds,
+                                                          String contractList)
     {
-        System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
-        var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
+        var instance = dataService.loadData(contractList);
 
         var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
         var factoryTaskList = firstComeFirstServeOptimizer.optimize(instance.getFactory().getOrderList(),
@@ -91,7 +96,8 @@ public class Main
         System.out.println();
         System.out.println("**********************************************");
         System.out.println("End income: " + currentIncome);
-        System.out.println("Runtime: " +  ConvertSecondsToTime(currentTimeStep));
+        //System.out.println("Runtime: " +  ConvertSecondsToTime(currentTimeStep));
+        System.out.println("Runtime: " +  currentTimeStep);
         System.out.println("**********************************************");
         System.out.println();
     }
