@@ -93,7 +93,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             //abort complete solution because no material for the production or delivery in the warehouse
             if(stepsToAdd.isEmpty())
-                return;
+                continue;
 
             stepsToDo.addAll(stepsToAdd);
             var copyOfSteps = new ArrayList<>(planningItems);
@@ -331,18 +331,14 @@ public class EnumeratedCalculationMain implements IOptimizationService
         //Check if material is actually in the warehouse
         for (var materialPosition : process.getMaterialPositions())
         {
-            var isMaterialAcquired = false;
+            var materialInWarehouse = 0;
             for(var step : stepsToDo)
             {
-                if(step.getItemToManipulate().getName().equals(materialPosition.item().getName()) &&
-                    step.getAmountOfItems() >= materialPosition.amount())
-                {
-                    isMaterialAcquired = true;
-                    break;
-                }
+                if(step.getItemToManipulate().getName().equals(materialPosition.item().getName()))
+                    materialInWarehouse += step.getAmountOfItems();
             }
 
-            if(!isMaterialAcquired)
+            if(materialInWarehouse < planningItem.amount())
             {
                 //System.out.println("Abort solution: Not enough material in the Warehouse to produce");
                 return steps;
