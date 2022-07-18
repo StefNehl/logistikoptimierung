@@ -65,6 +65,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         if(planningItems.isEmpty())
         {
             var result = this.factory.startFactory(stepsToDo, 10000, factoryMessageSettings);
+            System.out.println(result);
             this.factory.resetFactory();
             if(result < bestTimeSolution) {
                 bestTimeSolution = result;
@@ -102,6 +103,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
             if(planningItem.planningType() == PlanningType.Acquire ||
                     planningItem.planningType() == PlanningType.Deliver)
             {
+                if(this.driverPoolItems.isEmpty())
+                    break;
+
                 var poolItem = this.driverPoolItems.remove(this.driverPoolItems.size() - 1);
                 this.availableDrivers.add(poolItem.driver());
                 this.sortedAvailableTransportList.add(poolItem.transporter());
@@ -139,26 +143,35 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             if(step.getStepType().equals(FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse))
             {
-                amountOfProductInWarehouse += step.getAmountOfItems();
+                if(step.getItemToManipulate().getName()
+                    .equals(order.getProduct().item().getName()))
+                {
+                    amountOfProductInWarehouse += step.getAmountOfItems();
+                }
             }
-
         }
 
         if(amountOfProductInWarehouse < order.getProduct().amount())
-            return steps;
-
-        if(this.availableDrivers.isEmpty())
         {
-            var poolItem = this.driverPoolItems.remove(0);
-            this.availableDrivers.add(poolItem.driver());
-            this.sortedAvailableTransportList.add(poolItem.transporter());
-            this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
+            System.out.println("Abort solution: Not enough products in the Warehouse to deliver");
+            return steps;
         }
+
+
 
         Transporter lastTransport = null;
         var lastAmountToTransport = 0;
         while (amount >= 0)
         {
+            //Driver list is empty take release first driver from pool
+            if(this.availableDrivers.isEmpty())
+            {
+                var poolItem = this.driverPoolItems.remove(0);
+                this.availableDrivers.add(poolItem.driver());
+                this.sortedAvailableTransportList.add(poolItem.transporter());
+                this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
+            }
+
             var bestTransporter = this.getTransporterWithSmallestDifferenceFromAmountAndHigherCapacity(
                     this.sortedAvailableTransportList,
                     planningItem.item(), amount);
@@ -201,6 +214,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return steps;
     }
 
+    private int getItemAmountOfFactoryStep()
+    {
+        return 0;
+    }
+
     private ArrayList<FactoryStep> getAcquireTransportSteps(PlanningItem planningItem)
     {
         var steps = new ArrayList<FactoryStep>();
@@ -208,15 +226,17 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         //ToDo Check if warehouse is full (SumUp every acquiring minus every production and delivery)
 
-        if(this.availableDrivers.isEmpty())
-        {
-            var poolItem = this.driverPoolItems.remove(0);
-            this.availableDrivers.add(poolItem.driver());
-            this.sortedAvailableTransportList.add(poolItem.transporter());
-        }
-
         while (amount >= 0)
         {
+            //Driver list is empty take release first driver from pool
+            if(this.availableDrivers.isEmpty())
+            {
+                var poolItem = this.driverPoolItems.remove(0);
+                this.availableDrivers.add(poolItem.driver());
+                this.sortedAvailableTransportList.add(poolItem.transporter());
+                this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
+            }
+
             var bestTransporter = this.getTransporterWithSmallestDifferenceFromAmountAndHigherCapacity(
                     this.sortedAvailableTransportList,
                     planningItem.item(),
@@ -258,9 +278,12 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             steps.add(newStep);
 
+
+
             var newDriver = this.availableDrivers.remove(0);
             this.sortedAvailableTransportList.remove(bestTransporter);
             var newPoolItem = new DriverPoolItem(newDriver, bestTransporter);
+
             driverPoolItems.add(newPoolItem);
             amount -= bestTransporter.getCapacity();
 
@@ -323,7 +346,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
             }
 
             if(!isMaterialAcquired)
+            {
+                System.out.println("Abort solution: Not enough material in the Warehouse to produce");
                 return steps;
+
+            }
         }
 
         var newStep = new FactoryStep(this.factory, 0,
