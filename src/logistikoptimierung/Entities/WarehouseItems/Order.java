@@ -14,17 +14,19 @@ public class Order extends WarehouseItem
                  int orderNr,
                  String area,
                  MaterialPosition product,
-                 double income, String transportType,
-                 String engine, int travelTime)
+                 double income,
+                 String transportType,
+                 String engine,
+                 int travelTime)
     {
         super(orderId, orderId, WarehouseItemTypes.Order);
+        this.orderNr = orderNr;
         this.area = area;
         this.product = product;
         this.income = income;
         this.transportType = transportType;
         this.engine = engine;
         this.travelTime = travelTime;
-        this.orderNr = orderNr;
     }
 
     public int getOrderNr() {
@@ -58,5 +60,15 @@ public class Order extends WarehouseItem
 
     public int getTravelTime() {
         return travelTime;
+    }
+
+    public Order createCopyOfOrder()
+    {
+
+        var materialPosition = new MaterialPosition(getProduct().item(),
+                getProduct().amount());
+
+        var newOrder = new Order(super.getItemId(), this.orderNr, this.area, materialPosition, this.income, this.transportType, this.engine, this.travelTime);
+        return newOrder;
     }
 }

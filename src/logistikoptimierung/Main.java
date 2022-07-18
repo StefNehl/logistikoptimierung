@@ -1,6 +1,5 @@
 package logistikoptimierung;
 
-import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
 import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.EnumeratedCalculation.EnumeratedCalculationMain;
@@ -8,8 +7,8 @@ import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstS
 
 import java.util.concurrent.TimeUnit;
 
-public class Main {
-
+public class Main
+{
     public static void main(String[] args) {
 	// write your code here
 
@@ -26,13 +25,14 @@ public class Main {
         );
 
         int nrOfOrderToOptimize = 2;
+        long maxRuntimeInSeconds = 10000;
 
-        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize);
+        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds);
 
-        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize);
+        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds);
     }
 
-    private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings, int nrOfOrderToOptimize)
+    private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings, int nrOfOrderToOptimize, long maxRuntimeInSeconds)
     {
         System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
@@ -42,40 +42,35 @@ public class Main {
         var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
                 nrOfOrderToOptimize);
 
-        //var runTimeInSeconds = 100; //One week 60 * 60 * 24 * 5 = 144 000
-        var runTimeInSeconds = 10000;
-        instance.getFactory().startFactory(factoryTaskList, runTimeInSeconds, factoryMessageSettings);
-
-        System.out.println();
-        System.out.println("**********************************************");
-        System.out.println("End income: " + instance.getFactory().getCurrentIncome());
-        System.out.println("Runtime: " +  ConvertSecondsToTime(instance.getFactory().getCurrentTimeStep()));
-        System.out.println("**********************************************");
-        System.out.println();
+        instance.getFactory().startFactory(factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+        printResult(instance.getFactory().getCurrentIncome(), instance.getFactory().getCurrentTimeStep());
+        instance.getFactory().resetFactory();
 
         //instance.getFactory().printLogMessageFromTo(2017, 2200);
     }
 
-    private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings, int nrOfOrderToOptimize)
+    private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings, int nrOfOrderToOptimize, long maxRuntimeInSeconds)
     {
         System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
         var instance = dataService.loadData(CSVDataImportService.CONTRACT_3);
 
-        var optimizer = new EnumeratedCalculationMain(instance.getFactory(), factoryMessageSettings);
-        var factoryTaskList = optimizer.optimize(instance.getFactory()
+        var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
+        var factoryTaskList = firstComeFirstServeOptimizer.optimize(instance.getFactory().getOrderList(),
+                nrOfOrderToOptimize);
+
+        var result = instance.getFactory().startFactory(factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+
+        instance.getFactory().resetFactory();
+        var optimizer = new EnumeratedCalculationMain(instance.getFactory(), (result + 1), factoryMessageSettings);
+        factoryTaskList = optimizer.optimize(instance.getFactory()
                 .getOrderList(),
                 nrOfOrderToOptimize);
 
-        var runTimeInSeconds = 10000;
-        instance.getFactory().startFactory(factoryTaskList, runTimeInSeconds, factoryMessageSettings);
+        instance.getFactory().startFactory(factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+        printResult(instance.getFactory().getCurrentIncome(), instance.getFactory().getCurrentTimeStep());
+        instance.getFactory().resetFactory();
 
-        System.out.println();
-        System.out.println("**********************************************");
-        System.out.println("End income: " + instance.getFactory().getCurrentIncome());
-        System.out.println("Runtime: " +  ConvertSecondsToTime(instance.getFactory().getCurrentTimeStep()));
-        System.out.println("**********************************************");
-        System.out.println();
     }
 
     private static String ConvertSecondsToTime(long seconds)
@@ -89,6 +84,16 @@ public class Main {
                 " Minutes " + realSeconds + " Seconds";
 
         return timeString;
+    }
+
+    private static void printResult(double currentIncome, long currentTimeStep)
+    {
+        System.out.println();
+        System.out.println("**********************************************");
+        System.out.println("End income: " + currentIncome);
+        System.out.println("Runtime: " +  ConvertSecondsToTime(currentTimeStep));
+        System.out.println("**********************************************");
+        System.out.println();
     }
 
 }

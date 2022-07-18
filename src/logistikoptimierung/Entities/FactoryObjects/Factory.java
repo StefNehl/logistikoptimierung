@@ -18,6 +18,7 @@ public class Factory {
     private final List<Driver> drivers;
     private final List<Material> suppliedMaterials;
     private final List<Product> availableProducts;
+    private final List<Order> workingOrderList;
     private final List<Order> orderList;
 
     private final List<FactoryObjectMessage> logMessages = new ArrayList<>();
@@ -65,6 +66,15 @@ public class Factory {
         this.suppliedMaterials = new ArrayList<>(suppliedMaterials);
         this.availableProducts = new ArrayList<>(availableProducts);
         this.orderList = orderList;
+
+        //Working Order List is used for storing the remaining amount of items in an Order
+        //This list changes => copy the list
+        this.workingOrderList = new ArrayList<>();
+        for(var order : orderList)
+        {
+            var copyOfOrder = order.createCopyOfOrder();
+            workingOrderList.add(copyOfOrder);
+        }
     }
 
     public long startFactory(List<FactoryStep> factorySteps, long maxRunTime, FactoryMessageSettings factoryMessageSettings)
@@ -132,6 +142,13 @@ public class Factory {
         for(var driver : drivers)
         {
             driver.resetDriver();
+        }
+
+        this.workingOrderList.clear();
+        for(var order : orderList)
+        {
+            var copyOfOrder = order.createCopyOfOrder();
+            workingOrderList.add(copyOfOrder);
         }
     }
 
@@ -286,7 +303,7 @@ public class Factory {
         var result = new ArrayList<WarehouseItem>();
         result.addAll(suppliedMaterials);
         result.addAll(availableProducts);
-        result.addAll(orderList);
+        result.addAll(workingOrderList);
 
         return result;
     }

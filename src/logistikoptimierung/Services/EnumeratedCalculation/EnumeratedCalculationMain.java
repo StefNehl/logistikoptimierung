@@ -27,7 +27,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
 
 
-    public EnumeratedCalculationMain(Factory factory, FactoryMessageSettings factoryMessageSettings)
+    public EnumeratedCalculationMain(Factory factory, long maxRuntime, FactoryMessageSettings factoryMessageSettings)
     {
         this.factory = factory;
         this.productionItem = new ArrayList<>();
@@ -40,13 +40,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
         this.sortedAvailableTransportList = new ArrayList<>(this.factory.getTransporters());
         this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
         this.driverPoolItems = new ArrayList<>(this.factory.getNrOfDrivers());
+        this.bestTimeSolution = maxRuntime;
     }
 
     @Override
     public List<FactoryStep> optimize(List<Order> orderList, int nrOfOrdersToOptimize)
     {
         var subOrderList = new ArrayList<Order>();
-
         for(int i = 0; i < nrOfOrdersToOptimize; i++)
         {
             subOrderList.add(orderList.get(i));
@@ -64,10 +64,12 @@ public class EnumeratedCalculationMain implements IOptimizationService
     {
         if(planningItems.isEmpty())
         {
-            var result = this.factory.startFactory(stepsToDo, 10000, factoryMessageSettings);
-            System.out.println(result);
+            var result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
             this.factory.resetFactory();
-            if(result < bestTimeSolution) {
+
+            if(result < bestTimeSolution)
+            {
+                System.out.println(result);
                 bestTimeSolution = result;
                 bestSolution = new ArrayList<>(stepsToDo);
             }
@@ -89,7 +91,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 }
             }
 
-            //abort complete solution because no material for the production in the warehouse
+            //abort complete solution because no material for the production or delivery in the warehouse
             if(stepsToAdd.isEmpty())
                 return;
 
@@ -153,7 +155,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         if(amountOfProductInWarehouse < order.getProduct().amount())
         {
-            System.out.println("Abort solution: Not enough products in the Warehouse to deliver");
+            //System.out.println("Abort solution: Not enough products in the Warehouse to deliver");
             return steps;
         }
 
@@ -212,11 +214,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
         steps.add(newStep);
 
         return steps;
-    }
-
-    private int getItemAmountOfFactoryStep()
-    {
-        return 0;
     }
 
     private ArrayList<FactoryStep> getAcquireTransportSteps(PlanningItem planningItem)
@@ -347,9 +344,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             if(!isMaterialAcquired)
             {
-                System.out.println("Abort solution: Not enough material in the Warehouse to produce");
+                //System.out.println("Abort solution: Not enough material in the Warehouse to produce");
                 return steps;
-
             }
         }
 
@@ -395,6 +391,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         removeDoubleEntriesFromPlaningItemList();
         getProcessesForEveryBatchAndOrderAfterDepth(subOrderList);
         addAcquiringPlaningItemsForEveryBatch();
+        addAcquiringPlaningItemsForDirectDelivery(subOrderList);
         addDeliveryPlanningItems(subOrderList);
 
         for(var item : this.acquiringPlanningItems)
@@ -600,6 +597,15 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
                 acquiringPlanningItems.add(new MaterialPosition(materialPosition.item(), materialPosition.amount()));
             }
+        }
+    }
+
+    private void addAcquiringPlaningItemsForDirectDelivery(List<Order> orderList)
+    {
+        for(var order : orderList)
+        {
+            if(this.factory.checkIfItemHasASupplier(order.getProduct().item()))
+                this.acquiringPlanningItems.add(new MaterialPosition(order.getProduct().item(), order.getProduct().amount()));
         }
     }
 
