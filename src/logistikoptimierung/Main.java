@@ -25,7 +25,7 @@ public class Main
         );
 
         int nrOfOrderToOptimize = 2;
-        long maxRuntimeInSeconds = 10000;
+        long maxRuntimeInSeconds = 100000;
 
         TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds);
 

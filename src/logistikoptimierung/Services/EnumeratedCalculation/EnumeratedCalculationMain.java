@@ -66,10 +66,10 @@ public class EnumeratedCalculationMain implements IOptimizationService
         {
             var result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
             this.factory.resetFactory();
+            System.out.println(result);
 
             if(result < bestTimeSolution)
             {
-                System.out.println(result);
                 bestTimeSolution = result;
                 bestSolution = new ArrayList<>(stepsToDo);
             }
@@ -223,7 +223,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         //ToDo Check if warehouse is full (SumUp every acquiring minus every production and delivery)
 
-        while (amount >= 0)
+        while (amount > 0)
         {
             //Driver list is empty take release first driver from pool
             if(this.availableDrivers.isEmpty())
