@@ -73,6 +73,11 @@ public class FactoryStep {
         return this.itemToManipulate;
     }
 
+    public String getStepType()
+    {
+        return this.stepType;
+    }
+
     public int getAmountOfItems()
     {
         return this.amountOfItems;

@@ -78,24 +78,19 @@ public class EnumeratedCalculationMain implements IOptimizationService
             switch (planningItem.planningType())
             {
                 case Acquire -> {
-                    stepsToAdd.addAll(getAcquireTransportSteps(planningItem));
+                    stepsToAdd = getAcquireTransportSteps(planningItem);
                 }
                 case Deliver -> {
-                    stepsToAdd.addAll(getDeliverTransporters(planningItem));
+                    stepsToAdd = getDeliverTransporters(stepsToDo, planningItem);
                 }
                 case Produce -> {
-                    var newSteps = getProductionSteps(stepsToDo, planningItem);
-
-                    //abort complete solution because no material for the production in the warehouse
-                    if(newSteps == null)
-                    {
-                        //System.out.println("Solution aborted");
-                        return;
-                    }
-
-                    stepsToAdd.addAll(newSteps);
+                    stepsToAdd = getProductionSteps(stepsToDo, planningItem);
                 }
             }
+
+            //abort complete solution because no material for the production in the warehouse
+            if(stepsToAdd.isEmpty())
+                return;
 
             stepsToDo.addAll(stepsToAdd);
             var copyOfSteps = new ArrayList<>(planningItems);
@@ -115,12 +110,42 @@ public class EnumeratedCalculationMain implements IOptimizationService
         }
     }
 
-    private List<FactoryStep> getDeliverTransporters(PlanningItem planningItem)
+    private ArrayList<FactoryStep> getDeliverTransporters(List<FactoryStep> stepsToDo, PlanningItem planningItem)
     {
         var steps = new ArrayList<FactoryStep>();
         var amount = planningItem.amount();
 
-        //ToDo Check if warehouse is full (SumUp every acquiring minus every production and delivery)
+        //Check if product is actually in the warehouse
+        var amountOfProductInWarehouse = 0;
+        var order = (Order)planningItem.item();
+
+        for(var step : stepsToDo)
+        {
+            if(step.getStepType().equals(FactoryStepTypes.Produce))
+            {
+                var productPosition = order.getProduct();
+
+                if(step.getItemToManipulate().getName()
+                        .equals(productPosition.item().getName()))
+                {
+                    var production = (Production)step.getFactoryObject();
+                    var process = production.getProductionProcessForProduct(productPosition.item());
+                    if(process == null)
+                        continue;
+
+                    amountOfProductInWarehouse += process.getProductionBatchSize();
+                }
+            }
+
+            if(step.getStepType().equals(FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse))
+            {
+                amountOfProductInWarehouse += step.getAmountOfItems();
+            }
+
+        }
+
+        if(amountOfProductInWarehouse < order.getProduct().amount())
+            return steps;
 
         if(this.availableDrivers.isEmpty())
         {
@@ -176,7 +201,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return steps;
     }
 
-    private List<FactoryStep> getAcquireTransportSteps(PlanningItem planningItem)
+    private ArrayList<FactoryStep> getAcquireTransportSteps(PlanningItem planningItem)
     {
         var steps = new ArrayList<FactoryStep>();
         var amount = planningItem.amount();
@@ -276,7 +301,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return null;
     }
 
-    private List<FactoryStep> getProductionSteps(List<FactoryStep> stepsToDo, PlanningItem planningItem)
+    private ArrayList<FactoryStep> getProductionSteps(List<FactoryStep> stepsToDo, PlanningItem planningItem)
     {
         var steps = new ArrayList<FactoryStep>();
         var process = this
@@ -298,7 +323,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             }
 
             if(!isMaterialAcquired)
-                return null;
+                return steps;
         }
 
         var newStep = new FactoryStep(this.factory, 0,

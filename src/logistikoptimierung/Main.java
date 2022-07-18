@@ -25,12 +25,14 @@ public class Main {
                 false
         );
 
-        TestFirstComeFirstServe(factoryMessageSettings);
+        int nrOfOrderToOptimize = 2;
 
-        TestProductionProcessOptimization(factoryMessageSettings);
+        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize);
+
+        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize);
     }
 
-    private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings)
+    private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings, int nrOfOrderToOptimize)
     {
         System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
@@ -38,7 +40,7 @@ public class Main {
 
         var optimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
         var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
-                1);
+                nrOfOrderToOptimize);
 
         //var runTimeInSeconds = 100; //One week 60 * 60 * 24 * 5 = 144 000
         var runTimeInSeconds = 10000;
@@ -54,7 +56,7 @@ public class Main {
         //instance.getFactory().printLogMessageFromTo(2017, 2200);
     }
 
-    private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings)
+    private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings, int nrOfOrderToOptimize)
     {
         System.out.println("Test with csv import");
         var dataService = new CSVDataImportService();
@@ -63,7 +65,7 @@ public class Main {
         var optimizer = new EnumeratedCalculationMain(instance.getFactory(), factoryMessageSettings);
         var factoryTaskList = optimizer.optimize(instance.getFactory()
                 .getOrderList(),
-                1);
+                nrOfOrderToOptimize);
 
         var runTimeInSeconds = 10000;
         instance.getFactory().startFactory(factoryTaskList, runTimeInSeconds, factoryMessageSettings);
