@@ -1,3 +1,15 @@
+/**
+ * This class create an object of the production. The production can have several production processes for different items.
+ * The possible tasks for the production are:
+ * - Move the materials to the input buffer
+ * - Produce a specific product
+ * - Move the produced product to the output buffer
+ * - Move the produced product from the output buffer to the warehouse
+ *
+ * Furthermore, the class simulates the blocked time, and the size of the input/output buffer and checks
+ * if the material for the production is available.
+ */
+
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
@@ -22,6 +34,14 @@ public class Production extends FactoryObject
     private FactoryStepTypes currentTask;
     private long blockedUntilTimeStep;
 
+    /**
+     * Create an object of the production class
+     * @param name sets the name
+     * @param id sets the unique id
+     * @param productionProcesses sets the different production processes
+     * @param maxNrOfInputBufferBatches sets the maximum amount of items in the input buffer
+     * @param maxNrOfOutputBufferBatches sets the maximum amount of items in the output buffer
+     */
     public Production(String name,
                       int id,
                       List<ProductionProcess> productionProcesses,
@@ -37,6 +57,19 @@ public class Production extends FactoryObject
         this.blockedUntilTimeStep = 0;
     }
 
+    /**
+     * Performs a task with the production.
+     * Task types are:
+     * - MoveMaterialsForProductFromWarehouseToInputBuffer => gets the material for the specific product to produce from the warehouse
+     * - Produce => produce the product
+     * - MoveProductToOutputBuffer => move the product from the production to the output buffer
+     * - MoveProductFromOutputBufferToWarehouse => moves the product form the output buffer to the warehouse
+     * @param currentTimeStep sets the current timeStep
+     * @param item which warehouse item should be manipulated
+     * @param amountOfItems the amount of items which should be manipulated
+     * @param stepType  what is the task to do
+     * @return return true if the task was successfully or false if not
+     */
     @Override
     public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, FactoryStepTypes stepType)
     {
@@ -49,7 +82,6 @@ public class Production extends FactoryObject
         switch (stepType)
         {
             case MoveMaterialsForProductFromWarehouseToInputBuffer -> {
-
                 if(remainingNrOfInputBufferBatches == 0)
                 {
                     addNotEnoughCapacityInBufferLogMessage(false);
@@ -64,13 +96,12 @@ public class Production extends FactoryObject
                     return false;
                 }
 
-
                 for(var m : process.getMaterialPositions())
                 {
                     var itemForBuffer = getFactory().getWarehouse().removeItemFromWarehouse(m);
                     if(itemForBuffer == null)
                     {
-                        super.addLogMessage("Not enough material (" + m.item().getName() + ") for product: " + item.getName() + " in warehouse");
+                        super.addErrorLogMessage("Not enough material (" + m.item().getName() + ") for product: " + item.getName() + " in warehouse");
                         return false;
                     }
                 }
@@ -89,7 +120,10 @@ public class Production extends FactoryObject
                 var producedProduct = produce(item);
 
                 if(producedProduct == null)
+                {
+                    super.addErrorLogMessage("Not able to produce product");
                     return false;
+                }
 
                 productInProduction = producedProduct;
                 return true;
@@ -97,7 +131,13 @@ public class Production extends FactoryObject
             case MoveProductToOutputBuffer -> {
                 if(productInProduction == null)
                 {
-                    super.addLogMessage("No product in production. " + item.getName());
+                    super.addErrorLogMessage("No product in production. " + item.getName());
+                    return false;
+                }
+
+                if(remainingNrOfOutputBufferBatches == 0)
+                {
+                    super.addErrorLogMessage("Not enough space in the output buffer");
                     return false;
                 }
 
@@ -133,6 +173,12 @@ public class Production extends FactoryObject
         return true;
     }
 
+    /**
+     * Return the production process for the product to produce.
+     * @param item the Product which should be produce
+     * @return the production process for the product to produce. Returns null if the production does not include a
+     * process for the product.
+     */
     public ProductionProcess getProductionProcessForProduct(WarehouseItem item)
     {
         for(var process : productionProcesses)
@@ -168,6 +214,10 @@ public class Production extends FactoryObject
         return new MaterialPosition(productToProduce, processInInput.getProductionBatchSize());
     }
 
+    /**
+     * Resets the production. The input/output buffers are set back to empty. The blocking time step is set back to 0.
+     * Current task to None. And the item which is in production gets removed.
+     */
     public void resetProduction()
     {
         this.remainingNrOfInputBufferBatches = this.maxNrOfInputBufferBatches;
@@ -183,7 +233,7 @@ public class Production extends FactoryObject
     private void addPProcessNotFoundMessage(WarehouseItem product)
     {
         var message = super.getName() + product.getName() + " Process for product not found";
-        super.addLogMessage(message);
+        super.addErrorLogMessage(message);
     }
 
     private void addProduceItemMessage(WarehouseItem product)
@@ -199,7 +249,7 @@ public class Production extends FactoryObject
             bufferName = "OutputBuffer";
 
         var message = super.getName() + " Not enough capacity in " + bufferName;
-        super.addLogMessage(message);
+        super.addErrorLogMessage(message);
     }
 
     private void addItemNotInBufferLogMessage(WarehouseItem item, boolean isOutputBuffer)
