@@ -15,11 +15,29 @@ public class FactoryStep {
     private long doTimeStep;
     private List<FactoryStep> factoryStepsToDoBefore;
 
-    public FactoryStep(Factory factory, long doTimeStamp, String itemToManipulate, int amountOfItems, String factoryObjectName, FactoryStepTypes stepType)
+    /**
+     * Creates a factory step object which should be performed at a specific time step
+     * @param factory factory where the step should be performed
+     * @param doTimeStep the specific time step when the step should be performed
+     * @param itemToManipulate the item which should be manipulated
+     * @param amountOfItems the amount of items which should be manipulated
+     * @param factoryObjectName the factory object which should perform the manipulation
+     * @param stepType the type of manipulation
+     */
+    public FactoryStep(Factory factory, long doTimeStep, String itemToManipulate, int amountOfItems, String factoryObjectName, FactoryStepTypes stepType)
     {
-        initFactoryStep(factory, doTimeStamp, new ArrayList<>(), itemToManipulate, amountOfItems, factoryObjectName, stepType);
+        initFactoryStep(factory, doTimeStep, new ArrayList<>(), itemToManipulate, amountOfItems, factoryObjectName, stepType);
     }
 
+    /**
+     * Creates a factory step object which should be performed after a list of factory steps
+     * @param factory factory where the step should be performed
+     * @param factoryStepsToDoBefore the factory steps which needed to be completed before this step can perform
+     * @param itemToManipulate the item which should be manipulated
+     * @param amountOfItems the amount of items which should be manipulated
+     * @param factoryObjectName the factory object which should perform the manipulation
+     * @param stepType the type of manipulation
+     */
     public FactoryStep(Factory factory, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, FactoryStepTypes stepType)
     {
         var doTimeStamp = 0;
@@ -53,6 +71,10 @@ public class FactoryStep {
         this.factoryStepsToDoBefore = factoryStepsToDoBefore;
     }
 
+    /**
+     * The actual "do" of the step
+     * @return
+     */
     public boolean doStep()
     {
         var completed = factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
@@ -60,24 +82,40 @@ public class FactoryStep {
         return completed;
     }
 
+    /**
+     * get the time step when the factory step should be performed
+     * @return time step
+     */
     public long getDoTimeStep() {
         return doTimeStep;
     }
 
+    /**
+     * @return the factory where the time step should be performed
+     */
     public FactoryObject getFactoryObject() {
         return factoryObject;
     }
 
+    /**
+     * @return gets the warehouse item which should be manipulated
+     */
     public WarehouseItem getItemToManipulate()
     {
         return this.itemToManipulate;
     }
 
+    /**
+     * @return gets the type of manipulation
+     */
     public FactoryStepTypes getStepType()
     {
         return this.stepType;
     }
 
+    /**
+     * @return gets the amount of times
+     */
     public int getAmountOfItems()
     {
         return this.amountOfItems;
