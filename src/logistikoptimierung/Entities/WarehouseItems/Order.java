@@ -10,6 +10,17 @@ public class Order extends WarehouseItem
     private final int travelTime;
     private final int orderNr;
 
+    /**
+     * Creates a new object for the order.
+     * @param orderId sets the order id
+     * @param orderNr sets the order nr
+     * @param area sets the area for transportation
+     * @param product sets the production with the amount which is needed as material position
+     * @param income sets the income of the
+     * @param transportType sets the transport type for transportation
+     * @param engine sets the engine for transportation
+     * @param travelTime sets the travel time for transportation
+     */
     public Order(String orderId,
                  int orderNr,
                  String area,
@@ -41,6 +52,10 @@ public class Order extends WarehouseItem
         return product;
     }
 
+    /**
+     * Reduce the material position needed by the amount to deduct
+     * @param amountToDeduct amount to deduct
+     */
     public void deductProductAmount(int amountToDeduct)
     {
         this.product = new MaterialPosition(this.product.item(), this.product.amount() - amountToDeduct);
@@ -62,6 +77,10 @@ public class Order extends WarehouseItem
         return travelTime;
     }
 
+    /**
+     * Creates a full copy (with a copy of the material position) of the order
+     * @return a new copied order
+     */
     public Order createCopyOfOrder()
     {
 
