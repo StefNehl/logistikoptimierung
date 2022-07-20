@@ -19,7 +19,7 @@ public class Production extends FactoryObject
     private MaterialPosition productInProduction;
     private final Set<MaterialPosition> productsInOutputBuffer = new HashSet<>();
 
-    private String currentTask;
+    private FactoryStepTypes currentTask;
     private long blockedUntilTimeStep;
 
     public Production(String name,
@@ -38,7 +38,7 @@ public class Production extends FactoryObject
     }
 
     @Override
-    public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, FactoryStepTypes stepType)
     {
         if(currentTimeStep < this.blockedUntilTimeStep)
         {
@@ -48,7 +48,7 @@ public class Production extends FactoryObject
         currentTask = stepType;
         switch (stepType)
         {
-            case FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer -> {
+            case MoveMaterialsForProductFromWarehouseToInputBuffer -> {
 
                 if(remainingNrOfInputBufferBatches == 0)
                 {
@@ -79,7 +79,7 @@ public class Production extends FactoryObject
                 remainingNrOfInputBufferBatches--;
                 addBufferLogMessage(item, false, true);
             }
-            case FactoryStepTypes.Produce -> {
+            case Produce -> {
                 if(this.remainingNrOfOutputBufferBatches == 0)
                 {
                     addNotEnoughCapacityInBufferLogMessage(true);
@@ -94,7 +94,7 @@ public class Production extends FactoryObject
                 productInProduction = producedProduct;
                 return true;
             }
-            case FactoryStepTypes.MoveProductToOutputBuffer -> {
+            case MoveProductToOutputBuffer -> {
                 if(productInProduction == null)
                 {
                     super.addLogMessage("No product in production. " + item.getName());
@@ -107,7 +107,7 @@ public class Production extends FactoryObject
                 addBufferLogMessage(item, true, false);
                 return true;
             }
-            case FactoryStepTypes.MoveProductFromOutputBufferToWarehouse -> {
+            case MoveProductFromOutputBufferToWarehouse -> {
                 MaterialPosition productToMove = null;
                 for(var product : productsInOutputBuffer)
                 {
@@ -127,6 +127,7 @@ public class Production extends FactoryObject
 
                 getFactory().getWarehouse().addItemToWarehouse(productToMove);
             }
+            default -> throw new IllegalStateException("Unexpected value: " + stepType);
         }
 
         return true;
@@ -172,7 +173,7 @@ public class Production extends FactoryObject
         this.remainingNrOfInputBufferBatches = this.maxNrOfInputBufferBatches;
         this.remainingNrOfOutputBufferBatches = this.maxNrOfOutputBufferBatches;
         this.blockedUntilTimeStep = 0;
-        this.currentTask = "";
+        this.currentTask = FactoryStepTypes.None;
         this.productInProduction = null;
         this.productsInOutputBuffer.clear();
         this.processesInInputBuffer.clear();

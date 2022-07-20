@@ -4,7 +4,7 @@ import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 public class Driver extends FactoryObject
 {
-    private String currentTask;
+    private FactoryStepTypes currentTask;
     private long blockedUntilTimeStep;
 
 
@@ -14,7 +14,7 @@ public class Driver extends FactoryObject
     }
 
     @Override
-    public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, FactoryStepTypes stepType)
     {
         if(currentTimeStep < blockedUntilTimeStep)
         {
@@ -29,7 +29,7 @@ public class Driver extends FactoryObject
     public void resetDriver()
     {
         this.blockedUntilTimeStep = 0;
-        this.currentTask = "";
+        this.currentTask = FactoryStepTypes.None;
     }
 
     public long getBlockedUntilTimeStep() {

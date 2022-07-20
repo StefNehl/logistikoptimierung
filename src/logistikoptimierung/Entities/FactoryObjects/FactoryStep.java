@@ -9,24 +9,24 @@ public class FactoryStep {
 
     private WarehouseItem itemToManipulate;
     private FactoryObject factoryObject;
-    private String stepType;
+    private FactoryStepTypes stepType;
     private Factory factory;
     private int amountOfItems;
     private long doTimeStep;
     private List<FactoryStep> factoryStepsToDoBefore;
 
-    public FactoryStep(Factory factory, long doTimeStamp, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
+    public FactoryStep(Factory factory, long doTimeStamp, String itemToManipulate, int amountOfItems, String factoryObjectName, FactoryStepTypes stepType)
     {
         initFactoryStep(factory, doTimeStamp, new ArrayList<>(), itemToManipulate, amountOfItems, factoryObjectName, stepType);
     }
 
-    public FactoryStep(Factory factory, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
+    public FactoryStep(Factory factory, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, FactoryStepTypes stepType)
     {
         var doTimeStamp = 0;
         initFactoryStep(factory, doTimeStamp, factoryStepsToDoBefore, itemToManipulate, amountOfItems, factoryObjectName, stepType);
     }
 
-    private void initFactoryStep(Factory factory, long doTimeStamp, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, String stepType)
+    private void initFactoryStep(Factory factory, long doTimeStamp, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, FactoryStepTypes stepType)
     {
         for(var item : factory.getAvailableWarehouseItems())
         {
@@ -73,7 +73,7 @@ public class FactoryStep {
         return this.itemToManipulate;
     }
 
-    public String getStepType()
+    public FactoryStepTypes getStepType()
     {
         return this.stepType;
     }

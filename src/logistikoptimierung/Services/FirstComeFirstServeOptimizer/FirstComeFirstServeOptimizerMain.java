@@ -178,7 +178,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                             item.getName(),
                             transporterAmount,
                             transporterPlanningItem.getTransporter().getName(),
-                            FactoryStepTypes.TransporterClosesOrderFromCustomer));
+                            FactoryStepTypes.ClosesOrderFromCustomer));
                 }
             }
 

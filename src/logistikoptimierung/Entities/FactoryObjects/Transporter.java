@@ -1,3 +1,14 @@
+/**
+ * This class creates a Transporter for the factory. This transporter handles the Tasks:
+ * - Get material from supplier and drive back to warehouse
+ * - Move the material from the transporter to the warehouse
+ * - Conclude and bring the product to sell to the customer (from a specific order)
+ * - Close the order after every amount of a specific product was delivered
+ *
+ * Furthermore, the class simulates the blocked time, and the specific properties of the transporter.
+ * The properties are: Area, type, engine and capacity
+ */
+
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.Material;
@@ -14,8 +25,17 @@ public class Transporter extends FactoryObject
     private long blockedUntilTimeStep;
 
     private MaterialPosition loadedItem;
-    private String currentTask;
+    private FactoryStepTypes currentTask;
 
+    /**
+     * Creates an object of the transporter
+     * @param name set the name of the transporter
+     * @param id set the unique ID
+     * @param area set the property area
+     * @param type set the property type
+     * @param engine set the property engine
+     * @param maxCapacity set the property max capacity of the transporter
+     */
     public Transporter(String name, int id, String area, String type, String engine, int maxCapacity)
     {
         super(name, "T" + id, FactoryObjectTypes.Transporter);
@@ -26,8 +46,21 @@ public class Transporter extends FactoryObject
         this.blockedUntilTimeStep = 0;
     }
 
+    /**
+     * Performs the task with the transporter
+     * Task Types are:
+     * - GetMaterialFromSuppliesAndMoveBackToWarehouse => Get material from supplier and drive back to warehouse
+     * - MoveMaterialFromTransporterToWarehouse => Move the material from the transporter to the warehouse
+     * - ConcludeOrderTransportToCustomer => Conclude and bring the product to sell to the customer (from a specific order)
+     * - ClosesOrderFromCustomer => Close the order after every amount of a specific product was delivered
+     * @param currentTimeStep
+     * @param item
+     * @param amountOfItems
+     * @param stepType
+     * @return
+     */
     @Override
-    public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, String stepType)
+    public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, FactoryStepTypes stepType)
     {
         if(currentTimeStep < blockedUntilTimeStep)
         {
@@ -38,7 +71,7 @@ public class Transporter extends FactoryObject
         currentTask = stepType;
         switch (stepType)
         {
-            case FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse -> {
+            case GetMaterialFromSuppliesAndMoveBackToWarehouse -> {
                 var driver = this.getFactory().getNotBlockedDriver();
                 if(driver == null)
                 {
@@ -54,7 +87,7 @@ public class Transporter extends FactoryObject
                 }
                 this.loadedItem = itemToLoad;
             }
-            case FactoryStepTypes.MoveMaterialFromTransporterToWarehouse -> {
+            case MoveMaterialFromTransporterToWarehouse -> {
                 if(this.loadedItem == null)
                 {
                     super.addErrorLogMessage("No item to unload");
@@ -63,7 +96,7 @@ public class Transporter extends FactoryObject
                 this.getFactory().getWarehouse().addItemToWarehouse(loadedItem);
                 this.loadedItem = null;
             }
-            case FactoryStepTypes.ConcludeOrderTransportToCustomer -> {
+            case ConcludeOrderTransportToCustomer -> {
 
                 //Check if material is available
                 if(!this.getFactory().getWarehouse().checkIfMaterialIsAvailable(((Order)item).getProduct().item(), amountOfItems))
@@ -81,7 +114,7 @@ public class Transporter extends FactoryObject
 
                 return getSpecificAmountOfItemsFromOrderToCustomer((Order)item, amountOfItems);
             }
-            case FactoryStepTypes.TransporterClosesOrderFromCustomer -> {
+            case ClosesOrderFromCustomer -> {
                 var order = (Order)item;
                 if(order.getProduct().amount() > 0)
                 {
@@ -97,7 +130,7 @@ public class Transporter extends FactoryObject
     public void resetTransporter()
     {
         this.blockedUntilTimeStep = 0;
-        this.currentTask = "";
+        this.currentTask = FactoryStepTypes.None;
     }
 
     public int getCapacity() {

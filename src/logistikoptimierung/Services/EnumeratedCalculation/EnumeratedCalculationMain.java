@@ -215,7 +215,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 planningItem.item().getName(),
                 lastAmountToTransport,
                 lastTransport.getName(),
-                FactoryStepTypes.TransporterClosesOrderFromCustomer);
+                FactoryStepTypes.ClosesOrderFromCustomer);
 
         steps.add(newStep);
 
