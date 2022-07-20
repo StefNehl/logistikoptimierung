@@ -108,7 +108,7 @@ public class Factory {
         this.printFactoryStepMessages = factoryMessageSettings.printFactoryStepMessages();
         this.printOnlyCompletedFactoryStepMessages = factoryMessageSettings.printOnlyCompletedFactoryStepMessages();
         this.printWarehouseStockChangeMessages = factoryMessageSettings.printWarehouseStockChangeMessages();
-        this.printCompleteWarehouseStockAfterChangeMessages = factoryMessageSettings.printCompleteWarehouseStockAfterChangeMessages();
+        this.printCompleteWarehouseStockAfterChangeMessages = factoryMessageSettings.printCurrentWarehouseStockAfterChangeMessages();
 
         int hourCount = 1;
         addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
