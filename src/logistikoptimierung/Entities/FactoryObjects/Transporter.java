@@ -68,7 +68,7 @@ public class Transporter extends FactoryObject
                 //Check if material is available
                 if(!this.getFactory().getWarehouse().checkIfMaterialIsAvailable(((Order)item).getProduct().item(), amountOfItems))
                 {
-                    super.addLogMessage("Material: " + item + " in the amount: " + amountOfItems + " not available");
+                    super.addErrorLogMessage("Material: " + item + " in the amount: " + amountOfItems + " not available");
                     return false;
                 }
 
@@ -215,12 +215,12 @@ public class Transporter extends FactoryObject
     private void addCapacityExceededMessage(WarehouseItem item, int amount)
     {
         var message = super.getName() + ": Capacity exceeded for " + item.getName() + " amount: " + amount;
-        super.addLogMessage(message);
+        super.addErrorLogMessage(message);
     }
 
     private void addTransportationConstraintNotFulfilledMessage(WarehouseItem material)
     {
         var message = super.getName() + ": Transport constraints not fulfilled for " + material.getName();
-        super.addLogMessage(message);
+        super.addErrorLogMessage(message);
     }
 }
