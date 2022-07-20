@@ -45,9 +45,21 @@ public class Transporter extends FactoryObject
                     addNoAvailableDriverLogMessage();
                     return false;
                 }
-                this.loadedItem = getMaterialFromSupplier(amountOfItems, (Material) item, driver);
+                super.addLogMessage("Free Driver found: " + driver.getName());
+                var itemToLoad = getMaterialFromSupplier(amountOfItems, (Material) item, driver);
+                if(itemToLoad == null)
+                {
+                    super.addErrorLogMessage("Could not load item");
+                    return false;
+                }
+                this.loadedItem = itemToLoad;
             }
             case FactoryStepTypes.MoveMaterialFromTransporterToWarehouse -> {
+                if(this.loadedItem == null)
+                {
+                    super.addErrorLogMessage("No item to unload");
+                    return false;
+                }
                 this.getFactory().getWarehouse().addItemToWarehouse(loadedItem);
                 this.loadedItem = null;
             }
@@ -71,12 +83,12 @@ public class Transporter extends FactoryObject
             }
             case FactoryStepTypes.TransporterClosesOrderFromCustomer -> {
                 var order = (Order)item;
-                if(order.getProduct().amount() <= 0)
+                if(order.getProduct().amount() > 0)
                 {
-                    this.getFactory().increaseIncome(order.getIncome());
-                    return true;
+                    super.addErrorLogMessage("Order can't be closed. " + order.getProduct().amount() + " of " + order.getProduct().item() + " is still to deliver");
+                    return false;
                 }
-                return false;
+                this.getFactory().increaseIncome(order.getIncome());
             }
         }
         return true;
@@ -191,7 +203,7 @@ public class Transporter extends FactoryObject
     private void addNoAvailableDriverLogMessage()
     {
         var message = super.getName() + ": no driver available for task: " + currentTask;
-        super.addLogMessage(message);
+        super.addErrorLogMessage(message);
     }
 
     private void addDriveLogMessage(MaterialPosition position)

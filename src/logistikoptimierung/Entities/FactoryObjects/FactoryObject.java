@@ -40,6 +40,11 @@ public class FactoryObject {
         this.factory.addLog(message, factoryObjectType);
     }
 
+    public void addErrorLogMessage(String message)
+    {
+        this.factory.addLog(message, factoryObjectType);
+    }
+
     public void addBlockMessage(String message, String stepType)
     {
         this.factory.addBlockLog(message, stepType, factoryObjectType);
