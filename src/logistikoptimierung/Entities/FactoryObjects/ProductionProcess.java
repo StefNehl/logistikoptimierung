@@ -1,18 +1,17 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
-import logistikoptimierung.Entities.WarehouseItems.Product;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.List;
 
 public class ProductionProcess
 {
-    private WarehouseItem productToProduce;
-    private int productionBatchSize;
-    private int productionTime;
+    private final WarehouseItem productToProduce;
+    private final int productionBatchSize;
+    private final int productionTime;
 
-    private Production production;
+    private final Production production;
     List<MaterialPosition> materialPositions;
 
     public ProductionProcess(WarehouseItem productToProduce, int productionBatchSize,

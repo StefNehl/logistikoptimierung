@@ -1,7 +1,6 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
-import logistikoptimierung.Entities.WarehouseItems.Product;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.HashSet;
@@ -13,12 +12,12 @@ public class Production extends FactoryObject
     private final List<ProductionProcess> productionProcesses;
     private int remainingNrOfInputBufferBatches;
     private int remainingNrOfOutputBufferBatches;
-    private int maxNrOfInputBufferBatches;
-    private int maxNrOfOutputBufferBatches;
+    private final int maxNrOfInputBufferBatches;
+    private final int maxNrOfOutputBufferBatches;
 
-    private Set<ProductionProcess> processesInInputBuffer = new HashSet<>();
+    private final Set<ProductionProcess> processesInInputBuffer = new HashSet<>();
     private MaterialPosition productInProduction;
-    private Set<MaterialPosition> productsInOutputBuffer = new HashSet<>();
+    private final Set<MaterialPosition> productsInOutputBuffer = new HashSet<>();
 
     private String currentTask;
     private long blockedUntilTimeStep;

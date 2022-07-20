@@ -88,16 +88,6 @@ public class Transporter extends FactoryObject
         this.currentTask = "";
     }
 
-    public String getArea() { return area; }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getEngine() {
-        return engine;
-    }
-
     public int getCapacity() {
         return capacity;
     }

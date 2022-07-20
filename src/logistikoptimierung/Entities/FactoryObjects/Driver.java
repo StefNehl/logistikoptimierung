@@ -1,6 +1,5 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.WarehouseItems.Material;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 public class Driver extends FactoryObject
@@ -35,9 +34,5 @@ public class Driver extends FactoryObject
 
     public int getBlockedUntilTimeStep() {
         return blockedUntilTimeStep;
-    }
-
-    public void setBlockedUntilTimeStep(int blockedUntilTimeStep) {
-        this.blockedUntilTimeStep = blockedUntilTimeStep;
     }
 }

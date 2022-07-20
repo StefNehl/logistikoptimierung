@@ -32,8 +32,6 @@ public class Factory {
     private boolean printOnlyCompletedFactoryStepMessages;
     private boolean printCompleteWarehouseStockAfterChangeMessages;
 
-    private final int oneHourInSeconds = 3600;
-
     public Factory(String name,
                    int warehouseCapacity,
                    List<Production> productions,
@@ -96,6 +94,7 @@ public class Factory {
         var copyOfSteps = new ArrayList<>(factorySteps);
         for(long i = startTime; i <= maxRunTime; i++)
         {
+            int oneHourInSeconds = 3600;
             if(i % oneHourInSeconds == 0)
             {
                 hourCount++;
@@ -275,11 +274,6 @@ public class Factory {
         return null;
     }
 
-    public List<Material> getSuppliedMaterials() {
-        return suppliedMaterials;
-    }
-
-
     public boolean checkIfItemHasASupplier(WarehouseItem item)
     {
         for (var suppliedMaterial : this.suppliedMaterials)
@@ -288,10 +282,6 @@ public class Factory {
                 return true;
         }
         return false;
-    }
-
-    public List<Product> getAvailableProducts() {
-        return availableProducts;
     }
 
     public List<Order> getOrderList() {

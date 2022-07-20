@@ -30,8 +30,8 @@ public class Main
         String contractList = CSVDataImportService.CONTRACT_3;
         long maxRuntimeInSeconds = 100000;
 
-        testRecursion();
-        //TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
+        //testRecursion();
+        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
 
         //TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
     }

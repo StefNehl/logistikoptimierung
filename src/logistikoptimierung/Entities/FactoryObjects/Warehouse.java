@@ -1,11 +1,11 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.FactoryObjects.Factory;
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Warehouse extends FactoryObject
 {
@@ -36,11 +36,10 @@ public class Warehouse extends FactoryObject
 
         for(var wp : warehouseItems)
         {
-            if(wp.item().getName() == materialPosition.item().getName())
+            if(Objects.equals(wp.item().getName(), materialPosition.item().getName()))
             {
-                var newPosition = new MaterialPosition(materialPosition.item(),
+                warehousePosition = new MaterialPosition(materialPosition.item(),
                         wp.amount() + materialPosition.amount());
-                warehousePosition = newPosition;
                 indexToRemove = warehouseItems.indexOf(wp);
             }
         }
@@ -156,13 +155,13 @@ public class Warehouse extends FactoryObject
 
     private String listToString(List<MaterialPosition> list)
     {
-        var stringResult = "\n" + list.get(0).toString();
+        StringBuilder stringResult = new StringBuilder("\n" + list.get(0).toString());
 
         for(int i = 1; i < list.size(); i++)
         {
-            stringResult += "\n" + list.get(i).toString();
+            stringResult.append("\n").append(list.get(i).toString());
         }
 
-        return stringResult;
+        return stringResult.toString();
     }
 }

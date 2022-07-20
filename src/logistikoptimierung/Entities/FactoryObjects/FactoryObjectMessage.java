@@ -4,7 +4,6 @@ public record FactoryObjectMessage(long timeStep, String message, String factory
     @Override
     public String toString()
     {
-        var messageString = timeStep + " " + factoryObjectType + ": " + message;
-        return messageString;
+        return timeStep + " " + factoryObjectType + ": " + message;
     }
 }

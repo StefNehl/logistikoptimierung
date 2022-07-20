@@ -85,7 +85,7 @@ public class FactoryStep {
 
     private void addStepMessage(boolean completed)
     {
-        this.factory.addLog(this.toString() + " Completed: " + completed, FactoryObjectTypes.FactoryStep, completed);
+        this.factory.addLog(this + " Completed: " + completed, FactoryObjectTypes.FactoryStep, completed);
     }
 
     @Override
