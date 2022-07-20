@@ -7,7 +7,7 @@ public class FactoryObject {
     private final String objectId;
     private final String name;
     private Factory factory;
-    private final String factoryObjectType;
+    private final FactoryObjectMessageTypes factoryObjectType;
 
     /**
      * Creates a factory object. Factory objects are drivers, transporters, factory steps and productions.
@@ -16,7 +16,7 @@ public class FactoryObject {
      * @param objectId id of the object
      * @param factoryObjectType type of the object
      */
-    public FactoryObject(String name, String objectId, String factoryObjectType)
+    public FactoryObject(String name, String objectId, FactoryObjectMessageTypes factoryObjectType)
     {
         this.name = name;
         this.objectId = objectId;

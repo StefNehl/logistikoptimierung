@@ -35,7 +35,7 @@ public class FactoryStep {
         }
 
         if(this.itemToManipulate == null)
-            factory.addLog("Item " + itemToManipulate + " not found", FactoryObjectTypes.FactoryStep);
+            factory.addLog("Item " + itemToManipulate + " not found", FactoryObjectMessageTypes.FactoryStep);
 
         for (var factoryObject :
                 factory.getFactoryObject()) {
@@ -44,7 +44,7 @@ public class FactoryStep {
         }
 
         if(factoryObject == null)
-            factory.addLog("Factory Object " + factoryObjectName + " not found", FactoryObjectTypes.FactoryStep);
+            factory.addLog("Factory Object " + factoryObjectName + " not found", FactoryObjectMessageTypes.FactoryStep);
 
         this.stepType = stepType;
         this.factory = factory;
@@ -85,7 +85,7 @@ public class FactoryStep {
 
     private void addStepMessage(boolean completed)
     {
-        this.factory.addFactoryStepLog(this + " Completed: " + completed, FactoryObjectTypes.FactoryStep, completed);
+        this.factory.addFactoryStepLog(this + " Completed: " + completed, FactoryObjectMessageTypes.FactoryStep, completed);
     }
 
     @Override

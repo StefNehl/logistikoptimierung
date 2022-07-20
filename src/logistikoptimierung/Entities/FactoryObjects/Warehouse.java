@@ -15,7 +15,7 @@ public class Warehouse extends FactoryObject
 
     public Warehouse(String name, int warehouseCapacity, Factory factory)
     {
-        super(name, name, FactoryObjectTypes.Warehouse);
+        super(name, name, FactoryObjectMessageTypes.Warehouse);
         this.factory = factory;
         this.warehouseItems = new ArrayList<>();
         this.remainingWarehouseCapacity = warehouseCapacity;
@@ -123,25 +123,25 @@ public class Warehouse extends FactoryObject
     private void addCapacityReachedMessage()
     {
         var message = super.getName() + " Capacity reached";
-        this.factory.addLog(message, FactoryObjectTypes.Warehouse);
+        this.factory.addLog(message, FactoryObjectMessageTypes.Warehouse);
     }
 
     private void addAddItemMessage(MaterialPosition item)
     {
         var message = super.getName() + " Task: add item " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
-        this.factory.addLog(message, FactoryObjectTypes.WarehouseStock);
+        this.factory.addLog(message, FactoryObjectMessageTypes.WarehouseStock);
     }
 
     private void addItemNotFoundMessage(WarehouseItem item)
     {
         var message = super.getName() + " " + item.getName() + " not found or not enough amount in warehouse";
-        this.factory.addLog(message, FactoryObjectTypes.Warehouse);
+        this.factory.addLog(message, FactoryObjectMessageTypes.Warehouse);
     }
 
     private void addItemRemovedMessage(MaterialPosition item)
     {
         var message = super.getName() + " Task: remove " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
-        this.factory.addLog(message, FactoryObjectTypes.WarehouseStock);
+        this.factory.addLog(message, FactoryObjectMessageTypes.WarehouseStock);
     }
 
     public void addCompleteWarehouseStockMessage()
@@ -150,7 +150,7 @@ public class Warehouse extends FactoryObject
             return;
 
         var message = listToString(this.warehouseItems);
-        this.factory.addLog(message, FactoryObjectTypes.CurrentWarehouseStock);
+        this.factory.addLog(message, FactoryObjectMessageTypes.CurrentWarehouseStock);
     }
 
     private String listToString(List<MaterialPosition> list)

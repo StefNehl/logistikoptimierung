@@ -111,7 +111,7 @@ public class Factory {
         this.printCompleteWarehouseStockAfterChangeMessages = factoryMessageSettings.printCurrentWarehouseStockAfterChangeMessages();
 
         int hourCount = 1;
-        addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
+        addLog("Hour: " + hourCount, FactoryObjectMessageTypes.Factory);
 
         var copyOfSteps = new ArrayList<>(factorySteps);
         for(long i = startTime; i <= maxRunTime; i++)
@@ -120,7 +120,7 @@ public class Factory {
             if(i % oneHourInSeconds == 0)
             {
                 hourCount++;
-                addLog("Hour: " + hourCount, FactoryObjectTypes.Factory);
+                addLog("Hour: " + hourCount, FactoryObjectMessageTypes.Factory);
             }
 
             this.currentTimeStep = i;
@@ -389,7 +389,7 @@ public class Factory {
     {
         this.currentIncome += additionalIncome;
         var message = "Income increase, new income: " + additionalIncome;
-        addLog(message, FactoryObjectTypes.Factory);
+        addLog(message, FactoryObjectMessageTypes.Factory);
     }
 
     /**
@@ -405,21 +405,21 @@ public class Factory {
      * @param factoryObjectType the object which has the message
      * @param completed if the factory step was completed
      */
-    private void addLog(String message, String factoryObjectType, boolean completed)
+    private void addLog(String message, FactoryObjectMessageTypes factoryObjectType, boolean completed)
     {
         var newMessage = new FactoryObjectMessage(currentTimeStep, message, factoryObjectType);
         this.logMessages.add(newMessage);
         switch (factoryObjectType)
         {
-            case FactoryObjectTypes.Driver -> {
+            case Driver -> {
                 if(this.printDriverMessages)
                     System.out.println(newMessage);
             }
-            case FactoryObjectTypes.Factory -> {
+            case Factory -> {
                 if(this.printFactoryMessages)
                     System.out.println(newMessage);
             }
-            case FactoryObjectTypes.FactoryStep -> {
+            case FactoryStep -> {
                 if(!this.printFactoryStepMessages)
                     break;
 
@@ -432,23 +432,23 @@ public class Factory {
 
                 System.out.println(newMessage);
             }
-            case FactoryObjectTypes.Production -> {
+            case Production -> {
                 if(this.printProductionMessages)
                     System.out.println(newMessage);
             }
-            case FactoryObjectTypes.Transporter -> {
+            case Transporter -> {
                 if(this.printTransportMessages)
                     System.out.println(newMessage);
             }
-            case FactoryObjectTypes.WarehouseStock ->{
+            case WarehouseStock ->{
                 if(this.printWarehouseStockChangeMessages)
                     System.out.println(newMessage);
             }
-            case FactoryObjectTypes.Warehouse -> {
+            case Warehouse -> {
                 if(this.printWarehouseMessages)
                     System.out.println(newMessage);
             }
-            case FactoryObjectTypes.CurrentWarehouseStock -> {
+            case CurrentWarehouseStock -> {
                 if(this.printCompleteWarehouseStockAfterChangeMessages)
                     System.out.println(newMessage);
             }
@@ -460,7 +460,7 @@ public class Factory {
      * @param message message to log
      * @param factoryObjectType the object which has the message
      */
-    public void addLog(String message, String factoryObjectType)
+    public void addLog(String message, FactoryObjectMessageTypes factoryObjectType)
     {
         addLog(message, factoryObjectType, true);
     }
@@ -471,7 +471,7 @@ public class Factory {
      * @param factoryObjectType the object which has the message
      * @param completed if the factory step was completed
      */
-    public void addFactoryStepLog(String message, String factoryObjectType, boolean completed)
+    public void addFactoryStepLog(String message, FactoryObjectMessageTypes factoryObjectType, boolean completed)
     {
         addLog(message, factoryObjectType, completed);
     }
@@ -482,7 +482,7 @@ public class Factory {
      * @param stepType step type which the object wanted to perform
      * @param factoryObjectType type of the factory object
      */
-    public void addBlockLog(String name, FactoryStepTypes stepType, String factoryObjectType)
+    public void addBlockLog(String name, FactoryStepTypes stepType, FactoryObjectMessageTypes factoryObjectType)
     {
         addLog(name + " is blocked from Task: " + stepType, factoryObjectType);
     }
