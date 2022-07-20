@@ -1,17 +1,21 @@
 package logistikoptimierung.Entities.WarehouseItems;
 
-import java.util.List;
-
 public class Product extends WarehouseItem {
 
     private final String machineType;
 
+    /**
+     * Creates a new product
+     * @param name sets the name
+     * @param productId sets the id
+     * @param production sets the production where the product is produced
+     */
     public Product(String name,
                    String productId,
-                   String machineType)
+                   String production)
     {
         super(productId, name, WarehouseItemTypes.Product);
-        this.machineType = machineType;
+        this.machineType = production;
     }
 
     @Override

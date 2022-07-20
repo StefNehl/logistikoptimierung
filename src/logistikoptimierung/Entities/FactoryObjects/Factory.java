@@ -138,7 +138,7 @@ public class Factory {
                 return i;
 
         }
-        this.getWarehouse().addCompleteWarehouseStockMessage();
+        this.getWarehouse().addCurrentWarehouseStockMessage();
         return maxRunTime;
     }
 

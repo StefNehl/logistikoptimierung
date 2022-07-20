@@ -175,7 +175,7 @@ public class Warehouse extends FactoryObject
         this.factory.addLog(message, FactoryObjectMessageTypes.WarehouseStock);
     }
 
-    private void addCurrentWarehouseStockMessage()
+    public void addCurrentWarehouseStockMessage()
     {
         if(this.warehouseItems.isEmpty())
             return;
