@@ -1,7 +1,7 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
 /**
- * Different factory steps which the factory can performe
+ * Different factory steps which the factory can perform
  */
 public enum FactoryStepTypes
 {
