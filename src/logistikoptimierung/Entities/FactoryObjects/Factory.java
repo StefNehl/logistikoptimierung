@@ -448,7 +448,7 @@ public class Factory {
                 if(this.printWarehouseMessages)
                     System.out.println(newMessage);
             }
-            case FactoryObjectTypes.CompleteWarehouseStock -> {
+            case FactoryObjectTypes.CurrentWarehouseStock -> {
                 if(this.printCompleteWarehouseStockAfterChangeMessages)
                     System.out.println(newMessage);
             }

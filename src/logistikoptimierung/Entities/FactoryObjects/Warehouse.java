@@ -150,7 +150,7 @@ public class Warehouse extends FactoryObject
             return;
 
         var message = listToString(this.warehouseItems);
-        this.factory.addLog(message, FactoryObjectTypes.CompleteWarehouseStock);
+        this.factory.addLog(message, FactoryObjectTypes.CurrentWarehouseStock);
     }
 
     private String listToString(List<MaterialPosition> list)
