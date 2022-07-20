@@ -5,7 +5,7 @@ import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 public class Driver extends FactoryObject
 {
     private String currentTask;
-    private int blockedUntilTimeStep;
+    private long blockedUntilTimeStep;
 
 
     public Driver(String name, int id) {
@@ -32,7 +32,12 @@ public class Driver extends FactoryObject
         this.currentTask = "";
     }
 
-    public int getBlockedUntilTimeStep() {
+    public long getBlockedUntilTimeStep() {
         return blockedUntilTimeStep;
+    }
+
+    public void setBlockedUntilTimeStep(long blockedUntilTimeStep)
+    {
+        this.blockedUntilTimeStep = blockedUntilTimeStep;
     }
 }

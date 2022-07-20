@@ -45,7 +45,7 @@ public class Transporter extends FactoryObject
                     addNoAvailableDriverLogMessage();
                     return false;
                 }
-                this.loadedItem = getMaterialFromSupplier(amountOfItems, (Material) item);
+                this.loadedItem = getMaterialFromSupplier(amountOfItems, (Material) item, driver);
             }
             case FactoryStepTypes.MoveMaterialFromTransporterToWarehouse -> {
                 this.getFactory().getWarehouse().addItemToWarehouse(loadedItem);
@@ -92,7 +92,7 @@ public class Transporter extends FactoryObject
         return capacity;
     }
 
-    private MaterialPosition getMaterialFromSupplier(int amount, Material material)
+    private MaterialPosition getMaterialFromSupplier(int amount, Material material, Driver driver)
     {
         if(amount > this.capacity)
         {
@@ -108,6 +108,7 @@ public class Transporter extends FactoryObject
 
         var drivingTime = material.getTravelTime();
         this.blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + drivingTime;
+        driver.setBlockedUntilTimeStep(this.blockedUntilTimeStep);
 
         var newPosition = new MaterialPosition(material, amount);
         addDriveLogMessage(newPosition);
