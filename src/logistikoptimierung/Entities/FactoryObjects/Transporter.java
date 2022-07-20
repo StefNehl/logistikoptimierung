@@ -53,11 +53,11 @@ public class Transporter extends FactoryObject
      * - MoveMaterialFromTransporterToWarehouse => Move the material from the transporter to the warehouse
      * - ConcludeOrderTransportToCustomer => Conclude and bring the product to sell to the customer (from a specific order)
      * - ClosesOrderFromCustomer => Close the order after every amount of a specific product was delivered
-     * @param currentTimeStep
-     * @param item
-     * @param amountOfItems
-     * @param stepType
-     * @return
+     * @param currentTimeStep The current time step of the simulation
+     * @param item which warehouse item should be manipulated
+     * @param amountOfItems the amount of items which should be manipulated
+     * @param stepType what is the task to do
+     * @return return true if the task was successfully or false if not
      */
     @Override
     public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, FactoryStepTypes stepType)
@@ -127,12 +127,18 @@ public class Transporter extends FactoryObject
         return true;
     }
 
+    /**
+     * Resets the Transporter. The blocked until time step is set to 0 and the current task to the FactoryStepType None
+     */
     public void resetTransporter()
     {
         this.blockedUntilTimeStep = 0;
         this.currentTask = FactoryStepTypes.None;
     }
 
+    /**
+     * @return the capacity of the transporter
+     */
     public int getCapacity() {
         return capacity;
     }
@@ -161,6 +167,11 @@ public class Transporter extends FactoryObject
         return newPosition;
     }
 
+    /**
+     * Checks if the transport constraints of the material are fulfilled from the transporter
+     * @param material the material to check
+     * @return true for fulfilled and false if this is not the case
+     */
     public boolean areTransportationConstraintsFulfilledForMaterial(Material material)
     {
         var area = material.getArea();
@@ -170,6 +181,11 @@ public class Transporter extends FactoryObject
         return areTransportationConstraintsFulfilled(area, engine, transportTypes);
     }
 
+    /**
+     * Checks if the transport constraints of the order are fulfilled from the transporter
+     * @param order the order to check
+     * @return true for fulfilled and false if this is not the case
+     */
     public boolean areTransportationConstraintsFulfilledForOrder(Order order)
     {
         var area = order.getArea();
@@ -226,12 +242,6 @@ public class Transporter extends FactoryObject
 
         return true;
     }
-
-    public long getBlockedUntilTimeStep() {
-        return blockedUntilTimeStep;
-    }
-
-
 
     private void addNoAvailableDriverLogMessage()
     {
