@@ -5,6 +5,8 @@ import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.EnumeratedCalculation.EnumeratedCalculationMain;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Main
@@ -28,9 +30,46 @@ public class Main
         String contractList = CSVDataImportService.CONTRACT_3;
         long maxRuntimeInSeconds = 100000;
 
-        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
+        testRecursion();
+        //TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
 
-        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
+        //TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
+    }
+
+    private static void testRecursion()
+    {
+        var steps = new ArrayList<Integer>();
+        for(int i = 1; i <= 3; i++)
+            steps.add(i);
+
+        var stepToDo = new ArrayList<Integer>();
+        rec(stepToDo, steps);
+    }
+
+    private static int count = 0;
+    private static void rec(List<Integer> stepsToDo, List<Integer> steps)
+    {
+        if(steps.isEmpty())
+        {
+            count++;
+            for(var step : stepsToDo)
+                System.out.println(step);
+
+            System.out.println("********************");
+            System.out.println("C: " + count);
+            System.out.println("********************");
+        }
+
+        for(var step : steps)
+        {
+            if(step == 3 && !stepsToDo.contains(2))
+                return;
+            stepsToDo.add(step);
+            var copy = new ArrayList<>(steps);
+            copy.remove(step);
+            rec(stepsToDo, copy);
+            stepsToDo.remove(step);
+        }
     }
 
     private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings,
