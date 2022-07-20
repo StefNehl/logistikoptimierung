@@ -145,17 +145,17 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 factorySteps.add(new FactoryStep(
                         factory,
                         transporterPlanningItem.getBlockedTime(),
-                        item.getName(),
+                        item,
                         transporterAmount,
-                        transporterPlanningItem.getTransporter().getName(),
+                        transporterPlanningItem.getTransporter(),
                         FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse));
 
                 factorySteps.add(new FactoryStep(
                         factory,
                         transporterPlanningItem.getBlockedTime() + travelTime,
-                        item.getName(),
+                        item,
                         transporterAmount,
-                        transporterPlanningItem.getTransporter().getName(),
+                        transporterPlanningItem.getTransporter(),
                         FactoryStepTypes.MoveMaterialFromTransporterToWarehouse));
             }
 
@@ -165,9 +165,9 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 factorySteps.add(new FactoryStep(
                         factory,
                         startTimeStamp,
-                        item.getName(),
+                        item,
                         transporterAmount,
-                        transporterPlanningItem.getTransporter().getName(),
+                        transporterPlanningItem.getTransporter(),
                         FactoryStepTypes.ConcludeOrderTransportToCustomer));
 
                 if(remainingAmount == 0)
@@ -175,9 +175,9 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                     factorySteps.add(new FactoryStep(
                             factory,
                             startTimeStamp,
-                            item.getName(),
+                            item,
                             transporterAmount,
-                            transporterPlanningItem.getTransporter().getName(),
+                            transporterPlanningItem.getTransporter(),
                             FactoryStepTypes.ClosesOrderFromCustomer));
                 }
             }
@@ -322,35 +322,35 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
                 var newStep = new FactoryStep(factory,
                         productionStart,
-                        process.getProductToProduce().getName(),
+                        process.getProductToProduce(),
                         1,
-                        process.getProduction().getName(),
+                        process.getProduction(),
                         FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer);
                 factorySteps.add(newStep);
 
 
                 newStep = new FactoryStep(factory,
                         productionStart,
-                        process.getProductToProduce().getName(),
+                        process.getProductToProduce(),
                         1,
-                        process.getProduction().getName(),
+                        process.getProduction(),
                         FactoryStepTypes.Produce);
                 factorySteps.add(newStep);
 
 
                 newStep = new FactoryStep(factory,
                         productionStart + productionTime,
-                        process.getProductToProduce().getName(),
+                        process.getProductToProduce(),
                         1,
-                        process.getProduction().getName(),
+                        process.getProduction(),
                         FactoryStepTypes.MoveProductToOutputBuffer);
                 factorySteps.add(newStep);
 
                 newStep = new FactoryStep(factory,
                         productionStart + productionTime,
-                        process.getProductToProduce().getName(),
+                        process.getProductToProduce(),
                         1,
-                        process.getProduction().getName(),
+                        process.getProduction(),
                         FactoryStepTypes.MoveProductFromOutputBufferToWarehouse);
                 factorySteps.add(newStep);
 

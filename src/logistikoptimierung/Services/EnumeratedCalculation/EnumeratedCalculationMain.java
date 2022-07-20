@@ -194,9 +194,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 amountToTransport = bestTransporter.getCapacity();
 
             var newStep = new FactoryStep(this.factory, 0,
-                    planningItem.item().getName(),
+                    planningItem.item(),
                     amountToTransport,
-                    bestTransporter.getName(),
+                    bestTransporter,
                     FactoryStepTypes.ConcludeOrderTransportToCustomer);
 
             steps.add(newStep);
@@ -212,9 +212,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
         }
 
         var newStep = new FactoryStep(this.factory, 0,
-                planningItem.item().getName(),
+                planningItem.item(),
                 lastAmountToTransport,
-                lastTransport.getName(),
+                lastTransport,
                 FactoryStepTypes.ClosesOrderFromCustomer);
 
         steps.add(newStep);
@@ -266,17 +266,17 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 amountToTransport = bestTransporter.getCapacity();
 
             var newStep = new FactoryStep(this.factory, 0,
-                    planningItem.item().getName(),
+                    planningItem.item(),
                     amountToTransport,
-                    bestTransporter.getName(),
+                    bestTransporter,
                     FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse);
 
             steps.add(newStep);
 
             newStep = new FactoryStep(this.factory, 0,
-                    planningItem.item().getName(),
+                    planningItem.item(),
                     amountToTransport,
-                    bestTransporter.getName(),
+                    bestTransporter,
                     FactoryStepTypes.MoveMaterialFromTransporterToWarehouse);
 
             steps.add(newStep);
@@ -352,33 +352,33 @@ public class EnumeratedCalculationMain implements IOptimizationService
         }
 
         var newStep = new FactoryStep(this.factory, 0,
-                planningItem.item().getName(),
+                planningItem.item(),
                 1,
-                process.getProduction().getName(),
+                process.getProduction(),
                 FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer);
 
         steps.add(newStep);
 
         newStep = new FactoryStep(this.factory, 0,
-                planningItem.item().getName(),
+                planningItem.item(),
                 1,
-                process.getProduction().getName(),
+                process.getProduction(),
                 FactoryStepTypes.Produce);
 
         steps.add(newStep);
 
         newStep = new FactoryStep(this.factory, 0,
-                planningItem.item().getName(),
+                planningItem.item(),
                 1,
-                process.getProduction().getName(),
+                process.getProduction(),
                 FactoryStepTypes.MoveProductToOutputBuffer);
 
         steps.add(newStep);
 
         newStep = new FactoryStep(this.factory, 0,
-                planningItem.item().getName(),
+                planningItem.item(),
                 planningItem.amount(),
-                process.getProduction().getName(),
+                process.getProduction(),
                 FactoryStepTypes.MoveProductFromOutputBufferToWarehouse);
 
         steps.add(newStep);

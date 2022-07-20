@@ -21,12 +21,12 @@ public class FactoryStep {
      * @param doTimeStep the specific time step when the step should be performed
      * @param itemToManipulate the item which should be manipulated
      * @param amountOfItems the amount of items which should be manipulated
-     * @param factoryObjectName the factory object which should perform the manipulation
+     * @param factoryObject the factory object which should perform the manipulation
      * @param stepType the type of manipulation
      */
-    public FactoryStep(Factory factory, long doTimeStep, String itemToManipulate, int amountOfItems, String factoryObjectName, FactoryStepTypes stepType)
+    public FactoryStep(Factory factory, long doTimeStep, WarehouseItem itemToManipulate, int amountOfItems, FactoryObject factoryObject, FactoryStepTypes stepType)
     {
-        initFactoryStep(factory, doTimeStep, new ArrayList<>(), itemToManipulate, amountOfItems, factoryObjectName, stepType);
+        initFactoryStep(factory, doTimeStep, new ArrayList<>(), itemToManipulate, amountOfItems, factoryObject, stepType);
     }
 
     /**
@@ -35,34 +35,20 @@ public class FactoryStep {
      * @param factoryStepsToDoBefore the factory steps which needed to be completed before this step can perform
      * @param itemToManipulate the item which should be manipulated
      * @param amountOfItems the amount of items which should be manipulated
-     * @param factoryObjectName the factory object which should perform the manipulation
+     * @param factoryObject the factory object which should perform the manipulation
      * @param stepType the type of manipulation
      */
-    public FactoryStep(Factory factory, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, FactoryStepTypes stepType)
+    public FactoryStep(Factory factory, List<FactoryStep> factoryStepsToDoBefore, WarehouseItem itemToManipulate,
+                       int amountOfItems, FactoryObject factoryObject, FactoryStepTypes stepType)
     {
         var doTimeStamp = 0;
-        initFactoryStep(factory, doTimeStamp, factoryStepsToDoBefore, itemToManipulate, amountOfItems, factoryObjectName, stepType);
+        initFactoryStep(factory, doTimeStamp, factoryStepsToDoBefore, itemToManipulate, amountOfItems, factoryObject, stepType);
     }
 
-    private void initFactoryStep(Factory factory, long doTimeStamp, List<FactoryStep> factoryStepsToDoBefore, String itemToManipulate, int amountOfItems, String factoryObjectName, FactoryStepTypes stepType)
+    private void initFactoryStep(Factory factory, long doTimeStamp, List<FactoryStep> factoryStepsToDoBefore, WarehouseItem itemToManipulate, int amountOfItems, FactoryObject factoryObject, FactoryStepTypes stepType)
     {
-        for(var item : factory.getAvailableWarehouseItems())
-        {
-            if(item.getName().equals(itemToManipulate))
-                this.itemToManipulate = item;
-        }
-
-        if(this.itemToManipulate == null)
-            factory.addLog("Item " + itemToManipulate + " not found", FactoryObjectMessageTypes.FactoryStep);
-
-        for (var factoryObject :
-                factory.getFactoryObject()) {
-            if(factoryObject.getName().equals(factoryObjectName))
-                this.factoryObject = factoryObject;
-        }
-
-        if(factoryObject == null)
-            factory.addLog("Factory Object " + factoryObjectName + " not found", FactoryObjectMessageTypes.FactoryStep);
+        this.itemToManipulate = itemToManipulate;
+        this.factoryObject = factoryObject;
 
         this.stepType = stepType;
         this.factory = factory;
