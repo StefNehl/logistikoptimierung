@@ -1,14 +1,3 @@
-/**
- * This class create an object of the production. The production can have several production processes for different items.
- * The possible tasks for the production are:
- * - Move the materials to the input buffer
- * - Produce a specific product
- * - Move the produced product to the output buffer
- * - Move the produced product from the output buffer to the warehouse
- *
- * Furthermore, the class simulates the blocked time, and the size of the input/output buffer and checks
- * if the material for the production is available.
- */
 
 package logistikoptimierung.Entities.FactoryObjects;
 
@@ -35,7 +24,16 @@ public class Production extends FactoryObject
     private long blockedUntilTimeStep;
 
     /**
-     * Create an object of the production class
+     * This class create an object of the production. The production can have several production processes for different items.
+     * The possible tasks for the production are:
+     * - Move the materials to the input buffer
+     * - Produce a specific product
+     * - Move the produced product to the output buffer
+     * - Move the produced product from the output buffer to the warehouse
+     *
+     * Furthermore, the class simulates the blocked time, and the size of the input/output buffer and checks
+     * if the material for the production is available.
+     *
      * @param name sets the name
      * @param id sets the unique id
      * @param productionProcesses sets the different production processes

@@ -1,9 +1,3 @@
-/**
- * This class creates a Driver for a Transporter. It does not support any specific tasks.
- * If the driver is assigned to a Transporter the transporter object sets the blocked time to the same value as the
- * transporter.
- */
-
 package logistikoptimierung.Entities.FactoryObjects;
 
 public class Driver extends FactoryObject
@@ -11,7 +5,9 @@ public class Driver extends FactoryObject
     private long blockedUntilTimeStep;
 
     /**
-     * Creates an object of the type driver.
+     * This class creates a Driver for a Transporter. It does not support any specific tasks.
+     * If the driver is assigned to a Transporter the transporter object sets the blocked time to the same value as the
+     * transporter.
      * @param name sets the name
      * @param id sets the id
      */
