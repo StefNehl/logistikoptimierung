@@ -14,6 +14,14 @@ public class ProductionProcess
     private final Production production;
     List<MaterialPosition> materialPositions;
 
+    /**
+     * Creates the production process for a product to produce
+     * @param productToProduce the product to produce
+     * @param productionBatchSize the batch size of the product
+     * @param productionTime the production time
+     * @param production the parent production
+     * @param materialPositions list of material position needed for the production
+     */
     public ProductionProcess(WarehouseItem productToProduce, int productionBatchSize,
                              int productionTime,
                              Production production,
@@ -26,26 +34,46 @@ public class ProductionProcess
         this.materialPositions = materialPositions;
     }
 
+    /**
+     * @return the product which is produced
+     */
     public WarehouseItem getProductToProduce() {
         return productToProduce;
     }
 
+    /**
+     * @return the batch size
+     */
     public int getProductionBatchSize() {
         return productionBatchSize;
     }
 
+    /**
+     * @return the production time
+     */
     public int getProductionTime() {
         return productionTime;
     }
 
+    /**
+     * @return gets the parent production
+     */
     public Production getProduction() {
         return production;
     }
 
+    /**
+     * @return gets a list of the material position which are needed for the production
+     */
     public List<MaterialPosition> getMaterialPositions() {
         return materialPositions;
     }
 
+    /**
+     * Returns the amount for a warehouse item which is needed for the production process to produce
+     * @param item warehouse item
+     * @return the amount, 0 if the process does not need the warehouse item for the production
+     */
     public int getAmountFromMaterialPositions(WarehouseItem item)
     {
         for(var position : this.materialPositions)
