@@ -32,6 +32,18 @@ public class Factory {
     private boolean printOnlyCompletedFactoryStepMessages;
     private boolean printCompleteWarehouseStockAfterChangeMessages;
 
+    /**
+     * This class creates an object for the factory. The factory is the main object and contains the warehouse, transporters,
+     * drivers, and productions. The factory also starts the simulation.
+     * @param name sets the name
+     * @param warehouseCapacity sets the capacity of the warehouse
+     * @param productions sets the productions with the production processes
+     * @param nrOfDrivers sets the nr of available drivers
+     * @param transporters sets the transporters
+     * @param suppliedMaterials sets the materials for supply
+     * @param availableProducts sets the available productions
+     * @param orderList sets the orders
+     */
     public Factory(String name,
                    int warehouseCapacity,
                    List<Production> productions,
@@ -75,6 +87,16 @@ public class Factory {
         }
     }
 
+    /**
+     * Starts the simulation. The simulation iterates from 0 to the max run time, in seconds,  and tries to perform every task in the
+     * factory steps every iteration. The simulation stops if it reaches the max run time or if no factory step is left to perform.
+     * The factory message settings sets the amount of messages which are printed in the console while the simulation. The not printed
+     * messages are stored in the object.
+     * @param factorySteps sets the factory steps to perform
+     * @param maxRunTime sets the maximum runtime after the simulation stops
+     * @param factoryMessageSettings sets the amount of printed messages in the console
+     * @return the time step after the factory stops (in seconds)
+     */
     public long startFactory(List<FactoryStep> factorySteps, long maxRunTime, FactoryMessageSettings factoryMessageSettings)
     {
         logMessages.clear();
@@ -120,6 +142,9 @@ public class Factory {
         return maxRunTime;
     }
 
+    /**
+     * Resets the factory and every factory object to its initial state.
+     */
     public void resetFactory()
     {
         this.currentTimeStep = 0;
@@ -151,33 +176,55 @@ public class Factory {
         }
     }
 
+    /**
+     * @return the current time step of the simulation
+     */
     public long getCurrentTimeStep() {
         return currentTimeStep;
     }
 
+    /**
+     * @return the name of the factory
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * @return a list of transporters in the factory
+     */
     public List<Transporter> getTransporters() {
         return transporters;
     }
 
+    /**
+     * @return a list of productions in the factory
+     */
     public List<Production> getProductions()
     {
         return productions;
     }
 
+    /**
+     * @return the nr of drivers
+     */
     public int getNrOfDrivers()
     {
         return drivers.size();
     }
 
+    /**
+     * @return a list of the drivers
+     */
     public List<Driver> getDrivers()
     {
         return this.drivers;
     }
 
+    /**
+     * Returns a list of drivers which are not blocked by a task
+     * @return a list of drivers or null if no driver is available
+     */
     public Driver getNotBlockedDriver()
     {
         for(var driver : drivers)
@@ -189,6 +236,10 @@ public class Factory {
         return null;
     }
 
+    /**
+     * Returns a list of factory objects which are transporters and productions
+     * @return a list of factory objects
+     */
     public List<FactoryObject> getFactoryObject() {
         var result = new ArrayList<FactoryObject>();
         result.addAll(transporters);
@@ -197,10 +248,18 @@ public class Factory {
         return result;
     }
 
+    /**
+     * @return the warehouse object
+     */
     public Warehouse getWarehouse() {
         return this.warehouse;
     }
 
+    /**
+     * Gets the every production processes for a specific product to produce.
+     * @param product the specific product to produce
+     * @return a list or production processes. Returns an empty list if no production process was found for the product.
+     */
     public List<ProductionProcess> getProductionProcessesForProduct(WarehouseItem product)
     {
         var processList = new ArrayList<ProductionProcess>();
@@ -221,6 +280,13 @@ public class Factory {
         }
     }
 
+    /**
+     * Gets the every production processes for a specific product to produce with the respect of the batch size.
+     * The list contains every batch which needs to be produced to fulfill the amount of the product.
+     * @param product the product to produce
+     * @param amount the amount needed for the product to produce
+     * @return list with production processes, empty list if no production process was found for the item.
+     */
     public List<MaterialPosition> getMaterialPositionsForProductWithRespectOfBatchSize(WarehouseItem product, int amount)
     {
         var materialList = new ArrayList<MaterialPosition>();
@@ -263,6 +329,11 @@ public class Factory {
         }
     }
 
+    /**
+     * Returns the production process for the product.
+     * @param item product
+     * @return the production process, null if no process was found
+     */
     public ProductionProcess getProductionProcessForWarehouseItem(WarehouseItem item)
     {
         for (var production : productions)
@@ -274,6 +345,11 @@ public class Factory {
         return null;
     }
 
+    /**
+     * Checks if the specific warehouse item (product or material) has a supplier.
+     * @param item warehouse item to check
+     * @return true if the item has a supplier, false if not
+     */
     public boolean checkIfItemHasASupplier(WarehouseItem item)
     {
         for (var suppliedMaterial : this.suppliedMaterials)
@@ -284,10 +360,17 @@ public class Factory {
         return false;
     }
 
+    /**
+     * @return the order list
+     */
     public List<Order> getOrderList() {
         return orderList;
     }
 
+    /**
+     * Returns a list of every warehouse item (products, materials, orders)
+     * @return list of warehouse items
+     */
     public List<WarehouseItem> getAvailableWarehouseItems()
     {
         var result = new ArrayList<WarehouseItem>();
@@ -298,6 +381,10 @@ public class Factory {
         return result;
     }
 
+    /**
+     * Increase the income of the factory
+     * @param additionalIncome the income which should be added to the current factory income
+     */
     public void increaseIncome(double additionalIncome)
     {
         this.currentIncome += additionalIncome;
@@ -305,11 +392,20 @@ public class Factory {
         addLog(message, FactoryObjectTypes.Factory);
     }
 
+    /**
+     * @return the current income
+     */
     public double getCurrentIncome() {
         return currentIncome;
     }
 
-    public void addLog(String message, String factoryObjectType, boolean completed)
+    /**
+     * adds a log message to the factory and print the message in the console if the settings are set for the message
+     * @param message message to log
+     * @param factoryObjectType the object which has the message
+     * @param completed if the factory step was completed
+     */
+    private void addLog(String message, String factoryObjectType, boolean completed)
     {
         var newMessage = new FactoryObjectMessage(currentTimeStep, message, factoryObjectType);
         this.logMessages.add(newMessage);
@@ -359,21 +455,50 @@ public class Factory {
         }
     }
 
+    /**
+     * adds a log message to the factory and print the message in the console if the settings are set for the message
+     * @param message message to log
+     * @param factoryObjectType the object which has the message
+     */
     public void addLog(String message, String factoryObjectType)
     {
         addLog(message, factoryObjectType, true);
     }
 
+    /**
+     * adds a log message for a factory step to the factory and print the message in the console if the settings are set for the message
+     * @param message message to log
+     * @param factoryObjectType the object which has the message
+     * @param completed if the factory step was completed
+     */
+    public void addFactoryStepLog(String message, String factoryObjectType, boolean completed)
+    {
+        addLog(message, factoryObjectType, completed);
+    }
 
+    /**
+     * adds a log message if a factory object was blocked for a task.
+     * @param name name of the factory object
+     * @param stepType step type which the object wanted to perform
+     * @param factoryObjectType type of the factory object
+     */
     public void addBlockLog(String name, FactoryStepTypes stepType, String factoryObjectType)
     {
         addLog(name + " is blocked from Task: " + stepType, factoryObjectType);
     }
 
+    /**
+     * prints every log message
+     */
     public void printAllLogMessage() {
         printLogMessageFromTo(-1, -1);
     }
 
+    /**
+     * prints every log message in the time between the from and to time step
+     * @param fromTimeStamp
+     * @param toTimeStamp
+     */
     public void printLogMessageFromTo(long fromTimeStamp, long toTimeStamp)
     {
         if(logMessages.isEmpty()) {
