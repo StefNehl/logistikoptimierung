@@ -313,7 +313,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                     continue;
             }
 
-            if(transporter.getCapacity() > amount)
+            if(transporter.getCapacity() >= amount)
                 return transporter;
 
             if(fittingTransporterWithHighestCapacity == null ||
