@@ -89,7 +89,9 @@ public class Transporter extends FactoryObject
                     super.addErrorLogMessage("No item to unload");
                     return false;
                 }
-                this.getFactory().getWarehouse().addItemToWarehouse(loadedItem);
+                var result = this.getFactory().getWarehouse().addItemToWarehouse(loadedItem);
+                if(!result)
+                    return false;
                 this.loadedItem = null;
             }
             case ConcludeOrderTransportToCustomer -> {

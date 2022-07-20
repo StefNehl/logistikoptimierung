@@ -163,7 +163,9 @@ public class Production extends FactoryObject
                 remainingNrOfOutputBufferBatches++;
                 addBufferLogMessage(item, true, true);
 
-                getFactory().getWarehouse().addItemToWarehouse(productToMove);
+                var result = getFactory().getWarehouse().addItemToWarehouse(productToMove);
+                if(!result)
+                    return false;
             }
             default -> throw new IllegalStateException("Unexpected value: " + stepType);
         }

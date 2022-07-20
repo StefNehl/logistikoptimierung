@@ -13,6 +13,13 @@ public class Warehouse extends FactoryObject
     private int remainingWarehouseCapacity;
     private final Factory factory;
 
+    /**
+     * Create an object of the warehouse. This object simulates the add and remove of warehouse items from the warehouse.
+     * It has a certain capacity.
+     * @param name sets name of the warehouse
+     * @param warehouseCapacity sets the capacity
+     * @param factory sets the factory
+     */
     public Warehouse(String name, int warehouseCapacity, Factory factory)
     {
         super(name, name, FactoryObjectMessageTypes.Warehouse);
@@ -21,12 +28,17 @@ public class Warehouse extends FactoryObject
         this.remainingWarehouseCapacity = warehouseCapacity;
     }
 
-    public void addItemToWarehouse(MaterialPosition materialPosition)
+    /**
+     * Adds an item as material position to the warehouse
+     * @param materialPosition the material position with the warehouse item and the amount to add
+     * @return returns true if the add was possible, false if not
+     */
+    public boolean addItemToWarehouse(MaterialPosition materialPosition)
     {
         if(remainingWarehouseCapacity < materialPosition.amount())
         {
             addCapacityReachedMessage();
-            return;
+            return false;
         }
 
         remainingWarehouseCapacity = remainingWarehouseCapacity - materialPosition.amount();
@@ -55,9 +67,15 @@ public class Warehouse extends FactoryObject
         }
 
         addAddItemMessage(materialPosition);
-        addCompleteWarehouseStockMessage();
+        addCurrentWarehouseStockMessage();
+        return true;
     }
 
+    /**
+     * removes a material position from the warehouse
+     * @param materialPosition the material position to remove (with warehouse item and amount)
+     * @return the material position if possible, returns null if not
+     */
     public MaterialPosition removeItemFromWarehouse(MaterialPosition materialPosition)
     {
         for (var item : warehouseItems)
@@ -78,7 +96,7 @@ public class Warehouse extends FactoryObject
                         itemToOverwrite.amount() - materialPosition.amount());
                 warehouseItems.set(index, newPosition);
                 addItemRemovedMessage(materialPosition);
-                addCompleteWarehouseStockMessage();
+                addCurrentWarehouseStockMessage();
                 return item;
             }
         }
@@ -87,6 +105,12 @@ public class Warehouse extends FactoryObject
         return null;
     }
 
+    /**
+     * checks if an item in a certain amount is in the warehouse
+     * @param warehouseItem the warehouse item to check
+     * @param amount the needed amount of the item
+     * @return true if the item in the amount is available, return false if not
+     */
     public boolean checkIfMaterialIsAvailable(WarehouseItem warehouseItem, int amount)
     {
         for (var item : warehouseItems)
@@ -111,11 +135,18 @@ public class Warehouse extends FactoryObject
         return false;
     }
 
+    /**
+     * resets the warehouse to it's initial state, remove every item in the warehouse
+     */
     public void resetWarehouse()
     {
         this.warehouseItems.clear();
     }
 
+    /**
+     * returns every item which is available in the warehouse
+     * @return
+     */
     public List<MaterialPosition> getWarehouseItems() {
         return warehouseItems;
     }
@@ -144,7 +175,7 @@ public class Warehouse extends FactoryObject
         this.factory.addLog(message, FactoryObjectMessageTypes.WarehouseStock);
     }
 
-    public void addCompleteWarehouseStockMessage()
+    private void addCurrentWarehouseStockMessage()
     {
         if(this.warehouseItems.isEmpty())
             return;
