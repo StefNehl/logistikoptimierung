@@ -26,7 +26,7 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 3;
+        int nrOfOrderToOptimize = 2;
         String contractList = CSVDataImportService.CONTRACT_3;
         long maxRuntimeInSeconds = 100000000;
 
