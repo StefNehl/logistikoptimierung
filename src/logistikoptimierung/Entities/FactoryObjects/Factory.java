@@ -364,7 +364,7 @@ public class Factory {
      * @return the order list
      */
     public List<Order> getOrderList() {
-        return orderList;
+        return workingOrderList;
     }
 
     /**

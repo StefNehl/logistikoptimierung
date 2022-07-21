@@ -26,14 +26,14 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 4;
+        int nrOfOrderToOptimize = 1;
         String contractList = CSVDataImportService.CONTRACT_3;
         long maxRuntimeInSeconds = 100000000;
 
         //testRecursion();
         TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
 
-        //TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
+        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
     }
 
     private static void testRecursion()
