@@ -11,6 +11,7 @@ public class Factory {
     private long currentTimeStep;
     private double currentIncome;
     private long startTime;
+    private int nrOfRemainingSteps;
 
     private final Warehouse warehouse;
     private final List<Production> productions;
@@ -100,6 +101,7 @@ public class Factory {
     public long startFactory(List<FactoryStep> factorySteps, long maxRunTime, FactoryMessageSettings factoryMessageSettings)
     {
         logMessages.clear();
+        nrOfRemainingSteps = 0;
         this.printDriverMessages = factoryMessageSettings.printDriverMessages();
         this.printProductionMessages = factoryMessageSettings.printProductionMessages();
         this.printTransportMessages = factoryMessageSettings.printTransportMessages();
@@ -138,8 +140,17 @@ public class Factory {
                 return i;
 
         }
+        nrOfRemainingSteps = copyOfSteps.size();
         this.getWarehouse().addCurrentWarehouseStockMessage();
         return maxRunTime;
+    }
+
+    /**
+     * @return returns after the simulation, if the max runtime is reached the nr of remaining steps
+     */
+    public int getNrOfRemainingSteps()
+    {
+        return this.nrOfRemainingSteps;
     }
 
     /**

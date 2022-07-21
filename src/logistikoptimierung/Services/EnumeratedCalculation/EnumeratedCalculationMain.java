@@ -70,17 +70,18 @@ public class EnumeratedCalculationMain implements IOptimizationService
         if(planningItems.isEmpty())
         {
             var result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
+            var nrOfRemainingSteps = this.factory.getNrOfRemainingSteps();
             this.factory.resetFactory();
             nrOfSimulations++;
 
             if(nrOfSimulations % 100 == 0)
-                System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result);
+                System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
 
             if(result < bestTimeSolution)
             {
                 bestTimeSolution = result;
                 bestSolution = new ArrayList<>(stepsToDo);
-                System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result);
+                System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
             }
         }
 
