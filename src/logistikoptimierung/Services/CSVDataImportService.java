@@ -17,7 +17,6 @@ import java.util.List;
 public class CSVDataImportService implements IDataService
 {
     private static final String TRANSPORTER_FILENAME = "Transportmittel.csv";
-    private static final String FACTORIES_WITH_BUFFERS_FILENAME = "FabrikenMitPuffer.csv";
     private static final String MATERIAL_WITH_TRANSPORTER_FILENAME = "RohstoffeTransportmittel.csv";
     private static final String PRODUCTS_FILENAME = "Products.csv";
     private static final String PRODUCTIONS_FILENAME = "FabrikenMitPuffer.csv";
@@ -31,11 +30,25 @@ public class CSVDataImportService implements IDataService
     private static final String DATA_PATH = "data\\";
     private static final String DELIMITER = ";";
 
-    public CSVDataImportService()
-    {
+    private int nrOfDrivers = 0;
+    private int warehouseCapacity = 0;
 
+    /**
+     * Create a object for the CSV Import to load the data and create an instance with the given nr of drivers and warehouse capacity.
+     * @param nrOfDrivers nr of drivers in the simulation
+     * @param warehouseCapacity capacity of the warehouse in the simulation
+     */
+    public CSVDataImportService(int nrOfDrivers, int warehouseCapacity)
+    {
+        this.nrOfDrivers = nrOfDrivers;
+        this.warehouseCapacity = warehouseCapacity;
     }
 
+    /**
+     * Load the data from the given CSV files and creates the instance for the simulation.
+     * @param filename
+     * @return
+     */
     @Override
     public Instance loadData(String filename)
     {
@@ -43,10 +56,6 @@ public class CSVDataImportService implements IDataService
 
         try
         {
-            int warehouseCapacity = 1000;
-            int nrOfDrivers = 7;
-
-
             var materials = loadMaterials(
                     loadCsv(path + MATERIAL_WITH_TRANSPORTER_FILENAME));
 

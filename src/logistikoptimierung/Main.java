@@ -77,7 +77,7 @@ public class Main
                                                 long maxRuntimeInSeconds,
                                                 String contractList)
     {
-        var dataService = new CSVDataImportService();
+        var dataService = new CSVDataImportService(7, 1000);
         var instance = dataService.loadData(contractList);
 
         var optimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
@@ -96,7 +96,7 @@ public class Main
                                                           long maxRuntimeInSeconds,
                                                           String contractList)
     {
-        var dataService = new CSVDataImportService();
+        var dataService = new CSVDataImportService(7, 1000);
         var instance = dataService.loadData(contractList);
 
         var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
