@@ -13,6 +13,12 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
     private List<TransporterPlanningItem> transporterPlanningItems;
     private List<ProductionPlanningItem> productionPlanningItems;
 
+    /**
+     * Creates an object of the optimizer with the first come first serve principal.
+     * For this the allgorithm gets every needed step for transportation, production and delivery and orders them via
+     * the priority of the order. So the first order is handled first, then the next and so on.
+     * @param factory the factory where the optimization should happen
+     */
     public FirstComeFirstServeOptimizerMain(Factory factory)
     {
         this.factory = factory;
@@ -31,6 +37,12 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         }
     }
 
+    /**
+     * Optimize a given nr of order from the order list with the first come, first serve algorithm.
+     * @param orderList order list to optimize
+     * @param nrOfOrdersToOptimize nr of orders to optimize
+     * @return returns a list of factory steps for the simulation of the factory
+     */
     @Override
     public List<FactoryStep> optimize(List<Order> orderList, int nrOfOrdersToOptimize)
     {
@@ -48,6 +60,12 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return factorySteps;
     }
 
+    /**
+     * Handles the order and creates factory steps for the given order
+     * @param order order for the factory steps
+     * @return list of factory steps to handle an order from the transportation of the material to the delivery of the
+     * product
+     */
     private List<FactoryStep> handleOrder(Order order)
     {
         var factorySteps = new ArrayList<FactoryStep>();
@@ -69,6 +87,11 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return factorySteps;
     }
 
+    /**
+     * Finds the latest time step of a list with factory steps
+     * @param factorySteps list to look
+     * @return latest time step
+     */
     private long findLatestTimeStamp(List<FactoryStep> factorySteps)
     {
         long timeStamp = 0;
@@ -80,6 +103,12 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return timeStamp;
     }
 
+    /**
+     * Gets the factory steps for sending the product to the customer
+     * @param order order to handle
+     * @param startTimeStamp time step when the first step should be performed
+     * @return list of factory step for handling the order
+     */
     private List<FactoryStep> sendOrderToCustomerSteps(Order order, long startTimeStamp)
     {
         var factorySteps = new ArrayList<>(getTransportationFactoryStepsForOneTask(
@@ -91,6 +120,11 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return factorySteps;
     }
 
+    /**
+     * Returns a list of transporter for the warehouse item (product, material)
+     * @param item material or product to check
+     * @return list of transporters
+     */
     private List<TransporterPlanningItem> getFittingTransporters(WarehouseItem item)
     {
         var fittingTransporters = new ArrayList<TransporterPlanningItem>();
@@ -113,6 +147,15 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return fittingTransporters;
     }
 
+    /**
+     * Returns the factory steps which are needed for transporting the specific warehouse item in the amount from the
+     * warehouse to the customer
+     * @param item item to deliver to the customer
+     * @param amountOfItems the amount which should be delivered
+     * @param fittingTransporters transporters who fit the transportation constrains
+     * @param startTimeStamp start time for the first factory step
+     * @return a list of factory steps
+     */
     private List<FactoryStep> getTransportationFactoryStepsForOneTask(WarehouseItem item,
                                                                       int amountOfItems,
                                                                       List<TransporterPlanningItem> fittingTransporters,
@@ -187,6 +230,11 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return factorySteps;
     }
 
+    /**
+     * returns the transporter which is free at the earliest time
+     * @param transporters list of transporters to check
+     * @return the transporter which is free at the earliest time
+     */
     private TransporterPlanningItem findTransporterWhichEarliestFree(List<TransporterPlanningItem> transporters)
     {
         TransporterPlanningItem freeTransporter = transporters.get(0);
@@ -199,6 +247,12 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return freeTransporter;
     }
 
+    /**
+     * splits the bill of material for one order on the transporters. Every item gets produced (Stahl) and the needed
+     * material of every step aggregated (condensed) and split on the available transporters.
+     * @param order
+     * @return
+     */
     private List<FactoryStep> splitBomOnTransporters(Order order)
     {
         var factorySteps = new ArrayList<FactoryStep>();
@@ -240,6 +294,11 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return factorySteps;
     }
 
+    /**
+     * Returns a condensed material position list
+     * @param materialList not condensed material position list
+     * @return condensed material position list
+     */
     private List<MaterialPosition> condenseMaterialList(List<MaterialPosition> materialList)
     {
         var newMaterialList = new ArrayList<MaterialPosition>();
@@ -262,6 +321,12 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return newMaterialList;
     }
 
+    /**
+     * Finds the material from the material list by name
+     * @param name name to search
+     * @param materialList material list to search
+     * @return material position
+     */
     private MaterialPosition findMaterialPositionByName(String name, List<MaterialPosition> materialList)
     {
         for (var position : materialList)
@@ -273,6 +338,12 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         return null;
     }
 
+    /**
+     * Splits the production processes for an order on the needed production sites and returns the needed factory steps.
+     * @param order order for the factory steps
+     * @param startTimeStamp start time of the factory steps
+     * @return a list of factory steps
+     */
     private List<FactoryStep> splitBomOnMachines(Order order, long startTimeStamp)
     {
         var factorySteps = new ArrayList<FactoryStep>();
@@ -294,7 +365,6 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         var materialToProduces = this.factory
                 .getMaterialPositionsForProductWithRespectOfBatchSize((Product) order.getProduct().item(),
                         order.getProduct().amount());
-
 
         for(int i = fittingProcessPlaningItems.length-1; i >= 0; i--)
         {
@@ -353,23 +423,10 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                         process.getProduction(),
                         FactoryStepTypes.MoveProductFromOutputBufferToWarehouse);
                 factorySteps.add(newStep);
-
             }
         }
 
         return factorySteps;
-    }
-
-    private ProductionPlanningItem findProductionWhichEarliestFree(List<ProductionPlanningItem> productions)
-    {
-        ProductionPlanningItem freeProduction = productions.get(0);
-        for (var production : productions)
-        {
-            if(production.getBlockedTime() < freeProduction.getBlockedTime())
-                freeProduction = production;
-
-        }
-        return freeProduction;
     }
 }
 
