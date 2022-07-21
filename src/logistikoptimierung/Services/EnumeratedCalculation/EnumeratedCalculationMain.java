@@ -119,10 +119,28 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
                 var poolItem = this.driverPoolItems.remove(this.driverPoolItems.size() - 1);
                 this.availableDrivers.add(poolItem.driver());
-                this.sortedAvailableTransportList.add(poolItem.transporter());
-                this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
+                addTransporterToSortedTransportList(poolItem.transporter());
             }
         }
+    }
+
+    /**
+     * Add the transporter to the sorted transportation list and keeps the order
+     * @param transporterToAdd transporter to add
+     */
+    private void addTransporterToSortedTransportList(Transporter transporterToAdd)
+    {
+        var indexToAdd = 0;
+        for(var transporter : this.sortedAvailableTransportList)
+        {
+            if(transporter.getCapacity() <= transporterToAdd.getCapacity())
+                continue;
+
+            indexToAdd = this.sortedAvailableTransportList.indexOf(transporter);
+            break;
+        }
+
+        this.sortedAvailableTransportList.add(indexToAdd, transporterToAdd);
     }
 
     /**
@@ -175,8 +193,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             return steps;
         }
 
-
-
+        //The last transporter needs to close the order
         Transporter lastTransport = null;
         var lastAmountToTransport = 0;
         while (amount > 0)
@@ -186,13 +203,10 @@ public class EnumeratedCalculationMain implements IOptimizationService
             {
                 var poolItem = this.driverPoolItems.remove(0);
                 this.availableDrivers.add(poolItem.driver());
-                this.sortedAvailableTransportList.add(poolItem.transporter());
-                this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
+                addTransporterToSortedTransportList(poolItem.transporter());
             }
 
-            var bestTransporter = this.getTransporterWithSmallestDifferenceFromAmountAndHigherCapacity(
-                    this.sortedAvailableTransportList,
-                    planningItem.item(), amount);
+            var bestTransporter = findBestTransporterForTheAmount(planningItem.item(), amount);
 
             if(bestTransporter == null)
                 throw new RuntimeException("Should not happen ");
@@ -212,13 +226,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
             steps.add(newStep);
 
             var newDriver = this.availableDrivers.remove(0);
+            this.sortedAvailableTransportList.remove(bestTransporter);
             var newPoolItem = new DriverPoolItem(newDriver, bestTransporter);
             driverPoolItems.add(newPoolItem);
             amount -= bestTransporter.getCapacity();
 
             lastTransport  = bestTransporter;
             lastAmountToTransport = amountToTransport;
-
         }
 
         var newStep = new FactoryStep(this.factory, 0,
@@ -251,28 +265,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
             {
                 var poolItem = this.driverPoolItems.remove(0);
                 this.availableDrivers.add(poolItem.driver());
-                this.sortedAvailableTransportList.add(poolItem.transporter());
-                this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
+                addTransporterToSortedTransportList(poolItem.transporter());
             }
 
-            var bestTransporter = this.getTransporterWithSmallestDifferenceFromAmountAndHigherCapacity(
-                    this.sortedAvailableTransportList,
-                    planningItem.item(),
-                    amount);
+            var bestTransporter = findBestTransporterForTheAmount(planningItem.item(), amount);
 
-            //No Transporter found, need to reuse already used transporter
             if(bestTransporter == null)
-            {
-                var usedTransporters = new ArrayList<Transporter>();
-                for(var driverPoolItem : driverPoolItems)
-                    usedTransporters.add(driverPoolItem.transporter());
-
-                bestTransporter = this.getTransporterWithSmallestDifferenceFromAmountAndHigherCapacity(
-                        usedTransporters,
-                        planningItem.item(),
-                        amount
-                );
-            }
+                throw new RuntimeException("Should not happen ");
 
             var amountToTransport = 0;
             if(amount < bestTransporter.getCapacity())
@@ -311,7 +310,37 @@ public class EnumeratedCalculationMain implements IOptimizationService
     }
 
     /**
+     * Finds the best transporter from the available transporters. If none is available it returns one
+     * of the driver pool.
+     * @param item item for the transportation constraints
+     * @param amount amount of the item
+     * @return transporter, null if none was found
+     */
+    private Transporter findBestTransporterForTheAmount(WarehouseItem item, int amount)
+    {
+        var bestTransporter = this.getTransporterWithSmallestDifferenceFromAmountAndHigherCapacity(
+                this.sortedAvailableTransportList,
+                item,
+                amount);
+
+        //No Transporter found, need to reuse already used transporter
+        if(bestTransporter == null)
+        {
+            var bestDriverPoolItem = getDriverPoolItemWithSmallestDifferenceFromAmountAndHigherCapacity(item, amount);
+            bestTransporter = bestDriverPoolItem.transporter();
+
+            //Release driver from this transporter
+            this.driverPoolItems.remove(bestDriverPoolItem);
+            this.availableDrivers.add(bestDriverPoolItem.driver());
+            addTransporterToSortedTransportList(bestDriverPoolItem.transporter());
+        }
+
+        return bestTransporter;
+    }
+
+    /**
      * Returns the transporter with the smallest difference of the amount needed. The transporter is equal or higher than the amount needed.
+     * If no transporter fits the needed amount. The transporter with the highest capacity gets returned
      * @param availableTransportersSortedByCapacity sorted list of available transporters
      * @param item item to transport
      * @param amount amount of the item
@@ -321,7 +350,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
                                                                                         WarehouseItem item, int amount)
     {
         Transporter fittingTransporterWithHighestCapacity = null;
-
         for(var transporter : availableTransportersSortedByCapacity)
         {
             if(item instanceof Material)
@@ -347,6 +375,55 @@ public class EnumeratedCalculationMain implements IOptimizationService
             return fittingTransporterWithHighestCapacity;
 
         return null;
+    }
+
+    private DriverPoolItem getDriverPoolItemWithSmallestDifferenceFromAmountAndHigherCapacity(WarehouseItem item, int amount)
+    {
+        DriverPoolItem bestDriverPoolItem = null;
+        DriverPoolItem driverPoolItemWithHighestCapacity = null;
+        var minDiff = Integer.MAX_VALUE;
+        for(var driverPoolItem : this.driverPoolItems)
+        {
+            if(item instanceof Material)
+            {
+                if(!driverPoolItem.transporter().areTransportationConstraintsFulfilledForMaterial((Material) item))
+                    continue;
+            }
+            else if(item instanceof  Order)
+            {
+                if(!driverPoolItem.transporter().areTransportationConstraintsFulfilledForOrder((Order) item))
+                    continue;
+            }
+
+            var diff = driverPoolItem.transporter().getCapacity() - amount;
+
+            if(bestDriverPoolItem == null)
+            {
+                bestDriverPoolItem = driverPoolItem;
+                driverPoolItemWithHighestCapacity = driverPoolItem;
+                minDiff = diff;
+                continue;
+            }
+
+            if(driverPoolItem.transporter().getCapacity() >
+                    driverPoolItemWithHighestCapacity.transporter().getCapacity())
+                driverPoolItemWithHighestCapacity = driverPoolItem;
+
+            if(diff < 0)
+                continue;
+
+            if(diff < minDiff)
+            {
+                bestDriverPoolItem = driverPoolItem;
+                minDiff = diff;
+            }
+
+        }
+
+        if(bestDriverPoolItem.transporter().getCapacity() >= amount)
+            return bestDriverPoolItem;
+
+        return driverPoolItemWithHighestCapacity;
     }
 
     /**
