@@ -12,9 +12,6 @@ import java.util.*;
 public class EnumeratedCalculationMain implements IOptimizationService
 {
     private final Factory factory;
-    private List<MaterialPosition> acquiringPlanningItems;
-    private List<MaterialPosition> deliverPlanningItems;
-    private List<PlanningItem> allPlanningItems;
     private FactoryMessageSettings factoryMessageSettings;
 
     private List<Transporter> sortedAvailableTransportList;
@@ -25,14 +22,17 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private List<FactoryStep> bestSolution = new ArrayList<>();
     private long nrOfSimulations = 0;
 
-
-
+    /**
+     * Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.
+     * For this the allgorithm gets every needed step for transportation, production and delivery and orders them in
+     * every combination and simulates the factory to find the best result.
+     * @param factory the factory where the optimization should happen
+     * @param maxRuntime maximum run time for the optimization
+     * @param factoryMessageSettings factory messages settings for the simulating factory
+     */
     public EnumeratedCalculationMain(Factory factory, long maxRuntime, FactoryMessageSettings factoryMessageSettings)
     {
         this.factory = factory;
-        this.acquiringPlanningItems = new ArrayList<>();
-        this.deliverPlanningItems = new ArrayList<>();
-        this.allPlanningItems = new ArrayList<>();
         this.factoryMessageSettings = factoryMessageSettings;
 
         this.availableDrivers = new ArrayList<>(this.factory.getDrivers());
@@ -51,15 +51,20 @@ public class EnumeratedCalculationMain implements IOptimizationService
             subOrderList.add(orderList.get(i));
         }
 
-        getAllNeededFactoryPlanningItemsForOrder(subOrderList);
+        var planningItems = getAllNeededFactoryPlanningItemsForOrder(subOrderList);
 
         nrOfSimulations = 0;
         var stepToDo = new ArrayList<FactoryStep>();
-        getPlanningSolutionRecursive(stepToDo, this.allPlanningItems);
+        getPlanningSolutionRecursive(stepToDo, planningItems);
 
         return bestSolution;
     }
 
+    /**
+     * Checks every combination of the planning items and simulate the factory to find the best result.
+     * @param stepsToDo Steps to perform before the current step
+     * @param planningItems planning item to add the factory steps
+     */
     private void getPlanningSolutionRecursive(List<FactoryStep> stepsToDo, List<PlanningItem> planningItems)
     {
         if(planningItems.isEmpty())
@@ -120,6 +125,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
         }
     }
 
+    /**
+     * Returns a list of factory steps for a planning item with the deliver property. The method checks if the material
+     * was produced in the needed amount before. If not an empty list is returned.
+     * @param stepsToDo steps which are getting performed before this planning item
+     * @param planningItem planning item for the factory steps
+     * @return factory steps for the planning item, returns an empty list if no product to deliver is available in the warehouse
+     */
     private ArrayList<FactoryStep> getDeliverTransporters(List<FactoryStep> stepsToDo, PlanningItem planningItem)
     {
         var steps = new ArrayList<FactoryStep>();
@@ -220,6 +232,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return steps;
     }
 
+    /**
+     * Returns a list of factory steps for a planning item with the acquire property.
+     * @param planningItem planning item for the factory steps
+     * @return factory steps for the planning item
+     */
     private ArrayList<FactoryStep> getAcquireTransportSteps(PlanningItem planningItem)
     {
         var steps = new ArrayList<FactoryStep>();
@@ -293,12 +310,19 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return steps;
     }
 
-    private Transporter getTransporterWithSmallestDifferenceFromAmountAndHigherCapacity(List<Transporter> availableTransporters,
+    /**
+     * Returns the transporter with the smallest difference of the amount needed. The transporter is equal or higher than the amount needed.
+     * @param availableTransportersSortedByCapacity sorted list of available transporters
+     * @param item item to transport
+     * @param amount amount of the item
+     * @return a fitting transporter. If none is found the method returns null.
+     */
+    private Transporter getTransporterWithSmallestDifferenceFromAmountAndHigherCapacity(List<Transporter> availableTransportersSortedByCapacity,
                                                                                         WarehouseItem item, int amount)
     {
         Transporter fittingTransporterWithHighestCapacity = null;
 
-        for(var transporter : availableTransporters)
+        for(var transporter : availableTransportersSortedByCapacity)
         {
             if(item instanceof Material)
             {
@@ -325,6 +349,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return null;
     }
 
+    /**
+     * Returns a list of factory steps for a planning item with the produce property. The method checks if the material
+     * was transported in the needed amount before. If not an empty list is returned.
+     * @param stepsToDo steps which are getting performed before this planning item
+     * @param planningItem planning item for the factory steps
+     * @return factory steps for the planning item, returns an empty list if no material is available in the warehouse
+     */
     private ArrayList<FactoryStep> getProductionSteps(List<FactoryStep> stepsToDo, PlanningItem planningItem)
     {
         var steps = new ArrayList<FactoryStep>();
@@ -384,26 +415,35 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return steps;
     }
 
-    private void getAllNeededFactoryPlanningItemsForOrder(List<Order> subOrderList)
+    /**
+     * Returns a list of planning items which are needed to fulfill the orders in the subOrder list
+     * @param subOrderList order list for the planning items
+     * @return list of planning items needed
+     */
+    private List<PlanningItem> getAllNeededFactoryPlanningItemsForOrder(List<Order> subOrderList)
     {
         var productionPlanningItems = createProcessList(subOrderList);
         setProcessDepthForPlanningItems(productionPlanningItems);
         removeDoubleEntriesFromPlaningItemList(productionPlanningItems);
         getProcessesForEveryBatchAndOrderAfterDepth(subOrderList, productionPlanningItems);
-        addAcquiringPlaningItemsForEveryBatch(productionPlanningItems);
-        addAcquiringPlaningItemsForDirectDelivery(subOrderList);
-        addDeliveryPlanningItems(subOrderList);
+        var acquiringMaterialPositions = addAcquiringPlaningItemsForEveryBatch(productionPlanningItems);
+        acquiringMaterialPositions.addAll(addAcquiringPlaningItemsForDirectDelivery(subOrderList));
+        var deliverMaterialPositions = addDeliveryPlanningItems(subOrderList);
 
-        for(var item : this.acquiringPlanningItems)
-            this.allPlanningItems.add(new PlanningItem(item.item(), item.amount(), PlanningType.Acquire));
+        var planningItems = new ArrayList<PlanningItem>();
+
+        for(var item : acquiringMaterialPositions)
+            planningItems.add(new PlanningItem(item.item(), item.amount(), PlanningType.Acquire));
 
         for (var item : this.getFlatProductionProcessList(productionPlanningItems))
-            this.allPlanningItems.add(new PlanningItem(item.getProcess().getProductToProduce(),
+            planningItems.add(new PlanningItem(item.getProcess().getProductToProduce(),
                     1,
                     PlanningType.Produce));
 
-        for(var item : this.deliverPlanningItems)
-            this.allPlanningItems.add(new PlanningItem(item.item(), item.amount(), PlanningType.Deliver));
+        for(var item : deliverMaterialPositions)
+            planningItems.add(new PlanningItem(item.item(), item.amount(), PlanningType.Deliver));
+
+        return planningItems;
     }
 
     /**
@@ -596,8 +636,14 @@ public class EnumeratedCalculationMain implements IOptimizationService
         }
     }
 
-    private void addAcquiringPlaningItemsForEveryBatch(List<ProductionPlanningItem> productionPlanningItems)
+    /**
+     * Returns a list of material positions which are needed for the production
+     * @param productionPlanningItems production processes for the orders to optimize
+     * @return list of material positions
+     */
+    private List<MaterialPosition> addAcquiringPlaningItemsForEveryBatch(List<ProductionPlanningItem> productionPlanningItems)
     {
+        var materialPositionsToAcquire = new ArrayList<MaterialPosition>();
         for(var processPlaningItem : getFlatProductionProcessList(productionPlanningItems))
         {
             var materialPositions = processPlaningItem.getProcess().getMaterialPositions();
@@ -607,26 +653,42 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 if(!this.factory.checkIfItemHasASupplier(materialPosition.item()))
                     continue;
 
-                acquiringPlanningItems.add(new MaterialPosition(materialPosition.item(), materialPosition.amount()));
+                materialPositionsToAcquire.add(new MaterialPosition(materialPosition.item(), materialPosition.amount()));
             }
         }
+
+        return materialPositionsToAcquire;
     }
 
-    private void addAcquiringPlaningItemsForDirectDelivery(List<Order> orderList)
+    /**
+     * Returns a list of material position which are delivered directly to the customer
+     * @param orderList orders to check for direct delivery
+     * @return a list of material positions
+     */
+    private List<MaterialPosition> addAcquiringPlaningItemsForDirectDelivery(List<Order> orderList)
     {
+        var materialPositionsToAcquire = new ArrayList<MaterialPosition>();
         for(var order : orderList)
         {
             if(this.factory.checkIfItemHasASupplier(order.getProduct().item()))
-                this.acquiringPlanningItems.add(new MaterialPosition(order.getProduct().item(), order.getProduct().amount()));
+                materialPositionsToAcquire.add(new MaterialPosition(order.getProduct().item(), order.getProduct().amount()));
         }
+        return materialPositionsToAcquire;
     }
 
-    private void addDeliveryPlanningItems(List<Order> subOrderList)
+    /**
+     * Returns a list of material positions to deliver to the customer
+     * @param subOrderList orders to check
+     * @return list of material positions
+     */
+    private List<MaterialPosition> addDeliveryPlanningItems(List<Order> subOrderList)
     {
+        var deliveryItems = new ArrayList<MaterialPosition>();
         for (var order : subOrderList)
         {
-            deliverPlanningItems.add(new MaterialPosition(order,
+            deliveryItems.add(new MaterialPosition(order,
                     order.getProduct().amount()));
         }
+        return deliveryItems;
     }
 }
