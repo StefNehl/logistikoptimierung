@@ -4,6 +4,7 @@ package logistikoptimierung.Entities.FactoryObjects;
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -94,14 +95,22 @@ public class Production extends FactoryObject
                     return false;
                 }
 
+                var itemsForInBuffer = new ArrayList<MaterialPosition>();
                 for(var m : process.getMaterialPositions())
                 {
                     var itemForBuffer = getFactory().getWarehouse().removeItemFromWarehouse(m);
                     if(itemForBuffer == null)
                     {
                         super.addErrorLogMessage("Not enough material (" + m.item().getName() + ") for product: " + item.getName() + " in warehouse");
+
+                        for(var itemToMoveBack : itemsForInBuffer)
+                        {
+                            getFactory().getWarehouse().addItemToWarehouse(itemToMoveBack);
+                        }
+
                         return false;
                     }
+                    itemsForInBuffer.add(itemForBuffer);
                 }
 
                 processesInInputBuffer.add(process);

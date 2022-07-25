@@ -27,14 +27,16 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 4;
+        int nrOfOrderToOptimize = 5;
         String contractList = CSVDataImportService.MERGED_CONTRACTS;
         long maxRuntimeInSeconds = 100000000;
+        int nrOfDrivers = 7;
+        int warehouseCapacity = 1000;
 
         //testRecursion();
-        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
+        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
 
-        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, contractList);
+        //TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
     }
 
     private static void testRecursion()
@@ -76,10 +78,12 @@ public class Main
     private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings,
                                                 int nrOfOrderToOptimize,
                                                 long maxRuntimeInSeconds,
-                                                String contractList)
+                                                int nrOfDrivers,
+                                                int warehouseCapacity,
+                                                String contractListName)
     {
-        var dataService = new CSVDataImportService(6, 1000);
-        var instance = dataService.loadData(contractList);
+        var dataService = new CSVDataImportService(nrOfDrivers, warehouseCapacity);
+        var instance = dataService.loadData(contractListName);
 
         var optimizer = new FirstComeFirstServeOptimizerMain(instance.factory());
         var factoryTaskList = optimizer.optimize(instance.orderList(),
@@ -95,10 +99,12 @@ public class Main
     private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings,
                                                           int nrOfOrderToOptimize,
                                                           long maxRuntimeInSeconds,
-                                                          String contractList)
+                                                          int nrOfDrivers,
+                                                          int warehouseCapacity,
+                                                          String contractListName)
     {
-        var dataService = new CSVDataImportService(7, 1000);
-        var instance = dataService.loadData(contractList);
+        var dataService = new CSVDataImportService(nrOfDrivers, warehouseCapacity);
+        var instance = dataService.loadData(contractListName);
 
         var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(instance.factory());
         var factoryTaskList = firstComeFirstServeOptimizer.optimize(instance.orderList(),
