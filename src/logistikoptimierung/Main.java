@@ -15,20 +15,20 @@ public class Main
 	// write your code here
 
         var factoryMessageSettings = new FactoryMessageSettings(
+                true,
+                false,
+                false,
+                true,
                 false,
                 false,
                 false,
                 false,
                 false,
-                false,
-                false,
-                false,
-                false,
-                false
+                true
         );
 
-        int nrOfOrderToOptimize = 5;
-        String contractList = CSVDataImportService.MERGED_CONTRACTS;
+        int nrOfOrderToOptimize = 1;
+        String contractList = CSVDataImportService.TEST_CONTRACTS;
         long maxRuntimeInSeconds = 100000000;
         int nrOfDrivers = 7;
         int warehouseCapacity = 1000;

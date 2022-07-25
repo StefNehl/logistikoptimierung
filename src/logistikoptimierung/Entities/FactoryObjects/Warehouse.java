@@ -91,7 +91,7 @@ public class Warehouse extends FactoryObject
                     return null;
                 }
 
-                remainingWarehouseCapacity = remainingWarehouseCapacity + item.amount();
+                remainingWarehouseCapacity = remainingWarehouseCapacity + materialPosition.amount();
                 var newPosition = new MaterialPosition(materialPosition.item(),
                         itemToOverwrite.amount() - materialPosition.amount());
                 warehouseItems.set(index, newPosition);
@@ -182,6 +182,7 @@ public class Warehouse extends FactoryObject
 
         var message = listToString(this.warehouseItems);
         this.factory.addLog(message, FactoryObjectMessageTypes.CurrentWarehouseStock);
+        this.factory.addLog("Remaining warehouse capacity: " + this.remainingWarehouseCapacity, FactoryObjectMessageTypes.CurrentWarehouseStock);
     }
 
     private String listToString(List<MaterialPosition> list)

@@ -174,7 +174,11 @@ public class Production extends FactoryObject
 
                 var result = getFactory().getWarehouse().addItemToWarehouse(productToMove);
                 if(!result)
+                {
+                    productsInOutputBuffer.add(productToMove);
+                    remainingNrOfOutputBufferBatches--;
                     return false;
+                }
             }
             default -> throw new IllegalStateException("Unexpected value: " + stepType);
         }
