@@ -113,13 +113,19 @@ public class  Factory {
 
             this.currentTimeStep = i;
             var remainingSteps = new ArrayList<>(copyOfSteps);
+
             for (var step : remainingSteps)
             {
                 if(step.getDoTimeStep() > this.currentTimeStep)
                     continue;
 
-                if(step.doStep())
-                    copyOfSteps.remove(step);
+                if(!step.areAllStepsBeforeCompleted())
+                    continue;
+
+                if(!step.doStep())
+                    continue;
+
+                copyOfSteps.remove(step);
             }
 
             if(copyOfSteps.isEmpty())

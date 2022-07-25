@@ -14,6 +14,7 @@ public class FactoryStep {
     private int amountOfItems;
     private long doTimeStep;
     private List<FactoryStep> factoryStepsToDoBefore;
+    private boolean isCompleted;
 
     /**
      * Creates a factory step object which should be performed at a specific time step
@@ -59,13 +60,46 @@ public class FactoryStep {
 
     /**
      * The actual "do" of the step
-     * @return
+     * @return true if the step was completed, false if not
      */
     public boolean doStep()
     {
-        var completed = factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
+        this.isCompleted = factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
         //addStepMessage(completed);
-        return completed;
+        return this.isCompleted;
+    }
+
+    /**
+     * @return true if the step is completed, false if not
+     */
+    public boolean isStepCompleted()
+    {
+        return this.isCompleted;
+    }
+
+    /**
+     * @return a list with steps which needs to be done, before this step can be done
+     */
+    public List<FactoryStep> getFactoryStepsToDoBefore()
+    {
+        return this.factoryStepsToDoBefore;
+    }
+
+    /**
+     * @return true if every step which should be done before this step are completed
+     */
+    public boolean areAllStepsBeforeCompleted()
+    {
+        if(this.factoryStepsToDoBefore == null || this.factoryStepsToDoBefore.isEmpty())
+            return true;
+
+        for(var factoryStep : this.factoryStepsToDoBefore)
+        {
+            if(!factoryStep.isStepCompleted())
+                return false;
+        }
+
+        return true;
     }
 
     /**
