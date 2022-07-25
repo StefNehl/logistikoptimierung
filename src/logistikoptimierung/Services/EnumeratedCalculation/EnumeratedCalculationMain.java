@@ -21,6 +21,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private long bestTimeSolution;
     private List<FactoryStep> bestSolution = new ArrayList<>();
     private long nrOfSimulations = 0;
+    private long nrOfModels = 0;
 
     private List<List<FactoryStep>> checkForDublicates;
     private int Kopie = 0;
@@ -57,7 +58,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var planningItems = getAllNeededFactoryPlanningItemsForOrder(subOrderList);
 
         this.checkForDublicates = new ArrayList<>();
-        nrOfSimulations = 0;
+        this.nrOfSimulations = 0;
+        this.nrOfModels = 0;
         var stepToDo = new ArrayList<FactoryStep>();
         getPlanningSolutionRecursive(stepToDo, planningItems);
 

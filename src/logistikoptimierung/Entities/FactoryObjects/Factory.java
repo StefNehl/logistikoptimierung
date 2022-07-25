@@ -23,15 +23,7 @@ public class  Factory {
     private final List<Order> orderList;
 
     private final List<FactoryObjectMessage> logMessages = new ArrayList<>();
-    private boolean printDriverMessages;
-    private boolean printProductionMessages;
-    private boolean printTransportMessages;
-    private boolean printWarehouseMessages;
-    private boolean printWarehouseStockChangeMessages;
-    private boolean printFactoryMessages;
-    private boolean printFactoryStepMessages;
-    private boolean printOnlyCompletedFactoryStepMessages;
-    private boolean printCompleteWarehouseStockAfterChangeMessages;
+    private FactoryMessageSettings factoryMessageSettings;
 
     /**
      * This class creates an object for the factory. The factory is the main object and contains the warehouse, transporters,
@@ -102,15 +94,7 @@ public class  Factory {
     {
         logMessages.clear();
         nrOfRemainingSteps = 0;
-        this.printDriverMessages = factoryMessageSettings.printDriverMessages();
-        this.printProductionMessages = factoryMessageSettings.printProductionMessages();
-        this.printTransportMessages = factoryMessageSettings.printTransportMessages();
-        this.printWarehouseMessages = factoryMessageSettings.printWarehouseMessages();
-        this.printFactoryMessages = factoryMessageSettings.printFactoryMessage();
-        this.printFactoryStepMessages = factoryMessageSettings.printFactoryStepMessages();
-        this.printOnlyCompletedFactoryStepMessages = factoryMessageSettings.printOnlyCompletedFactoryStepMessages();
-        this.printWarehouseStockChangeMessages = factoryMessageSettings.printWarehouseStockChangeMessages();
-        this.printCompleteWarehouseStockAfterChangeMessages = factoryMessageSettings.printCurrentWarehouseStockAfterChangeMessages();
+        this.factoryMessageSettings = factoryMessageSettings;
 
         int hourCount = 1;
         addLog("Hour: " + hourCount, FactoryObjectMessageTypes.Factory);
@@ -418,23 +402,26 @@ public class  Factory {
      */
     private void addLog(String message, FactoryObjectMessageTypes factoryObjectType, boolean completed)
     {
+        if(!factoryMessageSettings.activateLogging())
+            return;
+
         var newMessage = new FactoryObjectMessage(currentTimeStep, message, factoryObjectType);
         this.logMessages.add(newMessage);
         switch (factoryObjectType)
         {
             case Driver -> {
-                if(this.printDriverMessages)
+                if(this.factoryMessageSettings.printDriverMessages())
                     System.out.println(newMessage);
             }
             case Factory -> {
-                if(this.printFactoryMessages)
+                if(this.factoryMessageSettings.printFactoryMessage())
                     System.out.println(newMessage);
             }
             case FactoryStep -> {
-                if(!this.printFactoryStepMessages)
+                if(!this.factoryMessageSettings.printFactoryStepMessages())
                     break;
 
-                if(this.printOnlyCompletedFactoryStepMessages)
+                if(this.factoryMessageSettings.printOnlyCompletedFactoryStepMessages())
                 {
                     if(completed)
                         System.out.println(newMessage);
@@ -444,23 +431,23 @@ public class  Factory {
                 System.out.println(newMessage);
             }
             case Production -> {
-                if(this.printProductionMessages)
+                if(this.factoryMessageSettings.printProductionMessages())
                     System.out.println(newMessage);
             }
             case Transporter -> {
-                if(this.printTransportMessages)
+                if(this.factoryMessageSettings.printTransportMessages())
                     System.out.println(newMessage);
             }
             case WarehouseStock ->{
-                if(this.printWarehouseStockChangeMessages)
+                if(this.factoryMessageSettings.printWarehouseStockChangeMessages())
                     System.out.println(newMessage);
             }
             case Warehouse -> {
-                if(this.printWarehouseMessages)
+                if(this.factoryMessageSettings.printWarehouseMessages())
                     System.out.println(newMessage);
             }
             case CurrentWarehouseStock -> {
-                if(this.printCompleteWarehouseStockAfterChangeMessages)
+                if(this.factoryMessageSettings.printCurrentWarehouseStockAfterChangeMessages())
                     System.out.println(newMessage);
             }
         }
