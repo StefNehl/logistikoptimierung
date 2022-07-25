@@ -117,7 +117,7 @@ public class Transporter extends FactoryObject
                     return false;
                 }
 
-                return getSpecificAmountOfItemsFromOrderToCustomer(workingOrder, amountOfItems);
+                return getSpecificAmountOfItemsFromOrderToCustomer(workingOrder, amountOfItems, driver);
             }
             case ClosesOrderFromCustomer -> {
 
@@ -233,7 +233,7 @@ public class Transporter extends FactoryObject
         return false;
     }
 
-    private boolean getSpecificAmountOfItemsFromOrderToCustomer(Order order, int amountOfItems)
+    private boolean getSpecificAmountOfItemsFromOrderToCustomer(Order order, int amountOfItems, Driver driver)
     {
         if(amountOfItems > this.capacity)
         {
@@ -247,7 +247,8 @@ public class Transporter extends FactoryObject
             return false;
         }
 
-        blockedUntilTimeStep = order.getTravelTime();
+        blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + order.getTravelTime();
+        driver.setBlockedUntilTimeStep(blockedUntilTimeStep);
         this.getFactory().getWarehouse().removeItemFromWarehouse(
                 new MaterialPosition(order.getProduct().item(), amountOfItems));
         order.deductProductAmount(amountOfItems);

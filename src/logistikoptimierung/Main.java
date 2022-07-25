@@ -19,7 +19,7 @@ public class Main
                 true,
                 false,
                 true,
-                false,
+                true,
                 false,
                 false,
                 false,
@@ -28,9 +28,9 @@ public class Main
         );
 
         int nrOfOrderToOptimize = 5;
-        String contractList = CSVDataImportService.TEST_CONTRACTS;
+        String contractList = CSVDataImportService.MERGED_CONTRACTS;
         long maxRuntimeInSeconds = 100000;
-        int nrOfDrivers = 2;
+        int nrOfDrivers = 6;
         int warehouseCapacity = 1000;
 
         //testRecursion();
