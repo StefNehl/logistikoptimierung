@@ -27,7 +27,7 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 4;
+        int nrOfOrderToOptimize = 3;
         String contractList = CSVDataImportService.CONTRACT_3;
         long maxRuntimeInSeconds = 100000000;
 
@@ -81,13 +81,13 @@ public class Main
         var dataService = new CSVDataImportService(7, 1000);
         var instance = dataService.loadData(contractList);
 
-        var optimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
-        var factoryTaskList = optimizer.optimize(instance.getFactory().getOrderList(),
+        var optimizer = new FirstComeFirstServeOptimizerMain(instance.factory());
+        var factoryTaskList = optimizer.optimize(instance.orderList(),
                 nrOfOrderToOptimize);
 
-        instance.getFactory().startFactory(factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
-        printResult(instance.getFactory().getCurrentIncome(), instance.getFactory().getCurrentTimeStep());
-        instance.getFactory().resetFactory();
+        instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep());
+        instance.factory().resetFactory();
 
         //instance.getFactory().printLogMessageFromTo(2017, 2200);
     }
@@ -100,21 +100,20 @@ public class Main
         var dataService = new CSVDataImportService(7, 1000);
         var instance = dataService.loadData(contractList);
 
-        var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(instance.getFactory());
-        var factoryTaskList = firstComeFirstServeOptimizer.optimize(instance.getFactory().getOrderList(),
+        var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(instance.factory());
+        var factoryTaskList = firstComeFirstServeOptimizer.optimize(instance.orderList(),
                 nrOfOrderToOptimize);
 
-        var result = instance.getFactory().startFactory(factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+        var result = instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
 
-        instance.getFactory().resetFactory();
-        var optimizer = new EnumeratedCalculationMain(instance.getFactory(), (result + 1), factoryMessageSettings);
-        factoryTaskList = optimizer.optimize(instance.getFactory()
-                .getOrderList(),
+        instance.factory().resetFactory();
+        var optimizer = new EnumeratedCalculationMain(instance.factory(), (result + 1), factoryMessageSettings);
+        factoryTaskList = optimizer.optimize(instance.orderList(),
                 nrOfOrderToOptimize);
 
-        instance.getFactory().startFactory(factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
-        printResult(instance.getFactory().getCurrentIncome(), instance.getFactory().getCurrentTimeStep());
-        instance.getFactory().resetFactory();
+        instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep());
+        instance.factory().resetFactory();
 
     }
 

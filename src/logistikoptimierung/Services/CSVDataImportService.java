@@ -82,9 +82,9 @@ public class CSVDataImportService implements IDataService
                     nrOfDrivers,
                     transporters,
                     materials,
-                    products,
+                    products);
+            return new Instance(factory,
                     orders);
-            return new Instance(factory);
         }
         catch (Exception ex)
         {

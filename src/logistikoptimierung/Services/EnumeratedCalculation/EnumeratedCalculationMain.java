@@ -17,6 +17,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private List<Transporter> sortedAvailableTransportList;
     private List<Driver> availableDrivers;
     private List<DriverPoolItem> driverPoolItems;
+    private List<Order> orderList;
 
     private long bestTimeSolution;
     private List<FactoryStep> bestSolution = new ArrayList<>();
@@ -49,6 +50,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     @Override
     public List<FactoryStep> optimize(List<Order> orderList, int nrOfOrdersToOptimize)
     {
+        this.orderList = orderList;
         var subOrderList = new ArrayList<Order>();
         for(int i = 0; i < nrOfOrdersToOptimize; i++)
         {
@@ -97,9 +99,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             nrOfSimulations++;
             checkForDublicates.add(stepsToDo);
-            result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
-
+            result = this.factory.startFactory(this.orderList, stepsToDo, bestTimeSolution, factoryMessageSettings);
             var nrOfRemainingSteps = this.factory.getNrOfRemainingSteps();
+
             this.factory.resetFactory();
 
             if(nrOfSimulations % 100 == 0) {
@@ -224,6 +226,29 @@ public class EnumeratedCalculationMain implements IOptimizationService
                         .equals(order.getProduct().item().getName()))
                 {
                     amountOfProductInWarehouse += step.getAmountOfItems();
+                }
+            }
+
+            if(step.getStepType().equals(FactoryStepTypes.ConcludeOrderTransportToCustomer))
+            {
+                var oldOrder = (Order)step.getItemToManipulate();
+                if(oldOrder.getProduct().item().getName().equals(order.getProduct().item().getName()))
+                {
+                    amountOfProductInWarehouse -= oldOrder.getProduct().amount();
+                }
+            }
+
+            if(step.getStepType().equals(FactoryStepTypes.Produce))
+            {
+                var production = (Production) step.getFactoryObject();
+                var process = production.getProductionProcessForProduct(step.getItemToManipulate());
+
+                for(var materialPosition : process.getMaterialPositions())
+                {
+                    if(step.getItemToManipulate().getName().equals(materialPosition.item().getName()))
+                    {
+                        amountOfProductInWarehouse -= materialPosition.amount();
+                    }
                 }
             }
         }

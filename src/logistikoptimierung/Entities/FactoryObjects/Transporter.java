@@ -110,16 +110,30 @@ public class Transporter extends FactoryObject
                     return false;
                 }
 
-                return getSpecificAmountOfItemsFromOrderToCustomer((Order)item, amountOfItems);
-            }
-            case ClosesOrderFromCustomer -> {
-                var order = (Order)item;
-                if(order.getProduct().amount() > 0)
+                var workingOrder = this.getFactory().getWorkingOrderForOrder((Order)item);
+                if(workingOrder == null)
                 {
-                    super.addErrorLogMessage("Order can't be closed. " + order.getProduct().amount() + " of " + order.getProduct().item() + " is still to deliver");
+                    super.addErrorLogMessage("Working order for order not found " + item.getName());
                     return false;
                 }
-                this.getFactory().increaseIncome(order.getIncome());
+
+                return getSpecificAmountOfItemsFromOrderToCustomer(workingOrder, amountOfItems);
+            }
+            case ClosesOrderFromCustomer -> {
+
+                var workingOrder = this.getFactory().getWorkingOrderForOrder((Order)item);
+                if(workingOrder == null)
+                {
+                    super.addErrorLogMessage("Working order for order not found " + item.getName());
+                    return false;
+                }
+
+                if(workingOrder.getProduct().amount() > 0)
+                {
+                    super.addErrorLogMessage("Order can't be closed. " + workingOrder.getProduct().amount() + " of " + workingOrder.getProduct().item() + " is still to deliver");
+                    return false;
+                }
+                this.getFactory().increaseIncome(workingOrder.getIncome());
             }
         }
         return true;

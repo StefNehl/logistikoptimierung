@@ -19,8 +19,8 @@ public class  Factory {
     private final List<Driver> drivers;
     private final List<Material> suppliedMaterials;
     private final List<Product> availableProducts;
-    private final List<Order> workingOrderList;
-    private final List<Order> orderList;
+
+    private List<Order> workingOrderList;
 
     private final List<FactoryObjectMessage> logMessages = new ArrayList<>();
     private FactoryMessageSettings factoryMessageSettings;
@@ -35,7 +35,6 @@ public class  Factory {
      * @param transporters sets the transporters
      * @param suppliedMaterials sets the materials for supply
      * @param availableProducts sets the available productions
-     * @param orderList sets the orders
      */
     public Factory(String name,
                    int warehouseCapacity,
@@ -43,8 +42,7 @@ public class  Factory {
                    int nrOfDrivers,
                    List<Transporter> transporters,
                    List<Material> suppliedMaterials,
-                   List<Product> availableProducts,
-                   List<Order> orderList) {
+                   List<Product> availableProducts) {
         this.name = name;
         this.currentTimeStep = 0;
         this.currentIncome = 0;
@@ -68,8 +66,25 @@ public class  Factory {
 
         this.suppliedMaterials = new ArrayList<>(suppliedMaterials);
         this.availableProducts = new ArrayList<>(availableProducts);
-        this.orderList = orderList;
 
+    }
+
+    /**
+     * Starts the simulation. The simulation iterates from 0 to the max run time, in seconds,  and tries to perform every task in the
+     * factory steps every iteration. The simulation stops if it reaches the max run time or if no factory step is left to perform.
+     * The factory message settings sets the amount of messages which are printed in the console while the simulation. The not printed
+     * messages are stored in the object.
+     * @param orderList sets the orders
+     * @param factorySteps sets the factory steps to perform
+     * @param maxRunTime sets the maximum runtime after the simulation stops
+     * @param factoryMessageSettings sets the amount of printed messages in the console
+     * @return the time step after the factory stops (in seconds)
+     */
+    public long startFactory(List<Order> orderList,
+                             List<FactoryStep> factorySteps,
+                             long maxRunTime,
+                             FactoryMessageSettings factoryMessageSettings)
+    {
         //Working Order List is used for storing the remaining amount of items in an Order
         //This list changes => copy the list
         this.workingOrderList = new ArrayList<>();
@@ -78,20 +93,7 @@ public class  Factory {
             var copyOfOrder = order.createCopyOfOrder();
             workingOrderList.add(copyOfOrder);
         }
-    }
 
-    /**
-     * Starts the simulation. The simulation iterates from 0 to the max run time, in seconds,  and tries to perform every task in the
-     * factory steps every iteration. The simulation stops if it reaches the max run time or if no factory step is left to perform.
-     * The factory message settings sets the amount of messages which are printed in the console while the simulation. The not printed
-     * messages are stored in the object.
-     * @param factorySteps sets the factory steps to perform
-     * @param maxRunTime sets the maximum runtime after the simulation stops
-     * @param factoryMessageSettings sets the amount of printed messages in the console
-     * @return the time step after the factory stops (in seconds)
-     */
-    public long startFactory(List<FactoryStep> factorySteps, long maxRunTime, FactoryMessageSettings factoryMessageSettings)
-    {
         logMessages.clear();
         nrOfRemainingSteps = 0;
         this.factoryMessageSettings = factoryMessageSettings;
@@ -164,11 +166,6 @@ public class  Factory {
         }
 
         this.workingOrderList.clear();
-        for(var order : orderList)
-        {
-            var copyOfOrder = order.createCopyOfOrder();
-            workingOrderList.add(copyOfOrder);
-        }
     }
 
     /**
@@ -356,13 +353,6 @@ public class  Factory {
     }
 
     /**
-     * @return the order list
-     */
-    public List<Order> getOrderList() {
-        return workingOrderList;
-    }
-
-    /**
      * Returns a list of every warehouse item (products, materials, orders)
      * @return list of warehouse items
      */
@@ -521,4 +511,19 @@ public class  Factory {
         }
     }
 
+    /**
+     * Returns the working order which is used for storing the state of the current order for the specific order
+     * @param order
+     * @return the working order, returns null if the order was not found
+     */
+    public Order getWorkingOrderForOrder(Order order)
+    {
+        for (var workingOrder : workingOrderList)
+        {
+            if(workingOrder.getOrderNr() == order.getOrderNr())
+                return workingOrder;
+        }
+
+        return null;
+    }
 }

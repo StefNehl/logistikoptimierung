@@ -1,17 +1,11 @@
 package logistikoptimierung.Entities;
 
 import logistikoptimierung.Entities.FactoryObjects.Factory;
+import logistikoptimierung.Entities.WarehouseItems.Order;
 
-public class Instance {
+import java.util.List;
 
-    private final Factory factory;
+public record Instance (Factory factory, List<Order> orderList)
+{
 
-    public Instance(Factory factory)
-    {
-        this.factory = factory;
-    }
-
-    public Factory getFactory() {
-        return factory;
-    }
 }
