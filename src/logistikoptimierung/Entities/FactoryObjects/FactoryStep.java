@@ -112,6 +112,19 @@ public class FactoryStep {
         this.factory.addFactoryStepLog(this + " Completed: " + completed, FactoryObjectMessageTypes.FactoryStep, completed);
     }
 
+    public boolean compareTo(FactoryStep step){
+        if(this.itemToManipulate.getItemId().equals(step.itemToManipulate.getItemId())){
+            if(this.getStepType().equals(step.getStepType())){
+                if(this.getAmountOfItems()==(step.getAmountOfItems())){
+                    if(this.factoryObject.getName().equals(step.getFactoryObject().getName()))
+                        if(this.getDoTimeStep() == step.getDoTimeStep())
+                            return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString()
     {

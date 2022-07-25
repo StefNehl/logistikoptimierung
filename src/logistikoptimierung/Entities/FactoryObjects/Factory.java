@@ -5,7 +5,7 @@ import logistikoptimierung.Entities.WarehouseItems.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Factory {
+public class  Factory {
 
     private final String name;
     private long currentTimeStep;

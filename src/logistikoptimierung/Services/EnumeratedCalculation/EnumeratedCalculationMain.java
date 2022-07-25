@@ -22,9 +22,12 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private List<FactoryStep> bestSolution = new ArrayList<>();
     private long nrOfSimulations = 0;
 
+    private List<List<FactoryStep>> checkForDublicates;
+    private int Kopie = 0;
+
     /**
      * Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.
-     * For this the allgorithm gets every needed step for transportation, production and delivery and orders them in
+     * For this the algorithm gets every needed step for transportation, production and delivery and orders them in
      * every combination and simulates the factory to find the best result.
      * @param factory the factory where the optimization should happen
      * @param maxRuntime maximum run time for the optimization
@@ -53,6 +56,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         var planningItems = getAllNeededFactoryPlanningItemsForOrder(subOrderList);
 
+        this.checkForDublicates = new ArrayList<>();
         nrOfSimulations = 0;
         var stepToDo = new ArrayList<FactoryStep>();
         getPlanningSolutionRecursive(stepToDo, planningItems);
@@ -69,13 +73,39 @@ public class EnumeratedCalculationMain implements IOptimizationService
     {
         if(planningItems.isEmpty())
         {
-            var result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
+            boolean sameList = false;
+            long result = 0;
+
+            if(checkForDublicates.size() == 0)
+            {
+                checkForDublicates.add(stepsToDo);
+                result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
+            }
+            else
+            {
+                sameList = false;
+                for (var dublicates : checkForDublicates) {
+
+                    if(compareLists(dublicates, stepsToDo)) {
+                        result = bestTimeSolution;
+                        sameList = true;
+                        break;
+                    }
+                }
+                if(sameList == false)
+                {
+                    checkForDublicates.add(stepsToDo);
+                    result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
+                }
+            }
+
             var nrOfRemainingSteps = this.factory.getNrOfRemainingSteps();
             this.factory.resetFactory();
             nrOfSimulations++;
 
-            if(nrOfSimulations % 100 == 0)
+            if(nrOfSimulations % 100 == 0) {
                 System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
+            }
 
             if(result < bestTimeSolution)
             {
@@ -123,6 +153,17 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 addTransporterToSortedTransportList(poolItem.transporter());
             }
         }
+    }
+
+    private boolean compareLists(List<FactoryStep> firstList, List<FactoryStep> secondList){
+        if(firstList.size() != secondList.size())
+            return false;
+        for (int i = 0; i < firstList.size(); i++) {
+            if (!firstList.get(i).compareTo(secondList.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -181,7 +222,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             if(step.getStepType().equals(FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse))
             {
                 if(step.getItemToManipulate().getName()
-                    .equals(order.getProduct().item().getName()))
+                        .equals(order.getProduct().item().getName()))
                 {
                     amountOfProductInWarehouse += step.getAmountOfItems();
                 }

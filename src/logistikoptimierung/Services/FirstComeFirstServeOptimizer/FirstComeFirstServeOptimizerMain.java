@@ -15,7 +15,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
     /**
      * Creates an object of the optimizer with the first come first serve principal.
-     * For this the allgorithm gets every needed step for transportation, production and delivery and orders them via
+     * For this the algorithm gets every needed step for transportation, production and delivery and orders them via
      * the priority of the order. So the first order is handled first, then the next and so on.
      * @param factory the factory where the optimization should happen
      */
