@@ -74,34 +74,31 @@ public class EnumeratedCalculationMain implements IOptimizationService
         if(planningItems.isEmpty())
         {
             boolean sameList = false;
-            long result = 0;
+            long result;
 
             if(checkForDublicates.size() == 0)
-            {
                 checkForDublicates.add(stepsToDo);
-                result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
-            }
             else
             {
-                sameList = false;
-                for (var dublicates : checkForDublicates) {
-
-                    if(compareLists(dublicates, stepsToDo)) {
-                        result = bestTimeSolution;
+                for (var dublicates : checkForDublicates)
+                {
+                    if(compareLists(dublicates, stepsToDo))
+                    {
                         sameList = true;
                         break;
                     }
                 }
-                if(sameList == false)
-                {
-                    checkForDublicates.add(stepsToDo);
-                    result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
-                }
             }
+
+            if(sameList)
+                return;
+
+            nrOfSimulations++;
+            checkForDublicates.add(stepsToDo);
+            result = this.factory.startFactory(stepsToDo, bestTimeSolution, factoryMessageSettings);
 
             var nrOfRemainingSteps = this.factory.getNrOfRemainingSteps();
             this.factory.resetFactory();
-            nrOfSimulations++;
 
             if(nrOfSimulations % 100 == 0) {
                 System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
@@ -135,11 +132,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
             if(stepsToAdd.isEmpty())
                 continue;
 
-            stepsToDo.addAll(stepsToAdd);
-            var copyOfSteps = new ArrayList<>(planningItems);
-            copyOfSteps.remove(planningItem);
-            getPlanningSolutionRecursive(stepsToDo, copyOfSteps);
-            stepsToDo.removeAll(stepsToAdd);
+            var copyOfPlanningItems = new ArrayList<>(planningItems);
+            var copyOfSteps = new ArrayList<>(stepsToDo);
+            copyOfSteps.addAll(stepsToAdd);
+            copyOfPlanningItems.remove(planningItem);
+            getPlanningSolutionRecursive(copyOfSteps, copyOfPlanningItems);
 
             //Release driver
             if(planningItem.planningType() == PlanningType.Acquire ||
