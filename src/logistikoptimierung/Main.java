@@ -19,7 +19,7 @@ public class Main
                 false,
                 false,
                 false,
-                true,
+                false,
                 false,
                 false,
                 false,
@@ -27,7 +27,7 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 3;
+        int nrOfOrderToOptimize = 4;
         String contractList = CSVDataImportService.CONTRACT_3;
         long maxRuntimeInSeconds = 100000000;
 
@@ -78,7 +78,7 @@ public class Main
                                                 long maxRuntimeInSeconds,
                                                 String contractList)
     {
-        var dataService = new CSVDataImportService(7, 1000);
+        var dataService = new CSVDataImportService(6, 1000);
         var instance = dataService.loadData(contractList);
 
         var optimizer = new FirstComeFirstServeOptimizerMain(instance.factory());

@@ -202,6 +202,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var amountOfProductInWarehouse = 0;
         var order = (Order)planningItem.item();
 
+        var stepsToDoBefore = new ArrayList<FactoryStep>();
+
         for(var step : stepsToDo)
         {
             if(step.getStepType().equals(FactoryStepTypes.Produce))
@@ -235,6 +237,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 if(oldOrder.getProduct().item().getName().equals(order.getProduct().item().getName()))
                 {
                     amountOfProductInWarehouse -= oldOrder.getProduct().amount();
+                    stepsToDoBefore.add(step);
                 }
             }
 
@@ -248,6 +251,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                     if(step.getItemToManipulate().getName().equals(materialPosition.item().getName()))
                     {
                         amountOfProductInWarehouse -= materialPosition.amount();
+                        stepsToDoBefore.add(step);
                     }
                 }
             }
@@ -283,7 +287,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             else
                 amountToTransport = bestTransporter.getCapacity();
 
-            var newStep = new FactoryStep(this.factory, 0,
+            var newStep = new FactoryStep(this.factory, stepsToDoBefore,
                     planningItem.item(),
                     amountToTransport,
                     bestTransporter,
@@ -301,7 +305,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             lastAmountToTransport = amountToTransport;
         }
 
-        var newStep = new FactoryStep(this.factory, 0,
+        var newStep = new FactoryStep(this.factory, stepsToDoBefore,
                 planningItem.item(),
                 lastAmountToTransport,
                 lastTransport,
@@ -506,14 +510,48 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 .factory
                 .getProductionProcessForWarehouseItem(planningItem.item());
 
+        var stepsToDoBefore = new ArrayList<FactoryStep>();
+
         //Check if material is actually in the warehouse
         for (var materialPosition : process.getMaterialPositions())
         {
             var materialInWarehouse = 0;
             for(var step : stepsToDo)
             {
-                if(step.getItemToManipulate().getName().equals(materialPosition.item().getName()))
-                    materialInWarehouse += step.getAmountOfItems();
+                if(step.getStepType().equals(FactoryStepTypes.MoveMaterialFromTransporterToWarehouse))
+                {
+                    //Check if transporter got the needed material before
+                    if(step.getItemToManipulate().equals(materialPosition.item()))
+                        materialInWarehouse += step.getAmountOfItems();
+                }
+
+                if(step.getStepType().equals(FactoryStepTypes.Produce))
+                {
+                    //Check if product was produced
+                    if(step.getItemToManipulate().equals(materialPosition.item()))
+                    {
+                        var subProcess = this.factory.getProductionProcessForWarehouseItem(step.getItemToManipulate());
+                        materialInWarehouse += subProcess.getProductionBatchSize();
+                        stepsToDoBefore.add(step);
+                    }
+                }
+
+                //Check if any other production consumed the material before
+                if(step.getStepType().equals(FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer))
+                {
+                    var productionProcess = this.factory.getProductionProcessForWarehouseItem(step.getItemToManipulate());
+                    for(var materialPositionForProcess : productionProcess.getMaterialPositions())
+                    {
+                        if(materialPositionForProcess.item().equals(materialPosition.item()))
+                        {
+                            materialInWarehouse -= materialPositionForProcess.amount();
+                            stepsToDoBefore.add(step);
+                        }
+                    }
+
+                }
+
+
             }
 
             if(materialInWarehouse < planningItem.amount())
@@ -523,7 +561,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             }
         }
 
-        var newStep = new FactoryStep(this.factory, 0,
+        var newStep = new FactoryStep(this.factory, stepsToDoBefore,
                 planningItem.item(),
                 1,
                 process.getProduction(),
@@ -531,7 +569,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         steps.add(newStep);
 
-        newStep = new FactoryStep(this.factory, 0,
+        stepsToDoBefore = new ArrayList<>();
+        stepsToDoBefore.add(newStep);
+        newStep = new FactoryStep(this.factory, stepsToDoBefore,
                 planningItem.item(),
                 1,
                 process.getProduction(),
@@ -539,7 +579,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         steps.add(newStep);
 
-        newStep = new FactoryStep(this.factory, 0,
+        stepsToDoBefore = new ArrayList<>();
+        stepsToDoBefore.add(newStep);
+        newStep = new FactoryStep(this.factory, stepsToDoBefore,
                 planningItem.item(),
                 1,
                 process.getProduction(),
@@ -547,7 +589,10 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         steps.add(newStep);
 
-        newStep = new FactoryStep(this.factory, 0,
+
+        stepsToDoBefore = new ArrayList<>();
+        stepsToDoBefore.add(newStep);
+        newStep = new FactoryStep(this.factory, stepsToDoBefore,
                 planningItem.item(),
                 planningItem.amount(),
                 process.getProduction(),
