@@ -16,7 +16,7 @@ public class Main
 
         var factoryMessageSettings = new FactoryMessageSettings(
                 true,
-                false,
+                true,
                 false,
                 true,
                 false,
@@ -24,13 +24,13 @@ public class Main
                 false,
                 false,
                 false,
-                true
+                false
         );
 
-        int nrOfOrderToOptimize = 1;
+        int nrOfOrderToOptimize = 5;
         String contractList = CSVDataImportService.TEST_CONTRACTS;
-        long maxRuntimeInSeconds = 100000000;
-        int nrOfDrivers = 7;
+        long maxRuntimeInSeconds = 100000;
+        int nrOfDrivers = 2;
         int warehouseCapacity = 1000;
 
         //testRecursion();

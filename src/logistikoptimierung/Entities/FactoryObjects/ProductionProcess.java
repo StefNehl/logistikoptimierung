@@ -83,4 +83,10 @@ public class ProductionProcess
         }
         return 0;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Product " + getProductToProduce().toString() + " BatchSize: " + getProductionBatchSize();
+    }
 }

@@ -2,6 +2,7 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
+import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.ArrayList;
@@ -95,22 +96,22 @@ public class Production extends FactoryObject
                     return false;
                 }
 
-                var itemsForInBuffer = new ArrayList<MaterialPosition>();
+
+                for(var m : process.getMaterialPositions())
+                {
+                    //Check if material is available
+                    if(!this.getFactory().getWarehouse().checkIfMaterialIsAvailable(m.item(), m.amount()))
+                    {
+                        super.addErrorLogMessage("Material: " + item + " in the amount: " + amountOfItems + " not available");
+                        return false;
+                    }
+                }
+
                 for(var m : process.getMaterialPositions())
                 {
                     var itemForBuffer = getFactory().getWarehouse().removeItemFromWarehouse(m);
                     if(itemForBuffer == null)
-                    {
-                        super.addErrorLogMessage("Not enough material (" + m.item().getName() + ") for product: " + item.getName() + " in warehouse");
-
-                        for(var itemToMoveBack : itemsForInBuffer)
-                        {
-                            getFactory().getWarehouse().addItemToWarehouse(itemToMoveBack);
-                        }
-
-                        return false;
-                    }
-                    itemsForInBuffer.add(itemForBuffer);
+                        throw new RuntimeException();
                 }
 
                 processesInInputBuffer.add(process);
@@ -124,7 +125,20 @@ public class Production extends FactoryObject
                     return false;
                 }
 
-                var producedProduct = produce(item);
+                ProductionProcess processInInput = null;
+                for(var process : processesInInputBuffer)
+                {
+                    if(process.getProductToProduce().equals(item))
+                        processInInput = process;
+                }
+
+                if(processInInput == null)
+                {
+                    addItemNotInBufferLogMessage(item, false);
+                    return false;
+                }
+
+                var producedProduct = produce(processInInput);
 
                 if(producedProduct == null)
                 {
@@ -202,29 +216,16 @@ public class Production extends FactoryObject
         return null;
     }
 
-    private MaterialPosition produce(WarehouseItem productToProduce)
+    private MaterialPosition produce(ProductionProcess processInInput)
     {
-        ProductionProcess processInInput = null;
-        for(var process : processesInInputBuffer)
-        {
-            if(process.getProductToProduce().equals(productToProduce))
-                processInInput = process;
-        }
-
-        if(processInInput == null)
-        {
-            addItemNotInBufferLogMessage(productToProduce, false);
-            return null;
-        }
-
         processesInInputBuffer.remove(processInInput);
         remainingNrOfInputBufferBatches++;
 
-        addBufferLogMessage(productToProduce, false, true);
+        addBufferLogMessage(processInInput.getProductToProduce(), false, true);
         blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + processInInput.getProductionTime();
-        addProduceItemMessage(productToProduce);
+        addProduceItemMessage(processInInput.getProductToProduce());
 
-        return new MaterialPosition(productToProduce, processInInput.getProductionBatchSize());
+        return new MaterialPosition(processInInput.getProductToProduce(), processInInput.getProductionBatchSize());
     }
 
     /**
