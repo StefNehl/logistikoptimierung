@@ -8,7 +8,6 @@ import logistikoptimierung.Entities.WarehouseItems.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Time;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,11 +20,8 @@ public class CSVDataImportService implements IDataService
     private static final String PRODUCTS_FILENAME = "Products.csv";
     private static final String PRODUCTIONS_FILENAME = "FabrikenMitPuffer.csv";
 
-    public static final String CONTRACT_1 = "Aufträge1.csv";
-    public static final String CONTRACT_2 = "Aufträge2.csv";
-    public static final String CONTRACT_3 = "Aufträge3.csv";
-    public static final String CONTRACT_4 = "Aufträge4.csv";
-    public static final String CONTRACT_5 = "Aufträge5.csv";
+    public static final String MERGED_CONTRACTS = "VermischteAufträge.csv";
+    public static final String TEST_CONTRACTS = "TestAufträge.csv";
 
     private static final String DATA_PATH = "data\\";
     private static final String DELIMITER = ";";

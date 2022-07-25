@@ -28,7 +28,7 @@ public class Main
         );
 
         int nrOfOrderToOptimize = 4;
-        String contractList = CSVDataImportService.CONTRACT_3;
+        String contractList = CSVDataImportService.MERGED_CONTRACTS;
         long maxRuntimeInSeconds = 100000000;
 
         //testRecursion();
