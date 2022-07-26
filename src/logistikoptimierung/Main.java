@@ -7,6 +7,9 @@ import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstS
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Main class for testing the optimization
+ */
 public class Main
 {
     /**
@@ -15,7 +18,7 @@ public class Main
      * 2: Sets the parameter for the instance of the factory and sets the max runtime for the simulation
      * 3: Tests the first come first serve optimization and prints the result in the console
      * 4: Tests the enumerated calculation optimization and prints the result in the console
-     * @param args
+     * @param args String args (No available start parameters)
      */
     public static void main(String[] args) {
 	// write your code here
