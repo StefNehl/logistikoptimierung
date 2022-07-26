@@ -8,7 +8,7 @@ public class WarehouseItem {
 
     private final String name;
     private final String itemId;
-    private WarehouseItemType itemType;
+    private final WarehouseItemType itemType;
 
     /**
      * Creates a warehouse item with an id, name and the item type
@@ -56,9 +56,6 @@ public class WarehouseItem {
         if(!(o instanceof WarehouseItem))
             return false;
 
-        if(this.name.equals(((WarehouseItem) o).getName()))
-            return true;
-
-        return false;
+        return this.name.equals(((WarehouseItem) o).getName());
     }
 }
