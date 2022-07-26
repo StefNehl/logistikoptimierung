@@ -1,5 +1,8 @@
 package logistikoptimierung.Entities.WarehouseItems;
 
+/**
+ * Creates the warehouse type order
+ */
 public class Order extends WarehouseItem
 {
     private final String area;
@@ -40,14 +43,23 @@ public class Order extends WarehouseItem
         this.travelTime = travelTime;
     }
 
+    /**
+     * @return the order nr
+     */
     public int getOrderNr() {
         return orderNr;
     }
 
+    /**
+     * @return the area
+     */
     public String getArea() {
         return area;
     }
 
+    /**
+     * @return the product as material position with the needed amount
+     */
     public MaterialPosition getProduct() {
         return product;
     }
@@ -61,18 +73,30 @@ public class Order extends WarehouseItem
         this.product = new MaterialPosition(this.product.item(), this.product.amount() - amountToDeduct);
     }
 
+    /**
+     * @return the income of the order
+     */
     public double getIncome() {
         return income;
     }
 
+    /**
+     * @return the transport type
+     */
     public String getTransportType() {
         return transportType;
     }
 
+    /**
+     * @return the engine
+     */
     public String getEngine() {
         return engine;
     }
 
+    /**
+     * @return the travel time needed for the transporter
+     */
     public int getTravelTime() {
         return travelTime;
     }
@@ -87,7 +111,6 @@ public class Order extends WarehouseItem
         var materialPosition = new MaterialPosition(getProduct().item(),
                 getProduct().amount());
 
-        var newOrder = new Order(super.getItemId(), this.orderNr, this.area, materialPosition, this.income, this.transportType, this.engine, this.travelTime);
-        return newOrder;
+        return new Order(super.getItemId(), this.orderNr, this.area, materialPosition, this.income, this.transportType, this.engine, this.travelTime);
     }
 }
