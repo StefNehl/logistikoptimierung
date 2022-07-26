@@ -13,6 +13,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for loading the data of the csv files and creates the instance to work with
+ */
 public class CSVDataImportService implements IDataService
 {
     private static final String TRANSPORTER_FILENAME = "Transportmittel.csv";
@@ -20,7 +23,14 @@ public class CSVDataImportService implements IDataService
     private static final String PRODUCTS_FILENAME = "Products.csv";
     private static final String PRODUCTIONS_FILENAME = "FabrikenMitPuffer.csv";
 
+    /**
+     * loads the contract of the merged and mixed up orders
+     */
     public static final String MERGED_CONTRACTS = "VermischteAufträge.csv";
+
+    /**
+     * Loads the contract of the test Aufträge
+     */
     public static final String TEST_CONTRACTS = "TestAufträge.csv";
 
     private static final String DATA_PATH = "data\\";
@@ -42,8 +52,8 @@ public class CSVDataImportService implements IDataService
 
     /**
      * Load the data from the given CSV files and creates the instance for the simulation.
-     * @param filename
-     * @return
+     * @param filename file name of the orders to load
+     * @return the instance with the factory and the order
      */
     @Override
     public Instance loadData(String filename)
