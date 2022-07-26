@@ -2,22 +2,24 @@ package logistikoptimierung.Services.EnumeratedCalculation;
 
 import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.*;
+import logistikoptimierung.Entities.Instance;
 import logistikoptimierung.Entities.WarehouseItems.Material;
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
+import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
 
 import java.util.*;
 
 public class EnumeratedCalculationMain implements IOptimizationService
 {
     private final Factory factory;
+    private final List<Order> orderList;
     private FactoryMessageSettings factoryMessageSettings;
 
     private List<Transporter> sortedAvailableTransportList;
     private List<Driver> availableDrivers;
     private List<DriverPoolItem> driverPoolItems;
-    private List<Order> orderList;
 
     private long bestTimeSolution;
     private List<FactoryStep> bestSolution = new ArrayList<>();
@@ -25,19 +27,19 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private long nrOfModels = 0;
 
     private List<List<FactoryStep>> checkForDublicates;
-    private int Kopie = 0;
 
     /**
      * Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.
      * For this the algorithm gets every needed step for transportation, production and delivery and orders them in
      * every combination and simulates the factory to find the best result.
-     * @param factory the factory where the optimization should happen
+     * @param instance with the factory and the orderlist where the optimization should happen
      * @param maxRuntime maximum run time for the optimization
      * @param factoryMessageSettings factory messages settings for the simulating factory
      */
-    public EnumeratedCalculationMain(Factory factory, long maxRuntime, FactoryMessageSettings factoryMessageSettings)
+    public EnumeratedCalculationMain(Instance instance, long maxRuntime, FactoryMessageSettings factoryMessageSettings)
     {
-        this.factory = factory;
+        this.factory = instance.factory();
+        this.orderList = instance.orderList();
         this.factoryMessageSettings = factoryMessageSettings;
 
         this.availableDrivers = new ArrayList<>(this.factory.getDrivers());
@@ -48,16 +50,26 @@ public class EnumeratedCalculationMain implements IOptimizationService
     }
 
     @Override
-    public List<FactoryStep> optimize(List<Order> orderList, int nrOfOrdersToOptimize)
+    public List<FactoryStep> optimize(int nrOfOrdersToOptimize)
     {
-        this.orderList = orderList;
         var subOrderList = new ArrayList<Order>();
         for(int i = 0; i < nrOfOrdersToOptimize; i++)
         {
-            subOrderList.add(orderList.get(i));
+            subOrderList.add(this.orderList.get(i));
         }
 
+        var newInstance = new Instance(this.factory, this.orderList);
+
+        var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(newInstance);
+        var factoryTaskList = firstComeFirstServeOptimizer.optimize(nrOfOrdersToOptimize);
+
+        var firstComeFirstServeResult = this.factory.startFactory(this.orderList, factoryTaskList, this.bestTimeSolution, factoryMessageSettings);
+        firstComeFirstServeResult++;
+        this.bestTimeSolution = firstComeFirstServeResult;
+        this.factory.resetFactory();
+
         var planningItems = getAllNeededFactoryPlanningItemsForOrder(subOrderList);
+        System.out.println("Nr of planning items: " + planningItems.size());
 
         this.checkForDublicates = new ArrayList<>();
         this.nrOfSimulations = 0;

@@ -2,6 +2,7 @@ package logistikoptimierung.Services.FirstComeFirstServeOptimizer;
 
 import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.*;
+import logistikoptimierung.Entities.Instance;
 import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
     private final Factory factory;
+    private final List<Order> orderList;
     private List<TransporterPlanningItem> transporterPlanningItems;
     private List<ProductionPlanningItem> productionPlanningItems;
 
@@ -17,11 +19,12 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
      * Creates an object of the optimizer with the first come first serve principal.
      * For this the algorithm gets every needed step for transportation, production and delivery and orders them via
      * the priority of the order. So the first order is handled first, then the next and so on.
-     * @param factory the factory where the optimization should happen
+     * @param instance the instance with the factory and the orderlist where the optimization should happen
      */
-    public FirstComeFirstServeOptimizerMain(Factory factory)
+    public FirstComeFirstServeOptimizerMain(Instance instance)
     {
-        this.factory = factory;
+        this.factory = instance.factory();
+        this.orderList = instance.orderList();
         this.transporterPlanningItems = new ArrayList<>();
 
         for (var transporter: this.factory.getTransporters())
@@ -39,17 +42,16 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
     /**
      * Optimize a given nr of order from the order list with the first come, first serve algorithm.
-     * @param orderList order list to optimize
      * @param nrOfOrdersToOptimize nr of orders to optimize
      * @return returns a list of factory steps for the simulation of the factory
      */
     @Override
-    public List<FactoryStep> optimize(List<Order> orderList, int nrOfOrdersToOptimize)
+    public List<FactoryStep> optimize(int nrOfOrdersToOptimize)
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var orderCount = 0;
 
-        for (var order : orderList)
+        for (var order : this.orderList)
         {
             if(orderCount == nrOfOrdersToOptimize)
                 break;
