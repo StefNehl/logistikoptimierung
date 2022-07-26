@@ -5,6 +5,9 @@ import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Creates a factory step object which should be performed at a specific time step
+ */
 public class FactoryStep {
 
     private WarehouseItem itemToManipulate;
@@ -147,6 +150,11 @@ public class FactoryStep {
         this.factory.addFactoryStepLog(this + " Completed: " + completed, FactoryObjectMessageTypes.FactoryStep, completed);
     }
 
+    /**
+     * Compares this factory step with the step in the parameters
+     * @param step step to compare
+     * @return true if step is the same, false if not
+     */
     public boolean compareTo(FactoryStep step){
         if(this.itemToManipulate.getItemId().equals(step.itemToManipulate.getItemId())){
             if(this.getStepType().equals(step.getStepType())){

@@ -5,22 +5,40 @@ package logistikoptimierung.Entities.FactoryObjects;
  */
 public enum FactoryStepTypes
 {
-    //Do nothing
+    /**
+     * Do nothing
+     */
     None,
-    //Get material from supplier and move back to warehouse
+    /**
+     * Get material from supplier and move back to warehouse
+     */
     GetMaterialFromSuppliesAndMoveBackToWarehouse,
-    //Move material from transporter to warehouse
+    /**
+     * Move material from transporter to warehouse
+     */
     MoveMaterialFromTransporterToWarehouse,
-    //Move materials for product from warehouse to input buffer
+    /**
+     * Move materials for product from warehouse to input buffer
+     */
     MoveMaterialsForProductFromWarehouseToInputBuffer,
-    //Produce
+    /**
+     * Produce
+     */
     Produce,
-    //Move product to output buffer
+    /**
+     * Move product to output buffer
+     */
     MoveProductToOutputBuffer,
-    //Move product from output buffer to warehouse
+    /**
+     * Move product from output buffer to warehouse
+     */
     MoveProductFromOutputBufferToWarehouse,
-    //Move the order and transport products for order from warehouse to customer
+    /**
+     * Move the order and transport products for order from warehouse to customer
+     */
     ConcludeOrderTransportToCustomer,
-    //Transporter closes order from the customer
+    /**
+     * Transporter closes order from the customer
+     */
     ClosesOrderFromCustomer;
 }
