@@ -5,6 +5,10 @@ import logistikoptimierung.Entities.WarehouseItems.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class creates an object for the factory. The factory is the main object and contains the warehouse, transporters,
+ * drivers, and productions. The factory also starts the simulation.
+ */
 public class  Factory {
 
     private final String name;
@@ -509,8 +513,8 @@ public class  Factory {
 
     /**
      * prints every log message in the time between the from and to time step
-     * @param fromTimeStamp
-     * @param toTimeStamp
+     * @param fromTimeStamp start for the messages
+     * @param toTimeStamp end for the messages
      */
     public void printLogMessageFromTo(long fromTimeStamp, long toTimeStamp)
     {
@@ -538,7 +542,7 @@ public class  Factory {
 
     /**
      * Returns the working order which is used for storing the state of the current order for the specific order
-     * @param order
+     * @param order for which the working order is needed
      * @return the working order, returns null if the order was not found
      */
     public Order getWorkingOrderForOrder(Order order)
