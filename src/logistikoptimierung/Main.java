@@ -15,11 +15,11 @@ public class Main
 	// write your code here
 
         var factoryMessageSettings = new FactoryMessageSettings(
-                true,
-                true,
                 false,
-                true,
-                true,
+                false,
+                false,
+                false,
+                false,
                 false,
                 false,
                 false,
@@ -27,16 +27,16 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 5;
+        int nrOfOrderToOptimize = 2;
         String contractList = CSVDataImportService.MERGED_CONTRACTS;
         long maxRuntimeInSeconds = 100000;
         int nrOfDrivers = 6;
         int warehouseCapacity = 1000;
 
         //testRecursion();
-        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
+        //TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
 
-        //TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
+        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
     }
 
     private static void testRecursion()
@@ -111,12 +111,13 @@ public class Main
                 nrOfOrderToOptimize);
 
         var result = instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
-
+        maxRuntimeInSeconds = instance.factory().getCurrentTimeStep();
         instance.factory().resetFactory();
         var optimizer = new EnumeratedCalculationMain(instance.factory(), (result + 1), factoryMessageSettings);
         factoryTaskList = optimizer.optimize(instance.orderList(),
                 nrOfOrderToOptimize);
 
+        instance.factory().resetFactory();
         instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
         printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep());
         instance.factory().resetFactory();

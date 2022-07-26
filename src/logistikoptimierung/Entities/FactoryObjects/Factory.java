@@ -12,6 +12,7 @@ public class  Factory {
     private double currentIncome;
     private long startTime;
     private int nrOfRemainingSteps;
+    private int timeStepToJump;
 
     private final Warehouse warehouse;
     private final List<Production> productions;
@@ -47,7 +48,6 @@ public class  Factory {
         this.currentTimeStep = 0;
         this.currentIncome = 0;
 
-
         this.startTime = 0;
         this.warehouse = new Warehouse("WH", warehouseCapacity, this);
         this.productions = new ArrayList<>(productions);
@@ -66,6 +66,21 @@ public class  Factory {
 
         this.suppliedMaterials = new ArrayList<>(suppliedMaterials);
         this.availableProducts = new ArrayList<>(availableProducts);
+
+        this.timeStepToJump = Integer.MAX_VALUE;
+        //get smallest time step from production and supplied material
+        for(var material : suppliedMaterials)
+        {
+            if(this.timeStepToJump > material.getTravelTime())
+                this.timeStepToJump = material.getTravelTime();
+        }
+
+        for(var production : productions)
+        {
+            for(var process : production.getProductionProcesses())
+            if(this.timeStepToJump > process.getProductionTime())
+                this.timeStepToJump = process.getProductionTime();
+        }
 
     }
 
@@ -92,6 +107,10 @@ public class  Factory {
         {
             var copyOfOrder = order.createCopyOfOrder();
             workingOrderList.add(copyOfOrder);
+
+            //Checks every order if there is a smaller time step
+            if(this.timeStepToJump > copyOfOrder.getTravelTime())
+                this.timeStepToJump = copyOfOrder.getTravelTime();
         }
 
         logMessages.clear();
@@ -102,7 +121,7 @@ public class  Factory {
         addLog("Hour: " + hourCount, FactoryObjectMessageTypes.Factory);
 
         var copyOfSteps = new ArrayList<>(factorySteps);
-        for(long i = startTime; i <= maxRunTime; i++)
+        for(long i = startTime; i <= maxRunTime; i = i + this.timeStepToJump)
         {
             int oneHourInSeconds = 3600;
             if(i % oneHourInSeconds == 0)

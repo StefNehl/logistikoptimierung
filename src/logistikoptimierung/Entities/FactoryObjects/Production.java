@@ -216,6 +216,11 @@ public class Production extends FactoryObject
         return null;
     }
 
+    /**
+     * Produce a product. Simulates the production of a product
+     * @param processInInput process for the production
+     * @return a material position with the product and the batch size as amount
+     */
     private MaterialPosition produce(ProductionProcess processInInput)
     {
         processesInInputBuffer.remove(processInInput);
@@ -226,6 +231,13 @@ public class Production extends FactoryObject
         addProduceItemMessage(processInInput.getProductToProduce());
 
         return new MaterialPosition(processInInput.getProductToProduce(), processInInput.getProductionBatchSize());
+    }
+
+    /**
+     * @return returns a list of every process of this production
+     */
+    public List<ProductionProcess> getProductionProcesses() {
+        return productionProcesses;
     }
 
     /**
