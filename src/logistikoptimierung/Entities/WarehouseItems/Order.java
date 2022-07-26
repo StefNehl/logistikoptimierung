@@ -30,7 +30,7 @@ public class Order extends WarehouseItem
                  String engine,
                  int travelTime)
     {
-        super(orderId, orderId, WarehouseItemTypes.Order);
+        super(orderId, orderId, WarehouseItemType.Order);
         this.orderNr = orderNr;
         this.area = area;
         this.product = product;

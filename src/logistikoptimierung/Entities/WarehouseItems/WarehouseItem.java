@@ -4,9 +4,9 @@ public class WarehouseItem {
 
     private final String name;
     private final String itemId;
-    private String itemType;
+    private WarehouseItemType itemType;
 
-    public WarehouseItem(String itemId, String name, String itemType)
+    public WarehouseItem(String itemId, String name, WarehouseItemType itemType)
     {
         this.name = name;
         this.itemId = itemId;
@@ -21,7 +21,7 @@ public class WarehouseItem {
         return itemId;
     }
 
-    public String getItemType() {
+    public WarehouseItemType getItemType() {
         return itemType;
     }
 

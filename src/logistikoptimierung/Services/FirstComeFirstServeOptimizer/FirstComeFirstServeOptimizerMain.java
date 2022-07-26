@@ -75,7 +75,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
         //Bring Material From Supplier To Warehouse
         //Bring Material From Warehouse to Customer
-        if(productToProduce.getItemType().equals(WarehouseItemTypes.Material))
+        if(productToProduce.getItemType().equals(WarehouseItemType.Material))
         {
             factorySteps.addAll(splitBomOnTransporters(order));
             factorySteps.addAll(sendOrderToCustomerSteps(order, findLatestTimeStamp(factorySteps)));
@@ -133,13 +133,13 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
         for (var transporterPlanningItem : this.transporterPlanningItems)
         {
-            if(item.getItemType().equals(WarehouseItemTypes.Order))
+            if(item.getItemType().equals(WarehouseItemType.Order))
             {
                 if(transporterPlanningItem.getTransporter().areTransportationConstraintsFulfilledForOrder((Order) item))
                     fittingTransporters.add(transporterPlanningItem);
             }
 
-            if(item.getItemType().equals(WarehouseItemTypes.Material))
+            if(item.getItemType().equals(WarehouseItemType.Material))
             {
                 if(transporterPlanningItem.getTransporter().areTransportationConstraintsFulfilledForMaterial((Material) item))
                     fittingTransporters.add(transporterPlanningItem);
@@ -260,7 +260,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         var factorySteps = new ArrayList<FactoryStep>();
 
         //Only get Material from the Supplier
-        if(order.getProduct().item().getItemType().equals(WarehouseItemTypes.Material))
+        if(order.getProduct().item().getItemType().equals(WarehouseItemType.Material))
         {
             factorySteps.addAll(getTransportationFactoryStepsForOneTask(
                     order.getProduct().item(),

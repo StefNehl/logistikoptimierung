@@ -33,7 +33,7 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 5;
+        int nrOfOrderToOptimize = 3;
         String contractList = CSVDataImportService.MERGED_CONTRACTS;
         long maxRuntimeInSeconds = 100000;
         int nrOfDrivers = 6;

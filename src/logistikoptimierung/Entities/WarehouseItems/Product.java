@@ -14,7 +14,7 @@ public class Product extends WarehouseItem {
                    String productId,
                    String production)
     {
-        super(productId, name, WarehouseItemTypes.Product);
+        super(productId, name, WarehouseItemType.Product);
         this.machineType = production;
     }
 
