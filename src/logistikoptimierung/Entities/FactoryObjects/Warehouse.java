@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Warehouse simulates the stock with the add and remove operation.
+ */
 public class Warehouse extends FactoryObject
 {
     private final List<MaterialPosition> warehouseItems;
@@ -149,8 +152,7 @@ public class Warehouse extends FactoryObject
     }
 
     /**
-     * returns every item which is available in the warehouse
-     * @return
+     * @return every item which is available in the warehouse
      */
     public List<MaterialPosition> getWarehouseItems() {
         return warehouseItems;
@@ -180,6 +182,9 @@ public class Warehouse extends FactoryObject
         this.factory.addLog(message, FactoryObjectMessageTypes.WarehouseStock);
     }
 
+    /**
+     * Adds a log message to with the current warehouse stock
+     */
     public void addCurrentWarehouseStockMessage()
     {
         if(this.warehouseItems.isEmpty())
