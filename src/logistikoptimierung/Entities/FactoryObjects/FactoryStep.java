@@ -65,6 +65,7 @@ public class FactoryStep {
     public boolean doStep()
     {
         this.isCompleted = factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
+        //Take care. Performance impact in the simulation
         //addStepMessage(this.isCompleted);
         return this.isCompleted;
     }

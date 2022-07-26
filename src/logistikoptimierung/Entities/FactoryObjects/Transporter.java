@@ -60,7 +60,8 @@ public class Transporter extends FactoryObject
     {
         if(currentTimeStep < blockedUntilTimeStep)
         {
-            super.addBlockMessage(super.getName(), currentTask);
+            //Take care. Performance impact in the simulation
+            //super.addBlockMessage(super.getName(), currentTask);
             return false;
         }
 

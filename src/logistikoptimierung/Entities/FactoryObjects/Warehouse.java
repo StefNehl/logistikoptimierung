@@ -124,7 +124,8 @@ public class Warehouse extends FactoryObject
 
                 if(itemToOverwrite.amount() < amount)
                 {
-                    addItemNotFoundMessage(warehouseItem);
+                    //Take care. Performance impact in the simulation
+                    //addItemNotFoundMessage(warehouseItem);
                     return false;
                 }
                 else
@@ -133,7 +134,8 @@ public class Warehouse extends FactoryObject
             }
         }
 
-        addItemNotFoundMessage(warehouseItem);
+        //Take care. Performance impact in the simulation
+        //addItemNotFoundMessage(warehouseItem);
         return false;
     }
 
