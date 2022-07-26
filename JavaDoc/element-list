@@ -1,0 +1,8 @@
+logistikoptimierung
+logistikoptimierung.Contracts
+logistikoptimierung.Entities
+logistikoptimierung.Entities.FactoryObjects
+logistikoptimierung.Entities.WarehouseItems
+logistikoptimierung.Services
+logistikoptimierung.Services.EnumeratedCalculation
+logistikoptimierung.Services.FirstComeFirstServeOptimizer
