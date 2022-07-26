@@ -32,6 +32,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private long bestTimeSolution;
     private List<FactoryStep> bestSolution = new ArrayList<>();
     private long nrOfSimulations = 0;
+    private boolean condenseMaterialSupplies;
 
     /**
      * Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.
@@ -43,8 +44,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param instance with the factory and the orderlist where the optimization should happen
      * @param maxRuntime maximum run time for the optimization
      * @param factoryMessageSettings factory messages settings for the simulating factory
+     * @param condenseMaterialSupplies condenses the supplying of the material to
      */
-    public EnumeratedCalculationMain(Instance instance, long maxRuntime, FactoryMessageSettings factoryMessageSettings)
+    public EnumeratedCalculationMain(Instance instance, long maxRuntime, boolean condenseMaterialSupplies, FactoryMessageSettings factoryMessageSettings)
     {
         this.factory = instance.factory();
         this.orderList = instance.orderList();
@@ -55,6 +57,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
         this.driverPoolItems = new ArrayList<>(this.factory.getNrOfDrivers());
         this.bestTimeSolution = maxRuntime;
+        this.condenseMaterialSupplies = condenseMaterialSupplies;
     }
 
     @Override
@@ -311,8 +314,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var steps = new ArrayList<FactoryStep>();
         var amount = planningItem.amount();
 
-        //ToDo Check if warehouse is full (SumUp every acquiring minus every production and delivery)
-
         while (amount > 0)
         {
             //Driver list is empty take release first driver from pool
@@ -326,7 +327,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             var bestTransporter = findBestTransporterForTheAmount(planningItem.item(), amount);
 
             if(bestTransporter == null)
-                throw new RuntimeException("Should not happen ");
+                throw new RuntimeException("Bug! no fitting Transporter ");
 
             var amountToTransport = 0;
             if(amount < bestTransporter.getCapacity())
@@ -507,7 +508,10 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 {
                     //Check if transporter got the needed material before
                     if(step.getItemToManipulate().equals(materialPosition.item()))
+                    {
+                        stepsToDoBefore.add(step);
                         materialInWarehouse += step.getAmountOfItems();
+                    }
                 }
 
                 if(step.getStepType().equals(FactoryStepTypes.Produce))
@@ -533,10 +537,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                             stepsToDoBefore.add(step);
                         }
                     }
-
                 }
-
-
             }
 
             if(materialInWarehouse < planningItem.amount())
@@ -606,6 +607,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var deliverMaterialPositions = addDeliveryPlanningItems(subOrderList);
 
         var planningItems = new ArrayList<PlanningItem>();
+
+        if(this.condenseMaterialSupplies)
+        {
+            acquiringMaterialPositions = this.condenseMaterialList(acquiringMaterialPositions);
+        }
 
         for(var item : acquiringMaterialPositions)
             planningItems.add(new PlanningItem(item.item(), item.amount(), PlanningType.Acquire));
@@ -842,6 +848,50 @@ public class EnumeratedCalculationMain implements IOptimizationService
         }
 
         return materialPositionsToAcquire;
+    }
+
+    /**
+     * Returns a condensed material position list
+     * @param materialList not condensed material position list
+     * @return condensed material position list
+     */
+    private List<MaterialPosition> condenseMaterialList(List<MaterialPosition> materialList)
+    {
+        var newMaterialList = new ArrayList<MaterialPosition>();
+
+        for (var item: materialList)
+        {
+            var position = findMaterialPositionByName(item.item().getName(), newMaterialList);
+            if(position == null)
+            {
+                var newPosition = new MaterialPosition(item.item(), item.amount());
+                newMaterialList.add(newPosition);
+                continue;
+            }
+
+            var newPosition = new MaterialPosition(item.item(), position.amount() + item.amount());
+            newMaterialList.remove(position);
+            newMaterialList.add(newPosition);
+        }
+
+        return newMaterialList;
+    }
+
+    /**
+     * Finds the material from the material list by name
+     * @param name name to search
+     * @param materialList material list to search
+     * @return material position
+     */
+    private MaterialPosition findMaterialPositionByName(String name, List<MaterialPosition> materialList)
+    {
+        for (var position : materialList)
+        {
+            if(position.item().getName().equals(name))
+                return position;
+        }
+
+        return null;
     }
 
     /**

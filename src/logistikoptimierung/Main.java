@@ -1,6 +1,7 @@
 package logistikoptimierung;
 
 import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
+import logistikoptimierung.Entities.Instance;
 import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.EnumeratedCalculation.EnumeratedCalculationMain;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
@@ -39,12 +40,12 @@ public class Main
         int nrOfOrderToOptimize = 3;
         String contractList = CSVDataImportService.MERGED_CONTRACTS;
         long maxRuntimeInSeconds = 100000;
-        int nrOfDrivers = 6;
+        int nrOfDrivers = 7;
         int warehouseCapacity = 1000;
 
-        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
-
-        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
+        testTheCalculationOfNrOfOrders(factoryMessageSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
+        //TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
+        //TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
     }
 
     /**
@@ -95,7 +96,7 @@ public class Main
         var dataService = new CSVDataImportService(nrOfDrivers, warehouseCapacity);
         var instance = dataService.loadData(contractListName);
 
-        var optimizer = new EnumeratedCalculationMain(instance, maxRuntimeInSeconds, factoryMessageSettings);
+        var optimizer = new EnumeratedCalculationMain(instance, maxRuntimeInSeconds, false, factoryMessageSettings);
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
         instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
@@ -136,6 +137,71 @@ public class Main
         System.out.println("Runtime: " +  ConvertSecondsToTime(currentTimeStep));
         System.out.println("**********************************************");
         System.out.println();
+    }
+
+    /**
+     * Tests the calculation of nr of orders
+     * @param factoryMessageSettings message settings for the factory
+     * @param runtimeInSeconds Runtime for the orders
+     * @param nrOfDrivers nr of drivers in the factory
+     * @param warehouseCapacity warehouse capacity in the factory
+     * @param contractListName name of the contract list for the instance
+     */
+    private static void testTheCalculationOfNrOfOrders(FactoryMessageSettings factoryMessageSettings,
+                                                       long runtimeInSeconds,
+                                                       int nrOfDrivers,
+                                                       int warehouseCapacity,
+                                                       String contractListName)
+    {
+        var dataService = new CSVDataImportService(nrOfDrivers, warehouseCapacity);
+        var instance = dataService.loadData(contractListName);
+        calculateMaxNrOfOrders(runtimeInSeconds, instance, factoryMessageSettings);
+    }
+
+    /**
+     * Calculates the maximum of orders which are possible in the given time
+     * @param runTimeInSeconds the max runtime in seconds
+     */
+    private static void calculateMaxNrOfOrders(long runTimeInSeconds, Instance instance, FactoryMessageSettings factoryMessageSettings)
+    {
+        int nrOfOrders = 1;
+        while (true)
+        {
+            var firstComeFirstServe = new FirstComeFirstServeOptimizerMain(instance);
+            var factorySteps = firstComeFirstServe.optimize(nrOfOrders);
+
+            if(factorySteps.isEmpty())
+                break;
+
+            instance.factory().startFactory(instance.orderList(), factorySteps, runTimeInSeconds, factoryMessageSettings);
+
+            var nrOfRemainingSteps = instance.factory().getNrOfRemainingSteps();
+            instance.factory().resetFactory();
+            if(nrOfRemainingSteps > 0)
+                break;
+            nrOfOrders++;
+        }
+
+        while (true)
+        {
+            var enumCalculation = new EnumeratedCalculationMain(instance, runTimeInSeconds, false, factoryMessageSettings);
+            var factorySteps = enumCalculation.optimize(nrOfOrders);
+
+            if(factorySteps.isEmpty())
+                break;
+
+            instance.factory().startFactory(instance.orderList(), factorySteps, runTimeInSeconds, factoryMessageSettings);
+            var nrOfRemainingSteps = instance.factory().getNrOfRemainingSteps();
+
+            if(nrOfRemainingSteps > 0)
+                break;
+
+            instance.factory().resetFactory();
+            nrOfOrders++;
+        }
+
+        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep());
+        System.out.println("Nr of orders done: " + nrOfOrders);
     }
 
 }
