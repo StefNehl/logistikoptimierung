@@ -182,7 +182,7 @@ public class CSVDataImportService implements IDataService
             }
 
             var productName = dataItem[1].trim();
-            var newProduct = new Product(productName, productId, productType);
+            var newProduct = new Product(productName, productId);
             products.add(newProduct);
         }
 
