@@ -84,6 +84,7 @@ public class FactoryObject {
     /**
      * adds a block log message to the factory for the current factory object
      * @param message message to log
+     * @param stepType step types of the step which was performed
      */
     public void addBlockMessage(String message, FactoryStepTypes stepType)
     {
