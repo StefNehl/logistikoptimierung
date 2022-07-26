@@ -1,5 +1,10 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
+/**
+ * This class creates a Driver for a Transporter. It does not support any specific tasks.
+ * If the driver is assigned to a Transporter the transporter object sets the blocked time to the same value as the
+ * transporter.
+ */
 public class Driver extends FactoryObject
 {
     private long blockedUntilTimeStep;
