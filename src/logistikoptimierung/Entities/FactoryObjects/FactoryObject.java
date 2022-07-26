@@ -2,6 +2,10 @@ package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
+/**
+ * Creates a factory object. Factory objects are drivers, transporters, factory steps and productions.
+ * This class should only be extended.
+ */
 public class FactoryObject {
 
     private final String objectId;
