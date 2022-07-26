@@ -11,6 +11,14 @@ import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstS
 
 import java.util.*;
 
+/**
+ * Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.
+ * For this the algorithm gets every needed step for transportation, production and delivery and orders them in
+ * every combination and simulates the factory to find the best result.
+ * For the transport and driver constraints a Driver pool in the size of the nr of drivers and if the pool is full the
+ * first driver is used again. This ensures with the trying of every combination that different drivers  and transporters
+ * are used in the optimization.
+ */
 public class EnumeratedCalculationMain implements IOptimizationService
 {
     private final Factory factory;
