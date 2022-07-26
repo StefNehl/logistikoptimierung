@@ -1,5 +1,8 @@
 package logistikoptimierung.Entities.WarehouseItems;
 
+/**
+ * Creates a material with the transport constraints and the supply time
+ */
 public class Material extends WarehouseItem {
 
     private final int travelTime;
@@ -30,21 +33,31 @@ public class Material extends WarehouseItem {
         return super.getName();
     }
 
+    /**
+     * @return the travel time of the transporter to get the material
+     */
     public int getTravelTime() {
         return travelTime;
     }
 
+    /**
+     * @return the engine type
+     */
     public String getEngine() {
         return engine;
     }
 
+    /**
+     * @return the area
+     */
     public String getArea() {
         return area;
     }
 
+    /**
+     * @return the transport types
+     */
     public String[] getTransportTypes() {
         return transportTypes;
     }
-
-
 }
