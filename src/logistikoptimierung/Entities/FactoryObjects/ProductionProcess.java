@@ -5,6 +5,9 @@ import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.List;
 
+/**
+ * The production process for a product
+ */
 public class ProductionProcess
 {
     private final WarehouseItem productToProduce;
@@ -15,7 +18,7 @@ public class ProductionProcess
     List<MaterialPosition> materialPositions;
 
     /**
-     * Creates the production process for a product to produce
+     * Creates the production process for a product to produce.
      * @param productToProduce the product to produce
      * @param productionBatchSize the batch size of the product
      * @param productionTime the production time
