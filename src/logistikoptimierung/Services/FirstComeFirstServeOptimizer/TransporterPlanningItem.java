@@ -7,8 +7,8 @@ import logistikoptimierung.Entities.FactoryObjects.Transporter;
  */
 public class TransporterPlanningItem
 {
-    private long blockedTime = 0;
-    private Transporter transporter;
+    private long blockedTime;
+    private final Transporter transporter;
 
     /**
      * Creates a planning item for the transporter
