@@ -146,6 +146,7 @@ public class Transporter extends FactoryObject
     {
         this.blockedUntilTimeStep = 0;
         this.currentTask = FactoryStepTypes.None;
+        this.loadedItem = null;
     }
 
     /**

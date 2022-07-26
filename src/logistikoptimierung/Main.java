@@ -34,7 +34,7 @@ public class Main
         int warehouseCapacity = 1000;
 
         //testRecursion();
-        //TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
+        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
 
         TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
     }
@@ -117,7 +117,6 @@ public class Main
         factoryTaskList = optimizer.optimize(instance.orderList(),
                 nrOfOrderToOptimize);
 
-        instance.factory().resetFactory();
         instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
         printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep());
         instance.factory().resetFactory();

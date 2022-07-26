@@ -11,6 +11,7 @@ public class Warehouse extends FactoryObject
 {
     private final List<MaterialPosition> warehouseItems;
     private int remainingWarehouseCapacity;
+    private final int warehouseCapacity;
     private final Factory factory;
 
     /**
@@ -25,6 +26,7 @@ public class Warehouse extends FactoryObject
         super(name, name, FactoryObjectMessageTypes.Warehouse);
         this.factory = factory;
         this.warehouseItems = new ArrayList<>();
+        this.warehouseCapacity = warehouseCapacity;
         this.remainingWarehouseCapacity = warehouseCapacity;
     }
 
@@ -141,6 +143,7 @@ public class Warehouse extends FactoryObject
     public void resetWarehouse()
     {
         this.warehouseItems.clear();
+        this.remainingWarehouseCapacity = this.warehouseCapacity;
     }
 
     /**
