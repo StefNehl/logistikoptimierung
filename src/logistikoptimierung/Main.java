@@ -9,6 +9,14 @@ import java.util.concurrent.TimeUnit;
 
 public class Main
 {
+    /**
+     * starts the test of the optimization.
+     * 1: Inits the factory settings for the simulation
+     * 2: Sets the parameter for the instance of the factory and sets the max runtime for the simulation
+     * 3: Tests the first come first serve optimization and prints the result in the console
+     * 4: Tests the enumerated calculation optimization and prints the result in the console
+     * @param args
+     */
     public static void main(String[] args) {
 	// write your code here
 
@@ -36,6 +44,16 @@ public class Main
         TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
     }
 
+    /**
+     * Loads the data with the contract list from the parameter, does the first come first serve optimization and
+     * tests the first come first serve optimization.
+     * @param factoryMessageSettings message settings for the factory
+     * @param nrOfOrderToOptimize nr of orders to optimize
+     * @param maxRuntimeInSeconds max Runtime for the simulation
+     * @param nrOfDrivers nr of drivers in the factory
+     * @param warehouseCapacity warehouse capacity in the factory
+     * @param contractListName name of the contract list for the instance
+     */
     private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings,
                                                 int nrOfOrderToOptimize,
                                                 long maxRuntimeInSeconds,
@@ -54,6 +72,16 @@ public class Main
         instance.factory().resetFactory();
     }
 
+    /**
+     * Loads the data with the contract list from the parameter, does the enumerated calculation optimization and
+     * tests the optimization.
+     * @param factoryMessageSettings message settings for the factory
+     * @param nrOfOrderToOptimize nr of orders to optimize
+     * @param maxRuntimeInSeconds max Runtime for the simulation
+     * @param nrOfDrivers nr of drivers in the factory
+     * @param warehouseCapacity warehouse capacity in the factory
+     * @param contractListName name of the contract list for the instance
+     */
     private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings,
                                                           int nrOfOrderToOptimize,
                                                           long maxRuntimeInSeconds,
@@ -73,6 +101,11 @@ public class Main
 
     }
 
+    /**
+     * Converts the given seconds to days, hours, minutes and seconds
+     * @param seconds
+     * @return string with the time
+     */
     private static String ConvertSecondsToTime(long seconds)
     {
         long days = TimeUnit.SECONDS.toDays(seconds);
@@ -86,6 +119,11 @@ public class Main
         return timeString;
     }
 
+    /**
+     * Prints the result of the factory
+     * @param currentIncome
+     * @param currentTimeStep
+     */
     private static void printResult(double currentIncome, long currentTimeStep)
     {
         System.out.println();

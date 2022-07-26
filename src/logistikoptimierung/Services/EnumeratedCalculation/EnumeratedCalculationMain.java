@@ -24,14 +24,14 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private long bestTimeSolution;
     private List<FactoryStep> bestSolution = new ArrayList<>();
     private long nrOfSimulations = 0;
-    private long nrOfModels = 0;
-
-    private List<List<FactoryStep>> checkForDublicates;
 
     /**
      * Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.
      * For this the algorithm gets every needed step for transportation, production and delivery and orders them in
      * every combination and simulates the factory to find the best result.
+     * For the transport and driver constraints a Driver pool in the size of the nr of drivers and if the pool is full the
+     * first driver is used again. This ensures with the trying of every combination that different drivers  and transporters
+     * are used in the optimization.
      * @param instance with the factory and the orderlist where the optimization should happen
      * @param maxRuntime maximum run time for the optimization
      * @param factoryMessageSettings factory messages settings for the simulating factory
@@ -71,9 +71,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var planningItems = getAllNeededFactoryPlanningItemsForOrder(subOrderList);
         System.out.println("Nr of planning items: " + planningItems.size());
 
-        this.checkForDublicates = new ArrayList<>();
         this.nrOfSimulations = 0;
-        this.nrOfModels = 0;
         var stepToDo = new ArrayList<FactoryStep>();
         getPlanningSolutionRecursive(stepToDo, planningItems);
 
@@ -144,17 +142,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 addTransporterToSortedTransportList(poolItem.transporter());
             }
         }
-    }
-
-    private boolean compareLists(List<FactoryStep> firstList, List<FactoryStep> secondList){
-        if(firstList.size() != secondList.size())
-            return false;
-        for (int i = 0; i < firstList.size(); i++) {
-            if (!firstList.get(i).compareTo(secondList.get(i))) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -595,6 +582,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
     /**
      * Returns a list of planning items which are needed to fulfill the orders in the subOrder list
+     * This algorithm could be improved heavily, but time constraints and the reason that this code runs only once per test
+     * was the reason we did not improve the code.
      * @param subOrderList order list for the planning items
      * @return list of planning items needed
      */
@@ -699,6 +688,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return 0;
     }
 
+    /**
+     * Returns every process batch and orders it after the depth
+     * @param orderList order list to do
+     * @param planningItems list of the planning items which should be processed
+     */
     private void getProcessesForEveryBatchAndOrderAfterDepth(List<Order> orderList, List<ProductionPlanningItem> planningItems)
     {
         var flatProcessList = getFlatProductionProcessList(planningItems);
@@ -803,6 +797,10 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return result;
     }
 
+    /**
+     * Remove double entries for the planning production list
+     * @param productionPlanningItems
+     */
     private void removeDoubleEntriesFromPlaningItemList(List<ProductionPlanningItem> productionPlanningItems)
     {
         for(var production : productionPlanningItems)
