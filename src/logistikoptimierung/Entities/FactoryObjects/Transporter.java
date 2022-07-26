@@ -5,6 +5,16 @@ import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
+/**
+ * This class creates a Transporter for the factory. This transporter handles the Tasks:
+ * - Get material from supplier and drive back to warehouse
+ * - Move the material from the transporter to the warehouse
+ * - Conclude and bring the product to sell to the customer (from a specific order)
+ * - Close the order after every amount of a specific product was delivered
+ *
+ * Furthermore, the class simulates the blocked time, and the specific properties of the transporter.
+ * The properties are: Area, type, engine and capacity
+ */
 public class Transporter extends FactoryObject
 {
     private final String area;
