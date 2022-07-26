@@ -27,7 +27,7 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 2;
+        int nrOfOrderToOptimize = 4;
         String contractList = CSVDataImportService.MERGED_CONTRACTS;
         long maxRuntimeInSeconds = 100000;
         int nrOfDrivers = 6;
@@ -110,10 +110,10 @@ public class Main
         var factoryTaskList = firstComeFirstServeOptimizer.optimize(instance.orderList(),
                 nrOfOrderToOptimize);
 
-        var result = instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
-        maxRuntimeInSeconds = instance.factory().getCurrentTimeStep();
+        maxRuntimeInSeconds = instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+        maxRuntimeInSeconds++;
         instance.factory().resetFactory();
-        var optimizer = new EnumeratedCalculationMain(instance.factory(), (result + 1), factoryMessageSettings);
+        var optimizer = new EnumeratedCalculationMain(instance.factory(), maxRuntimeInSeconds, factoryMessageSettings);
         factoryTaskList = optimizer.optimize(instance.orderList(),
                 nrOfOrderToOptimize);
 

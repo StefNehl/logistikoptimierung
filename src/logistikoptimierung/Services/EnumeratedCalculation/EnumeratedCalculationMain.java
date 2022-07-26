@@ -77,31 +77,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
     {
         if(planningItems.isEmpty())
         {
-            boolean sameList = false;
-            long result;
-
-            if(checkForDublicates.size() == 0)
-                checkForDublicates.add(stepsToDo);
-            else
-            {
-                for (var dublicates : checkForDublicates)
-                {
-                    if(compareLists(dublicates, stepsToDo))
-                    {
-                        sameList = true;
-                        break;
-                    }
-                }
-            }
-
-            if(sameList)
-                return;
-
             nrOfSimulations++;
-            checkForDublicates.add(stepsToDo);
-            result = this.factory.startFactory(this.orderList, stepsToDo, bestTimeSolution, factoryMessageSettings);
+            long result = this.factory.startFactory(this.orderList, stepsToDo, bestTimeSolution, factoryMessageSettings);
             var nrOfRemainingSteps = this.factory.getNrOfRemainingSteps();
-
             this.factory.resetFactory();
 
             if(nrOfSimulations % 100 == 0) {
@@ -208,17 +186,31 @@ public class EnumeratedCalculationMain implements IOptimizationService
         {
             if(step.getStepType().equals(FactoryStepTypes.Produce))
             {
-                var productPosition = order.getProduct();
-
-                if(step.getItemToManipulate().getName()
-                        .equals(productPosition.item().getName()))
+                //Check if item to deliver was produced
+                if(step.getItemToManipulate()
+                        .equals(order.getProduct().item()))
                 {
                     var production = (Production)step.getFactoryObject();
-                    var process = production.getProductionProcessForProduct(productPosition.item());
+                    var process = production.getProductionProcessForProduct(order.getProduct().item());
                     if(process == null)
                         continue;
 
                     amountOfProductInWarehouse += process.getProductionBatchSize();
+                    stepsToDoBefore.add(step);
+                    continue;
+                }
+
+                var production = (Production) step.getFactoryObject();
+                var process = production.getProductionProcessForProduct(step.getItemToManipulate());
+
+                //Check if any other production process was using the item
+                for(var materialPosition : process.getMaterialPositions())
+                {
+                    if(step.getItemToManipulate().getName().equals(materialPosition.item().getName()))
+                    {
+                        amountOfProductInWarehouse -= materialPosition.amount();
+                        stepsToDoBefore.add(step);
+                    }
                 }
             }
 
@@ -228,6 +220,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                         .equals(order.getProduct().item().getName()))
                 {
                     amountOfProductInWarehouse += step.getAmountOfItems();
+                    stepsToDoBefore.add(step);
                 }
             }
 
@@ -236,23 +229,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 var oldOrder = (Order)step.getItemToManipulate();
                 if(oldOrder.getProduct().item().getName().equals(order.getProduct().item().getName()))
                 {
-                    amountOfProductInWarehouse -= oldOrder.getProduct().amount();
+                    amountOfProductInWarehouse -= step.getAmountOfItems();
                     stepsToDoBefore.add(step);
-                }
-            }
-
-            if(step.getStepType().equals(FactoryStepTypes.Produce))
-            {
-                var production = (Production) step.getFactoryObject();
-                var process = production.getProductionProcessForProduct(step.getItemToManipulate());
-
-                for(var materialPosition : process.getMaterialPositions())
-                {
-                    if(step.getItemToManipulate().getName().equals(materialPosition.item().getName()))
-                    {
-                        amountOfProductInWarehouse -= materialPosition.amount();
-                        stepsToDoBefore.add(step);
-                    }
                 }
             }
         }
