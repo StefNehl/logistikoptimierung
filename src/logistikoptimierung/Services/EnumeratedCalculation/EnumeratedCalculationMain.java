@@ -3,10 +3,7 @@ package logistikoptimierung.Services.EnumeratedCalculation;
 import logistikoptimierung.Contracts.IOptimizationService;
 import logistikoptimierung.Entities.FactoryObjects.*;
 import logistikoptimierung.Entities.Instance;
-import logistikoptimierung.Entities.WarehouseItems.Material;
-import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
-import logistikoptimierung.Entities.WarehouseItems.Order;
-import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
+import logistikoptimierung.Entities.WarehouseItems.*;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
 
 import java.util.*;
@@ -56,6 +53,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         this.sortedAvailableTransportList = new ArrayList<>(this.factory.getTransporters());
         this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
         this.driverPoolItems = new ArrayList<>(this.factory.getNrOfDrivers());
+
         this.bestTimeSolution = maxRuntime;
         this.condenseMaterialSupplies = condenseMaterialSupplies;
     }
@@ -86,7 +84,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         System.out.println("Nr of planning items: " + planningItems.size());
 
         this.nrOfSimulations = 0;
-        getPlanningSolutionRecursive(stepToDo, planningItems);
+        getPlanningSolutionRecursive(stepToDo, planningItems, new ArrayList<>(this.factory.getProductions()));
 
         return bestSolution;
     }
@@ -96,7 +94,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param stepsToDo Steps to perform before the current step
      * @param planningItems planning item to add the factory steps
      */
-    private void getPlanningSolutionRecursive(List<FactoryStep> stepsToDo, List<PlanningItem> planningItems)
+    private void getPlanningSolutionRecursive(List<FactoryStep> stepsToDo, List<PlanningItem> planningItems, List<Production> availableProduction)
     {
         if(planningItems.isEmpty())
         {
@@ -106,7 +104,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             this.factory.resetFactory();
 
             if(nrOfSimulations % 100 == 0) {
-                System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
+                //System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
             }
 
             if(result < bestTimeSolution)
@@ -117,6 +115,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             }
         }
 
+        var planningItemsToRemove = new ArrayList<PlanningItem>();
         for (var planningItem : planningItems)
         {
             var stepsToAdd = new ArrayList<FactoryStep>();
@@ -137,11 +136,31 @@ public class EnumeratedCalculationMain implements IOptimizationService
             if(stepsToAdd.isEmpty())
                 continue;
 
+            //Check if planning item can be processed in parallel
+            if(planningItem.planningType().equals(PlanningType.Produce))
+            {
+                var productionProcess = this.factory.getProductionProcessForWarehouseItem(planningItem.item());
+                if(availableProduction.contains(productionProcess.getProduction()))
+                {
+                    stepsToDo.addAll(stepsToAdd);
+                    availableProduction.remove(productionProcess.getProduction());
+                    planningItemsToRemove.add(planningItem);
+                    continue;
+                }
+                else
+                {
+                    availableProduction = new ArrayList<>(this.factory.getProductions());
+                }
+            }
+
             var copyOfPlanningItems = new ArrayList<>(planningItems);
             var copyOfSteps = new ArrayList<>(stepsToDo);
             copyOfSteps.addAll(stepsToAdd);
             copyOfPlanningItems.remove(planningItem);
-            getPlanningSolutionRecursive(copyOfSteps, copyOfPlanningItems);
+            copyOfPlanningItems.removeAll(planningItemsToRemove);
+            getPlanningSolutionRecursive(copyOfSteps, copyOfPlanningItems, availableProduction);
+
+            //Release production
 
             //Release driver
             if(planningItem.planningType() == PlanningType.Acquire ||
@@ -661,7 +680,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
         for(var item : acquiringMaterialPositions)
             planningItems.add(new PlanningItem(item.item(), item.amount(), PlanningType.Acquire));
 
-        for (var item : this.getFlatProductionProcessList(productionPlanningItems))
+        var sortedFlatProductionProcessList = new ArrayList<>(this.getFlatProductionProcessList(productionPlanningItems));
+        sortedFlatProductionProcessList.sort(Comparator.comparingInt(value -> value.getProcessDepth()));
+        for (var item : sortedFlatProductionProcessList)
             planningItems.add(new PlanningItem(item.getProcess().getProductToProduce(),
                     1,
                     PlanningType.Produce));

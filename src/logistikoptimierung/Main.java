@@ -1,11 +1,14 @@
 package logistikoptimierung;
 
 import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
+import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
 import logistikoptimierung.Entities.Instance;
 import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.EnumeratedCalculation.EnumeratedCalculationMain;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,8 +40,8 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 3;
-        String contractList = CSVDataImportService.MERGED_CONTRACTS;
+        int nrOfOrderToOptimize = 2;
+        String contractList = CSVDataImportService.TEST_CONTRACTS;
         long maxRuntimeInSeconds = 100000;
         int nrOfDrivers = 6;
         int warehouseCapacity = 1000;
@@ -75,7 +78,7 @@ public class Main
         instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
         var endTime = System.nanoTime();
 
-        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
+        printResult(factoryTaskList, instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
         instance.factory().resetFactory();
     }
 
@@ -106,7 +109,8 @@ public class Main
         instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
 
         var endTime = System.nanoTime();
-        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
+
+        printResult(factoryTaskList, instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
         instance.factory().resetFactory();
 
     }
@@ -134,8 +138,13 @@ public class Main
      * @param currentIncome
      * @param currentTimeStep
      */
-    private static void printResult(double currentIncome, long currentTimeStep, long runTimeReal)
+    private static void printResult(List<FactoryStep> stepList, double currentIncome, long currentTimeStep, long runTimeReal)
     {
+        System.out.println();
+        System.out.println("**********************************************");
+        System.out.println();
+        for(var step : stepList)
+            System.out.println(step);
         System.out.println();
         System.out.println("**********************************************");
         System.out.println("End income: " + currentIncome);
@@ -171,6 +180,7 @@ public class Main
      */
     private static void calculateMaxNrOfOrders(long runTimeInSeconds, Instance instance, FactoryMessageSettings factoryMessageSettings)
     {
+        var bestSteps = new ArrayList<FactoryStep>();
         var startTime = System.nanoTime();
         int nrOfOrders = 1;
         while (true)
@@ -208,10 +218,11 @@ public class Main
 
             instance.factory().resetFactory();
             nrOfOrders++;
+            bestSteps = new ArrayList<>(factorySteps);
         }
 
         var endTime = System.nanoTime();
-        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
+        printResult(bestSteps, instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
         System.out.println("Nr of orders done: " + nrOfOrders);
     }
 
