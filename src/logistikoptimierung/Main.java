@@ -39,13 +39,13 @@ public class Main
 
         int nrOfOrderToOptimize = 3;
         String contractList = CSVDataImportService.MERGED_CONTRACTS;
-        long maxRuntimeInSeconds = 100000;
+        long maxRuntimeInSeconds = 10000000;
         int nrOfDrivers = 7;
-        int warehouseCapacity = 1000;
+        int warehouseCapacity = 300;
 
-        testTheCalculationOfNrOfOrders(factoryMessageSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
-        //TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
-        //TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
+        //testTheCalculationOfNrOfOrders(factoryMessageSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
+        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
+        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
     }
 
     /**
@@ -170,6 +170,7 @@ public class Main
             var firstComeFirstServe = new FirstComeFirstServeOptimizerMain(instance);
             var factorySteps = firstComeFirstServe.optimize(nrOfOrders);
 
+            //Not possible
             if(factorySteps.isEmpty())
                 break;
 
@@ -187,6 +188,7 @@ public class Main
             var enumCalculation = new EnumeratedCalculationMain(instance, runTimeInSeconds, false, factoryMessageSettings);
             var factorySteps = enumCalculation.optimize(nrOfOrders);
 
+            //Not possible
             if(factorySteps.isEmpty())
                 break;
 

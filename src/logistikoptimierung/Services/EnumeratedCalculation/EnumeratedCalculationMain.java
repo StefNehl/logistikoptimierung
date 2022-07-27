@@ -121,7 +121,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             switch (planningItem.planningType())
             {
                 case Acquire -> {
-                    stepsToAdd = getAcquireTransportSteps(planningItem);
+                    stepsToAdd = getAcquireTransportSteps(stepsToDo, planningItem);
                 }
                 case Produce -> {
                     stepsToAdd = getProductionSteps(stepsToDo, planningItem);
@@ -309,10 +309,14 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param planningItem planning item for the factory steps
      * @return factory steps for the planning item
      */
-    private ArrayList<FactoryStep> getAcquireTransportSteps(PlanningItem planningItem)
+    private ArrayList<FactoryStep> getAcquireTransportSteps(List<FactoryStep> stepToDo, PlanningItem planningItem)
     {
         var steps = new ArrayList<FactoryStep>();
         var amount = planningItem.amount();
+
+        //Removed this cutting plane. Possibility to remove a solution with a high runtime
+        //if(checkIfWarehouseIsFull(stepToDo, amount))
+        //    return steps;
 
         while (amount > 0)
         {
@@ -363,6 +367,45 @@ public class EnumeratedCalculationMain implements IOptimizationService
         }
 
         return steps;
+    }
+
+    private boolean checkIfWarehouseIsFull(List<FactoryStep> stepsToDo, int amountToAdd)
+    {
+        var warehouseCapacity = this.factory.getWarehouse().getWarehouseCapacity();
+        warehouseCapacity -= amountToAdd;
+        for(var step : stepsToDo)
+        {
+            if(step.getStepType().equals(FactoryStepTypes.MoveMaterialFromTransporterToWarehouse))
+            {
+                //reduce
+                warehouseCapacity -= step.getAmountOfItems();
+            }
+
+            if(step.getStepType().equals(FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer))
+            {
+                //add
+                var process = this.factory.getProductionProcessForWarehouseItem(step.getItemToManipulate());
+                warehouseCapacity += process.getProductionBatchSize();
+            }
+
+            if(step.getStepType().equals(FactoryStepTypes.MoveProductFromOutputBufferToWarehouse))
+            {
+                //reduce
+                var process = this.factory.getProductionProcessForWarehouseItem(step.getItemToManipulate());
+                warehouseCapacity -= process.getProductionBatchSize();
+            }
+
+            if(step.getStepType().equals(FactoryStepTypes.ConcludeOrderTransportToCustomer))
+            {
+                //add
+                warehouseCapacity = warehouseCapacity + step.getAmountOfItems();
+
+            }
+
+            if(warehouseCapacity < 0)
+                return true;
+        }
+        return false;
     }
 
     /**

@@ -34,6 +34,14 @@ public class Warehouse extends FactoryObject
     }
 
     /**
+     * @return the warehouse capacity
+     */
+    public int getWarehouseCapacity()
+    {
+        return warehouseCapacity;
+    }
+
+    /**
      * Adds an item as material position to the warehouse
      * @param materialPosition the material position with the warehouse item and the amount to add
      * @return returns true if the add was possible, false if not
