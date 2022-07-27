@@ -39,9 +39,9 @@ public class Main
 
         int nrOfOrderToOptimize = 3;
         String contractList = CSVDataImportService.MERGED_CONTRACTS;
-        long maxRuntimeInSeconds = 10000000;
-        int nrOfDrivers = 7;
-        int warehouseCapacity = 300;
+        long maxRuntimeInSeconds = 100000;
+        int nrOfDrivers = 6;
+        int warehouseCapacity = 1000;
 
         //testTheCalculationOfNrOfOrders(factoryMessageSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
         TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
@@ -65,6 +65,7 @@ public class Main
                                                 int warehouseCapacity,
                                                 String contractListName)
     {
+        var startTime = System.nanoTime();
         var dataService = new CSVDataImportService(nrOfDrivers, warehouseCapacity);
         var instance = dataService.loadData(contractListName);
 
@@ -72,7 +73,9 @@ public class Main
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
         instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
-        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep());
+        var endTime = System.nanoTime();
+
+        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
         instance.factory().resetFactory();
     }
 
@@ -93,6 +96,7 @@ public class Main
                                                           int warehouseCapacity,
                                                           String contractListName)
     {
+        var startTime = System.nanoTime();
         var dataService = new CSVDataImportService(nrOfDrivers, warehouseCapacity);
         var instance = dataService.loadData(contractListName);
 
@@ -100,7 +104,9 @@ public class Main
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
         instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
-        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep());
+
+        var endTime = System.nanoTime();
+        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
         instance.factory().resetFactory();
 
     }
@@ -128,13 +134,14 @@ public class Main
      * @param currentIncome
      * @param currentTimeStep
      */
-    private static void printResult(double currentIncome, long currentTimeStep)
+    private static void printResult(double currentIncome, long currentTimeStep, long runTimeReal)
     {
         System.out.println();
         System.out.println("**********************************************");
         System.out.println("End income: " + currentIncome);
-        System.out.println("Runtime: " +  currentTimeStep);
-        System.out.println("Runtime: " +  ConvertSecondsToTime(currentTimeStep));
+        System.out.println("Simulation Runtime: " +  currentTimeStep);
+        System.out.println("Simulation Runtime: " +  ConvertSecondsToTime(currentTimeStep));
+        System.out.println("System Runtime: " +  ConvertSecondsToTime(runTimeReal));
         System.out.println("**********************************************");
         System.out.println();
     }
@@ -164,6 +171,7 @@ public class Main
      */
     private static void calculateMaxNrOfOrders(long runTimeInSeconds, Instance instance, FactoryMessageSettings factoryMessageSettings)
     {
+        var startTime = System.nanoTime();
         int nrOfOrders = 1;
         while (true)
         {
@@ -202,8 +210,19 @@ public class Main
             nrOfOrders++;
         }
 
-        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep());
+        var endTime = System.nanoTime();
+        printResult(instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
         System.out.println("Nr of orders done: " + nrOfOrders);
+    }
+
+    /**
+     * Converts nano seconds to seconds
+     * @param nanoseconds nano seconds
+     * @return seconds
+     */
+    private static long convertNanoSecondsToSeconds(long nanoseconds)
+    {
+        return (long)(nanoseconds / Math.pow(10, 9));
     }
 
 }

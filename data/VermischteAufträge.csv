@@ -1,21 +1,23 @@
 #A;#P;Product;Size;Ertrag;Col;Eng;T
 1;33;Couch;236;4202;GR;x;60
-5;4;Kohle;30;295;BL;x;3
-5;42;Salz;30;1058;GR;x;30
-3;37;Plastik;229;2765;YE;x;60
+5;35;Benzin;45;2377;GR;x;30
+4;40;Milch;105;1643;YE;x;60
+1;36;Klebstoff;234;3432;GR;x;60
+4;20;Nägel;105;1563;GR;x;60
 5;13;Steinsalz;40;628;GR;x;3
 5;33;Couch;80;3688;x;S;15
 1;36;Klebstoff;234;3432;GR;x;60
 5;12;Vieh;40;686;BL;x;3
 5;13;Steinsalz;40;686;BL;x;3
-4;40;Milch;105;1643;YE;x;60
+3;37;Plastik;229;2765;YE;x;60
 5;4;Kohle;40;702;YE;x;3
 5;26;Sperrholz;32;1761;BL;x;30
+2;22;Kupferdraht;180;3686;GR;x;60
 5;26;Sperrholz;42;3037;YE;x;30
 5;39;Mehl;21;1011;BL;x;30
 5;42;Salz;30;650;YE;x;3
 5;13;Steinsalz;27;548;BL;x;3
-2;22;Kupferdraht;180;3686;GR;x;60
+5;17;Kupfer ;21;856;GR;x;30
 1;29;Stuhl;179;3101;BL;x;60
 5;13;Steinsalz;25;354;GR;x;3
 5;32;Kunststoffmöbel;96;4024;BL;x;30
@@ -23,7 +25,6 @@
 5;29;Stuhl;37;1605;PU;x;15
 5;30;Tisch;56;2069;GR;x;15
 5;8;Holz;40;667;BL;x;3
-4;20;Nägel;105;1563;GR;x;60
 5;30;Tisch;51;2426;BL;x;15
 4;41;Wolle;105;1237;GR;x;60
 1;39;Mehl;200;3475;GR;x;60
@@ -33,11 +34,11 @@
 5;17;Kupfer ;34;1339;x;S;15
 5;13;Steinsalz;35;688;BL;x;3
 4;42;Salz;110;1759;PU;x;60
-5;35;Benzin;45;2377;GR;x;30
+5;4;Kohle;30;295;BL;x;3
 5;13;Steinsalz;40;539;GR;x;3
 5;8;Holz;30;514;BL;x;3
 1;26;Sperrholz;183;3355;GR;x;60
-5;17;Kupfer ;21;856;GR;x;30
+5;42;Salz;30;1058;GR;x;30
 4;41;Wolle;105;1169;GR;x;60
 5;27;Palette;61;1960;x;O;15
 5;42;Salz;41;1393;x;S;15

@@ -63,6 +63,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
     @Override
     public List<FactoryStep> optimize(int nrOfOrdersToOptimize)
     {
+        var stepToDo = new ArrayList<FactoryStep>();
+        if(nrOfOrdersToOptimize > this.orderList.size())
+            return stepToDo;
         var subOrderList = new ArrayList<Order>();
         for(int i = 0; i < nrOfOrdersToOptimize; i++)
         {
@@ -83,7 +86,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
         System.out.println("Nr of planning items: " + planningItems.size());
 
         this.nrOfSimulations = 0;
-        var stepToDo = new ArrayList<FactoryStep>();
         getPlanningSolutionRecursive(stepToDo, planningItems);
 
         return bestSolution;
@@ -774,7 +776,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 var amountForParentItem = parentItem.getProcess().getAmountFromMaterialPositions(
                         planningItem.getProcess().getProductToProduce());
                 amountToProduce += amountForParentItem;
-                orderMap.put(parentItem.getOrderNr(), amountForParentItem);
+                orderMap.put(parentItem.getOrderNr(), amountToProduce);
             }
 
             for(var order : orderList)
