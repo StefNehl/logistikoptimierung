@@ -30,6 +30,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private List<FactoryStep> bestSolution = new ArrayList<>();
     private long nrOfSimulations = 0;
     private boolean condenseMaterialSupplies;
+    private long maxSystemRunTime;
+    private long startTime;
 
     /**
      * Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.
@@ -43,7 +45,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param factoryMessageSettings factory messages settings for the simulating factory
      * @param condenseMaterialSupplies condenses the supplying of the material to
      */
-    public EnumeratedCalculationMain(Instance instance, long maxRuntime, boolean condenseMaterialSupplies, FactoryMessageSettings factoryMessageSettings)
+    public EnumeratedCalculationMain(Instance instance,
+                                     long maxRuntime,
+                                     boolean condenseMaterialSupplies,
+                                     FactoryMessageSettings factoryMessageSettings,
+                                     long maxSystemRunTimeInNanoSeconds)
     {
         this.factory = instance.factory();
         this.orderList = instance.orderList();
@@ -56,6 +62,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         this.bestTimeSolution = maxRuntime;
         this.condenseMaterialSupplies = condenseMaterialSupplies;
+
+        this.maxSystemRunTime = maxSystemRunTimeInNanoSeconds;
     }
 
     @Override
@@ -73,9 +81,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var newInstance = new Instance(this.factory, this.orderList);
 
         var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(newInstance);
-        var factoryTaskList = firstComeFirstServeOptimizer.optimize(nrOfOrdersToOptimize);
+        this.bestSolution = firstComeFirstServeOptimizer.optimize(nrOfOrdersToOptimize);
 
-        var firstComeFirstServeResult = this.factory.startFactory(this.orderList, factoryTaskList, this.bestTimeSolution, factoryMessageSettings);
+        var firstComeFirstServeResult = this.factory.startFactory(this.orderList, this.bestSolution, this.bestTimeSolution, factoryMessageSettings);
         firstComeFirstServeResult++;
         this.bestTimeSolution = firstComeFirstServeResult;
         this.factory.resetFactory();
@@ -84,9 +92,18 @@ public class EnumeratedCalculationMain implements IOptimizationService
         System.out.println("Nr of planning items: " + planningItems.size());
 
         this.nrOfSimulations = 0;
+        this.startTime = System.nanoTime();
         getPlanningSolutionRecursive(stepToDo, planningItems, new ArrayList<>(this.factory.getProductions()));
 
         return bestSolution;
+    }
+
+    /**
+     * @return Returns the nr of Simulations done in the last optimization
+     */
+    public long getNrOfSimulations()
+    {
+        return this.nrOfSimulations;
     }
 
     /**
@@ -96,6 +113,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
      */
     private void getPlanningSolutionRecursive(List<FactoryStep> stepsToDo, List<PlanningItem> planningItems, List<Production> availableProduction)
     {
+        if(maxSystemRunTime != 0 && System.nanoTime() > (maxSystemRunTime + startTime))
+            return;
+
         if(planningItems.isEmpty())
         {
             nrOfSimulations++;
@@ -604,7 +624,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 }
             }
 
-            if(materialInWarehouse < planningItem.amount())
+            if(materialInWarehouse < materialPosition.amount())
             {
                 //System.out.println("Abort solution: Not enough material in the Warehouse to produce");
                 return steps;
@@ -677,18 +697,20 @@ public class EnumeratedCalculationMain implements IOptimizationService
             acquiringMaterialPositions = this.condenseMaterialList(acquiringMaterialPositions);
         }
 
+        var idCount = 1;
+
         for(var item : acquiringMaterialPositions)
-            planningItems.add(new PlanningItem(item.item(), item.amount(), PlanningType.Acquire));
+            planningItems.add(new PlanningItem(idCount++, item.item(), item.amount(), PlanningType.Acquire));
 
         var sortedFlatProductionProcessList = new ArrayList<>(this.getFlatProductionProcessList(productionPlanningItems));
         sortedFlatProductionProcessList.sort(Comparator.comparingInt(value -> value.getProcessDepth()));
         for (var item : sortedFlatProductionProcessList)
-            planningItems.add(new PlanningItem(item.getProcess().getProductToProduce(),
+            planningItems.add(new PlanningItem(idCount++, item.getProcess().getProductToProduce(),
                     1,
                     PlanningType.Produce));
 
         for(var item : deliverMaterialPositions)
-            planningItems.add(new PlanningItem(item.item(), item.amount(), PlanningType.Deliver));
+            planningItems.add(new PlanningItem(idCount++, item.item(), item.amount(), PlanningType.Deliver));
 
         return planningItems;
     }

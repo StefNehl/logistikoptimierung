@@ -40,15 +40,17 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 2;
-        String contractList = CSVDataImportService.TEST_CONTRACTS;
+        int nrOfOrderToOptimize = 5;
+        String contractList = CSVDataImportService.PARALLEL_CONTRACTS;
         long maxRuntimeInSeconds = 100000;
         int nrOfDrivers = 6;
         int warehouseCapacity = 1000;
 
+        var maxSystemRunTimeInSeconds = 1800;
+
         //testTheCalculationOfNrOfOrders(factoryMessageSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
         TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
-        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
+        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList, maxSystemRunTimeInSeconds);
     }
 
     /**
@@ -97,13 +99,18 @@ public class Main
                                                           long maxRuntimeInSeconds,
                                                           int nrOfDrivers,
                                                           int warehouseCapacity,
-                                                          String contractListName)
+                                                          String contractListName,
+                                                          long maxSystemRunTimeInSeconds)
     {
         var startTime = System.nanoTime();
         var dataService = new CSVDataImportService(nrOfDrivers, warehouseCapacity);
         var instance = dataService.loadData(contractListName);
 
-        var optimizer = new EnumeratedCalculationMain(instance, maxRuntimeInSeconds, false, factoryMessageSettings);
+        var optimizer = new EnumeratedCalculationMain(instance,
+                maxRuntimeInSeconds,
+                false,
+                factoryMessageSettings,
+                convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
         instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
@@ -111,8 +118,8 @@ public class Main
         var endTime = System.nanoTime();
 
         printResult(factoryTaskList, instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
+        System.out.println("Nr of Simulations: " + optimizer.getNrOfSimulations());
         instance.factory().resetFactory();
-
     }
 
     /**
@@ -167,18 +174,22 @@ public class Main
                                                        long runtimeInSeconds,
                                                        int nrOfDrivers,
                                                        int warehouseCapacity,
-                                                       String contractListName)
+                                                       String contractListName,
+                                                       long maxSystemRunTimeInSeconds)
     {
         var dataService = new CSVDataImportService(nrOfDrivers, warehouseCapacity);
         var instance = dataService.loadData(contractListName);
-        calculateMaxNrOfOrders(runtimeInSeconds, instance, factoryMessageSettings);
+        calculateMaxNrOfOrders(runtimeInSeconds, instance, factoryMessageSettings, convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
     }
 
     /**
      * Calculates the maximum of orders which are possible in the given time
      * @param runTimeInSeconds the max runtime in seconds
      */
-    private static void calculateMaxNrOfOrders(long runTimeInSeconds, Instance instance, FactoryMessageSettings factoryMessageSettings)
+    private static void calculateMaxNrOfOrders(long runTimeInSeconds,
+                                               Instance instance,
+                                               FactoryMessageSettings factoryMessageSettings,
+                                               long maxSystemRunTimeInSeconds)
     {
         var bestSteps = new ArrayList<FactoryStep>();
         var startTime = System.nanoTime();
@@ -203,7 +214,11 @@ public class Main
 
         while (true)
         {
-            var enumCalculation = new EnumeratedCalculationMain(instance, runTimeInSeconds, false, factoryMessageSettings);
+            var enumCalculation = new EnumeratedCalculationMain(instance,
+                    runTimeInSeconds,
+                    false,
+                    factoryMessageSettings,
+                    convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
             var factorySteps = enumCalculation.optimize(nrOfOrders);
 
             //Not possible
@@ -234,6 +249,16 @@ public class Main
     private static long convertNanoSecondsToSeconds(long nanoseconds)
     {
         return (long)(nanoseconds / Math.pow(10, 9));
+    }
+
+    /**
+     * Converts nano seconds to seconds
+     * @param seconds seconds
+     * @return nano seconds
+     */
+    private static long convertSecondsToNanoSeconds(double seconds)
+    {
+        return (long) (seconds * Math.pow(10, 9));
     }
 
 }

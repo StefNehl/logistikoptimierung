@@ -8,11 +8,11 @@ import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
  * @param amount amount of items
  * @param planningType type of the manipulation
  */
-public record PlanningItem(WarehouseItem item, int amount, PlanningType planningType)
+public record PlanningItem(int id, WarehouseItem item, int amount, PlanningType planningType)
 {
     @Override
     public String toString()
     {
-        return "Item: " + item + " Amount: " + amount + " " + planningType;
+        return id + " Item: " + item + " Amount: " + amount + " " + planningType;
     }
 }

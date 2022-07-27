@@ -33,6 +33,10 @@ public class CSVDataImportService implements IDataService
      */
     public static final String TEST_CONTRACTS = "TestAufträge.csv";
 
+    public static final String SIMILAR_CONTRACTS = "similarProducts.csv";
+
+    public static final String PARALLEL_CONTRACTS = "paraProc.csv";
+
     private static final String DATA_PATH = "data\\";
     private static final String DELIMITER = ";";
 
