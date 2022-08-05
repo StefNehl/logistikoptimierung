@@ -3,6 +3,7 @@ package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
 import logistikoptimierung.Entities.WarehouseItems.Order;
+import logistikoptimierung.Entities.WarehouseItems.Product;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.ArrayList;
@@ -98,7 +99,7 @@ public class Production extends FactoryObject
                     return false;
                 }
 
-                var process = getProductionProcessForProduct(item);
+                var process = getProductionProcessForProduct((Product) item);
 
                 if(process == null)
                 {
@@ -216,7 +217,7 @@ public class Production extends FactoryObject
      * @return the production process for the product to produce. Returns null if the production does not include a
      * process for the product.
      */
-    public ProductionProcess getProductionProcessForProduct(WarehouseItem item)
+    public ProductionProcess getProductionProcessForProduct(Product item)
     {
         for(var process : productionProcesses)
         {

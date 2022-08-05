@@ -83,13 +83,13 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         if(productToProduce.getItemType().equals(WarehouseItemType.Material))
         {
             factorySteps.addAll(splitBomOnTransporters(order));
-            factorySteps.addAll(sendOrderToCustomerSteps(order, findLatestTimeStamp(factorySteps)));
+            factorySteps.addAll(sendOrderToCustomerSteps(order, factorySteps));
             return factorySteps;
         }
 
         factorySteps.addAll(splitBomOnTransporters(order));
-        factorySteps.addAll(splitBomOnMachines(order, findLatestTimeStamp(factorySteps)));
-        factorySteps.addAll(sendOrderToCustomerSteps(order, findLatestTimeStamp(factorySteps)));
+        factorySteps.addAll(splitBomOnMachines(order, factorySteps));
+        factorySteps.addAll(sendOrderToCustomerSteps(order, factorySteps));
 
         return factorySteps;
     }
@@ -113,16 +113,16 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
     /**
      * Gets the factory steps for sending the product to the customer
      * @param order order to handle
-     * @param startTimeStamp time step when the first step should be performed
+     * @param factoryStepsBefore factory steps which are done before
      * @return list of factory step for handling the order
      */
-    private List<FactoryStep> sendOrderToCustomerSteps(Order order, long startTimeStamp)
+    private List<FactoryStep> sendOrderToCustomerSteps(Order order, List<FactoryStep> factoryStepsBefore)
     {
         var factorySteps = new ArrayList<>(getTransportationFactoryStepsForOneTask(
                 order,
                 order.getProduct().amount(),
                 getFittingTransporters(order),
-                startTimeStamp));
+                factoryStepsBefore));
 
         return factorySteps;
     }
@@ -160,19 +160,42 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
      * @param item item to deliver to the customer
      * @param amountOfItems the amount which should be delivered
      * @param fittingTransporters transporters who fit the transportation constrains
-     * @param startTimeStamp start time for the first factory step
+     * @param factoryStepsToDoBefore factory steps which are done before
      * @return a list of factory steps
      */
     private List<FactoryStep> getTransportationFactoryStepsForOneTask(WarehouseItem item,
                                                                       int amountOfItems,
                                                                       List<TransporterPlanningItem> fittingTransporters,
-                                                                      long startTimeStamp)
+                                                                      List<FactoryStep> factoryStepsToDoBefore)
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var remainingAmount = amountOfItems;
 
         if(fittingTransporters.isEmpty())
             return factorySteps;
+
+        long startTimeStep = 0;
+        if(factoryStepsToDoBefore != null)
+        {
+            if(item instanceof Order)
+            {
+                var order = (Order)item;
+
+                for(var step : factoryStepsToDoBefore)
+                {
+                    if(step.getItemToManipulate().equals(order.getProduct().item()))
+                    {
+                        var startTimeFromStep = step.getDoTimeStep();
+                        var productionTime = 0;
+                        if(order.getProduct().item() instanceof Product)
+                            productionTime = this.factory.getProductionProcessForProduct((Product) order.getProduct().item()).getProductionTime();
+                        startTimeStep = startTimeFromStep + productionTime;
+                        break;
+                    }
+                }
+            }
+
+        }
 
         while(remainingAmount != 0)
         {
@@ -214,7 +237,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 travelTime = ((Order) item).getTravelTime();
                 factorySteps.add(new FactoryStep(
                         factory,
-                        startTimeStamp,
+                        startTimeStep,
                         item,
                         transporterAmount,
                         transporterPlanningItem.getTransporter(),
@@ -224,7 +247,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 {
                     factorySteps.add(new FactoryStep(
                             factory,
-                            startTimeStamp,
+                            startTimeStep,
                             item,
                             transporterAmount,
                             transporterPlanningItem.getTransporter(),
@@ -271,7 +294,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                     order.getProduct().item(),
                     order.getProduct().amount(),
                     getFittingTransporters(order.getProduct().item()),
-                    0));
+                    null));
 
             return factorySteps;
         }
@@ -294,7 +317,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                     materialPosition.item(),
                     materialPosition.amount(),
                     getFittingTransporters(materialPosition.item()),
-                    0));
+                    null));
         }
 
         return factorySteps;
@@ -347,10 +370,10 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
     /**
      * Splits the production processes for an order on the needed production sites and returns the needed factory steps.
      * @param order order for the factory steps
-     * @param startTimeStamp start time of the factory steps
+     * @param factoryStepsBefore factory steps which are done before the new factory steps
      * @return a list of factory steps
      */
-    private List<FactoryStep> splitBomOnMachines(Order order, long startTimeStamp)
+    private List<FactoryStep> splitBomOnMachines(Order order, List<FactoryStep> factoryStepsBefore)
     {
         var factorySteps = new ArrayList<FactoryStep>();
         var processesToProduce = this.factory
@@ -377,6 +400,9 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             var processPlaningItem = fittingProcessPlaningItems[i];
             var process = processesToProduce.get(i);
 
+            if(this.factory.checkIfItemHasASupplier(process.getProductToProduce()))
+                continue;
+
             var amountNeeded = 0;
             var batchSizeOfProduct = 0;
             var nrOfBatchesNeeded = 0;
@@ -393,7 +419,30 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 }
             }
 
-            processPlaningItem.increaseBlockedTime(startTimeStamp);
+            long startTime = 0;
+            for(var material : process.getMaterialPositions())
+            {
+                var amountMaterialNeeded = material.amount();
+                for(var step : factoryStepsBefore)
+                {
+                    if(step.getItemToManipulate().equals(material.item()))
+                    {
+                        amountMaterialNeeded -= step.getDoTimeStep();
+                    }
+
+                    if(amountMaterialNeeded < 0)
+                    {
+                        var travelTime =((Material) material.item()).getTravelTime();
+                        var startTimeOfStep = step.getDoTimeStep();
+                        var returnTimeOfStep = startTimeOfStep + travelTime;
+                        if(startTime < returnTimeOfStep)
+                            startTime = returnTimeOfStep;
+                        break;
+                    }
+                }
+            }
+
+            processPlaningItem.increaseBlockedTime(startTime);
 
             for(int j = 0; j < nrOfBatchesNeeded; j++)
             {

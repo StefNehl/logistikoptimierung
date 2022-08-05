@@ -290,7 +290,10 @@ public class  Factory {
 
     private void addProcessesRecursiveToList(WarehouseItem product, List<ProductionProcess> productionProcesses)
     {
-        var process = getProductionProcessForWarehouseItem(product);
+        if(!(product instanceof Product))
+            return;
+
+        var process = getProductionProcessForProduct((Product) product);
         if(process != null)
         {
             productionProcesses.add(process);
@@ -322,7 +325,7 @@ public class  Factory {
                                                     boolean produceEverything,
                                                     List<MaterialPosition> materialPositions)
     {
-        var process = getProductionProcessForWarehouseItem(item);
+        var process = getProductionProcessForProduct((Product) item);
 
         if(!produceEverything && checkIfItemHasASupplier(item))
         {
@@ -343,8 +346,7 @@ public class  Factory {
 
             for (var subItem : process.getMaterialPositions())
             {
-                var subProcess = getProductionProcessForWarehouseItem(subItem.item());
-                if(subProcess != null)
+                if(subItem.item() instanceof Product)
                 {
                     addMaterialPositionRecursiveToListWithRespectOfBatchSize(subItem.item(),
                             subItem.amount(),
@@ -352,7 +354,7 @@ public class  Factory {
                             produceEverything,
                             materialPositions);
                 }
-                else
+                else if(subItem.item() instanceof Material)
                 {
                     var subMaterialPosition = new MaterialPosition(subItem.item(), subItem.amount() * nrOfBatchesToProduce);
                     materialPositions.add(subMaterialPosition);
@@ -366,7 +368,7 @@ public class  Factory {
      * @param item product
      * @return the production process, null if no process was found
      */
-    public ProductionProcess getProductionProcessForWarehouseItem(WarehouseItem item)
+    public ProductionProcess getProductionProcessForProduct(Product item)
     {
         for (var production : productions)
         {

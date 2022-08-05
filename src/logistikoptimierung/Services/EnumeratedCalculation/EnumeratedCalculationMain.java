@@ -159,7 +159,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             //Check if planning item can be processed in parallel
             if(planningItem.planningType().equals(PlanningType.Produce))
             {
-                var productionProcess = this.factory.getProductionProcessForWarehouseItem(planningItem.item());
+                var productionProcess = this.factory.getProductionProcessForProduct((Product) planningItem.item());
                 if(availableProduction.contains(productionProcess.getProduction()))
                 {
                     stepsToDo.addAll(stepsToAdd);
@@ -242,7 +242,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                         .equals(order.getProduct().item()))
                 {
                     var production = (Production)step.getFactoryObject();
-                    var process = production.getProductionProcessForProduct(order.getProduct().item());
+                    var process = production.getProductionProcessForProduct((Product) order.getProduct().item());
                     if(process == null)
                         continue;
 
@@ -252,7 +252,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 }
 
                 var production = (Production) step.getFactoryObject();
-                var process = production.getProductionProcessForProduct(step.getItemToManipulate());
+                var process = production.getProductionProcessForProduct((Product) step.getItemToManipulate());
 
                 //Check if any other production process was using the item
                 for(var materialPosition : process.getMaterialPositions())
@@ -425,14 +425,14 @@ public class EnumeratedCalculationMain implements IOptimizationService
             if(step.getStepType().equals(FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer))
             {
                 //add
-                var process = this.factory.getProductionProcessForWarehouseItem(step.getItemToManipulate());
+                var process = this.factory.getProductionProcessForProduct((Product) step.getItemToManipulate());
                 warehouseCapacity += process.getProductionBatchSize();
             }
 
             if(step.getStepType().equals(FactoryStepTypes.MoveProductFromOutputBufferToWarehouse))
             {
                 //reduce
-                var process = this.factory.getProductionProcessForWarehouseItem(step.getItemToManipulate());
+                var process = this.factory.getProductionProcessForProduct((Product) step.getItemToManipulate());
                 warehouseCapacity -= process.getProductionBatchSize();
             }
 
@@ -578,7 +578,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var steps = new ArrayList<FactoryStep>();
         var process = this
                 .factory
-                .getProductionProcessForWarehouseItem(planningItem.item());
+                .getProductionProcessForProduct((Product) planningItem.item());
 
         var stepsToDoBefore = new ArrayList<FactoryStep>();
 
@@ -603,7 +603,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                     //Check if product was produced
                     if(step.getItemToManipulate().equals(materialPosition.item()))
                     {
-                        var subProcess = this.factory.getProductionProcessForWarehouseItem(step.getItemToManipulate());
+                        var subProcess = this.factory.getProductionProcessForProduct((Product) step.getItemToManipulate());
                         materialInWarehouse += subProcess.getProductionBatchSize();
                         stepsToDoBefore.add(step);
                     }
@@ -612,7 +612,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 //Check if any other production consumed the material before
                 if(step.getStepType().equals(FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer))
                 {
-                    var productionProcess = this.factory.getProductionProcessForWarehouseItem(step.getItemToManipulate());
+                    var productionProcess = this.factory.getProductionProcessForProduct((Product) step.getItemToManipulate());
                     for(var materialPositionForProcess : productionProcess.getMaterialPositions())
                     {
                         if(materialPositionForProcess.item().equals(materialPosition.item()))
@@ -758,7 +758,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     {
         for (var item : planningItems)
         {
-            var prodItem = item.getProduction().getProductionProcessForProduct(
+            var prodItem = item.getProduction().getProductionProcessForProduct((Product)
                     process.getProductToProduce());
             if(prodItem != null)
                 return item;
@@ -782,7 +782,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         if(this.factory.checkIfItemHasASupplier(item))
             return 0;
 
-        var process = this.factory.getProductionProcessForWarehouseItem(item);
+        var process = this.factory.getProductionProcessForProduct((Product) item);
         for (var position : process.getMaterialPositions())
         {
             return getProcessDepthRecursive(position.item()) + 1;
