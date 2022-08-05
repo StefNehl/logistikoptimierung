@@ -306,21 +306,31 @@ public class  Factory {
      * The list contains every batch which needs to be produced to fulfill the amount of the product.
      * @param product the product to produce
      * @param amount the amount needed for the product to produce
+     * @param produceEverything true if everything gets produced also Stahl and Bauholz (both have also a supplier)
      * @return list with production processes, empty list if no production process was found for the item.
      */
-    public List<MaterialPosition> getMaterialPositionsForProductWithRespectOfBatchSize(WarehouseItem product, int amount)
+    public List<MaterialPosition> getMaterialPositionsForProductWithRespectOfBatchSize(WarehouseItem product, int amount, boolean produceEverything)
     {
         var materialList = new ArrayList<MaterialPosition>();
-        addMaterialPositionRecursiveToListWithRespectOfBatchSize(product,1,  amount, materialList);
+        addMaterialPositionRecursiveToListWithRespectOfBatchSize(product,1,  amount, produceEverything,  materialList);
         return materialList;
     }
 
     private void addMaterialPositionRecursiveToListWithRespectOfBatchSize(WarehouseItem item,
                                                     int batchSize,
                                                     int nrOfBatches,
+                                                    boolean produceEverything,
                                                     List<MaterialPosition> materialPositions)
     {
         var process = getProductionProcessForWarehouseItem(item);
+
+        if(!produceEverything && checkIfItemHasASupplier(item))
+        {
+            var subMaterialPosition = new MaterialPosition(item, batchSize * nrOfBatches);
+            materialPositions.add(subMaterialPosition);
+            return;
+        }
+
         if(process != null)
         {
             var processBatchSizeForProduct = process.getProductionBatchSize();
@@ -339,6 +349,7 @@ public class  Factory {
                     addMaterialPositionRecursiveToListWithRespectOfBatchSize(subItem.item(),
                             subItem.amount(),
                             nrOfBatchesToProduce,
+                            produceEverything,
                             materialPositions);
                 }
                 else

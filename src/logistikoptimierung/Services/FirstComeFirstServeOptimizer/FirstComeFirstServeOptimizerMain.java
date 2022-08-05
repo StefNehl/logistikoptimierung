@@ -280,15 +280,14 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         var materialList = this.factory
                 .getMaterialPositionsForProductWithRespectOfBatchSize(
                         productToProduce,
-                        order.getProduct().amount());
+                        order.getProduct().amount(), false);
 
-        var condensedMaterialList = condenseMaterialList(materialList);
+        materialList = condenseMaterialList(materialList);
 
-        for(var materialPosition : condensedMaterialList)
+        for(var materialPosition : materialList)
         {
-            //produce everything. Also, Stahl and Bauholz
-            var process = this.factory.getProductionProcessForWarehouseItem(materialPosition.item());
-            if(process != null)
+            //get everything. Also, Stahl and Bauholz
+            if(!factory.checkIfItemHasASupplier(materialPosition.item()))
                 continue;
 
             factorySteps.addAll(getTransportationFactoryStepsForOneTask(
@@ -371,7 +370,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
         var materialToProduces = this.factory
                 .getMaterialPositionsForProductWithRespectOfBatchSize((Product) order.getProduct().item(),
-                        order.getProduct().amount());
+                        order.getProduct().amount(), false);
 
         for(int i = fittingProcessPlaningItems.length-1; i >= 0; i--)
         {
@@ -383,6 +382,8 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             var nrOfBatchesNeeded = 0;
             for(var productToProduce : materialToProduces)
             {
+                if(this.factory.checkIfItemHasASupplier(productToProduce.item()))
+                    continue;
                 if(process.getProductToProduce().equals(productToProduce.item()))
                 {
                     amountNeeded = productToProduce.amount();
@@ -392,9 +393,11 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 }
             }
 
+            processPlaningItem.increaseBlockedTime(startTimeStamp);
+
             for(int j = 0; j < nrOfBatchesNeeded; j++)
             {
-                var productionStart = processPlaningItem.getBlockedTime() + startTimeStamp;
+                var productionStart = processPlaningItem.getBlockedTime();
                 var productionTime = process.getProductionTime();
 
                 var newStep = new FactoryStep(factory,

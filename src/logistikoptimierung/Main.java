@@ -40,9 +40,9 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 3;
+        int nrOfOrderToOptimize = 2;
         String contractList = CSVDataImportService.MERGED_CONTRACTS;
-        long maxRuntimeInSeconds = 100000;
+        long maxRuntimeInSeconds = 10000000;
         int nrOfDrivers = 6;
         int warehouseCapacity = 1000;
 
@@ -50,7 +50,7 @@ public class Main
 
         //testTheCalculationOfNrOfOrders(factoryMessageSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
         TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
-        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList, maxSystemRunTimeInSeconds);
+        //TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList, maxSystemRunTimeInSeconds);
     }
 
     /**
