@@ -21,7 +21,6 @@ public class Transporter extends FactoryObject
     private final String type;
     private final String engine;
     private final int capacity;
-    private long blockedUntilTimeStep;
 
     private MaterialPosition loadedItem;
     private FactoryStepTypes currentTask;
@@ -49,7 +48,6 @@ public class Transporter extends FactoryObject
         this.type = type;
         this.engine = engine;
         this.capacity = maxCapacity;
-        this.blockedUntilTimeStep = 0;
     }
 
     /**
@@ -68,7 +66,7 @@ public class Transporter extends FactoryObject
     @Override
     public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, FactoryStepTypes stepType)
     {
-        if(currentTimeStep < blockedUntilTimeStep)
+        if(currentTimeStep < super.getBlockedUntilTimeStep())
         {
             //Take care. Performance impact in the simulation
             //super.addBlockMessage(super.getName(), currentTask);
@@ -155,7 +153,7 @@ public class Transporter extends FactoryObject
      */
     public void resetTransporter()
     {
-        this.blockedUntilTimeStep = 0;
+        super.setBlockedUntilTimeStep(0);
         this.currentTask = FactoryStepTypes.None;
         this.loadedItem = null;
     }
@@ -182,8 +180,8 @@ public class Transporter extends FactoryObject
         }
 
         var drivingTime = material.getTravelTime();
-        this.blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + drivingTime;
-        driver.setBlockedUntilTimeStep(this.blockedUntilTimeStep);
+        super.setBlockedUntilTimeStep(this.getFactory().getCurrentTimeStep() + drivingTime);
+        driver.setBlockedUntilTimeStep(super.getBlockedUntilTimeStep());
 
         var newPosition = new MaterialPosition(material, amount);
         addDriveLogMessage(newPosition);
@@ -259,8 +257,8 @@ public class Transporter extends FactoryObject
             return false;
         }
 
-        blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + order.getTravelTime();
-        driver.setBlockedUntilTimeStep(blockedUntilTimeStep);
+        super.setBlockedUntilTimeStep(this.getFactory().getCurrentTimeStep() + order.getTravelTime());
+        driver.setBlockedUntilTimeStep(super.getBlockedUntilTimeStep());
         this.getFactory().getWarehouse().removeItemFromWarehouse(
                 new MaterialPosition(order.getProduct().item(), amountOfItems));
         order.deductProductAmount(amountOfItems);

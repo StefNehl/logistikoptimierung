@@ -124,7 +124,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             this.factory.resetFactory();
 
             if(nrOfSimulations % 100 == 0) {
-                //System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
+                System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
             }
 
             if(result < bestTimeSolution)

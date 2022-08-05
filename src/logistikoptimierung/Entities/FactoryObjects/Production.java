@@ -2,11 +2,9 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
-import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.Product;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +32,6 @@ public class Production extends FactoryObject
     private final Set<MaterialPosition> productsInOutputBuffer = new HashSet<>();
 
     private FactoryStepTypes currentTask;
-    private long blockedUntilTimeStep;
 
     /**
      * This class create an object of the production. The production can have several production processes for different items.
@@ -65,7 +62,6 @@ public class Production extends FactoryObject
         this.remainingNrOfOutputBufferBatches = maxNrOfOutputBufferBatches;
         this.maxNrOfInputBufferBatches = maxNrOfInputBufferBatches;
         this.maxNrOfOutputBufferBatches = maxNrOfOutputBufferBatches;
-        this.blockedUntilTimeStep = 0;
     }
 
     /**
@@ -84,12 +80,13 @@ public class Production extends FactoryObject
     @Override
     public boolean doWork(long currentTimeStep, WarehouseItem item, int amountOfItems, FactoryStepTypes stepType)
     {
-        if(currentTimeStep < this.blockedUntilTimeStep)
+        if(currentTimeStep < super.getBlockedUntilTimeStep())
         {
             super.addBlockMessage(super.getName(), currentTask);
             return false;
         }
-        currentTask = stepType;
+        this.currentTask = stepType;
+        this.setBlockedUntilTimeStep(currentTimeStep);
         switch (stepType)
         {
             case MoveMaterialsForProductFromWarehouseToInputBuffer -> {
@@ -238,7 +235,8 @@ public class Production extends FactoryObject
         remainingNrOfInputBufferBatches++;
 
         addBufferLogMessage(processInInput.getProductToProduce(), false, true);
-        blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + processInInput.getProductionTime();
+        var blockedUntilTimeStep = this.getFactory().getCurrentTimeStep() + processInInput.getProductionTime();
+        super.setBlockedUntilTimeStep(blockedUntilTimeStep);
         addProduceItemMessage(processInInput.getProductToProduce());
 
         return new MaterialPosition(processInInput.getProductToProduce(), processInInput.getProductionBatchSize());
@@ -259,7 +257,7 @@ public class Production extends FactoryObject
     {
         this.remainingNrOfInputBufferBatches = this.maxNrOfInputBufferBatches;
         this.remainingNrOfOutputBufferBatches = this.maxNrOfOutputBufferBatches;
-        this.blockedUntilTimeStep = 0;
+        super.setBlockedUntilTimeStep(0);
         this.currentTask = FactoryStepTypes.None;
         this.productInProduction = null;
         this.productsInOutputBuffer.clear();

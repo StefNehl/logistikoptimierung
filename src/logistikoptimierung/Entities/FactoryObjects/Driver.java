@@ -7,8 +7,6 @@ package logistikoptimierung.Entities.FactoryObjects;
  */
 public class Driver extends FactoryObject
 {
-    private long blockedUntilTimeStep;
-
     /**
      * This class creates a Driver for a Transporter. It does not support any specific tasks.
      * If the driver is assigned to a Transporter the transporter object sets the blocked time to the same value as the
@@ -18,7 +16,6 @@ public class Driver extends FactoryObject
      */
     public Driver(String name, int id) {
         super(name, "D" + id, FactoryObjectMessageTypes.Driver);
-        blockedUntilTimeStep = 0;
     }
 
     /**
@@ -26,21 +23,7 @@ public class Driver extends FactoryObject
      */
     public void resetDriver()
     {
-        this.blockedUntilTimeStep = 0;
+        super.setBlockedUntilTimeStep(0);
     }
 
-    /**
-     * @return returns the time step until the driver is blocked
-     */
-    public long getBlockedUntilTimeStep() {
-        return blockedUntilTimeStep;
-    }
-
-    /**
-     * @param blockedUntilTimeStep Sets the time step until the driver is blocked
-     */
-    public void setBlockedUntilTimeStep(long blockedUntilTimeStep)
-    {
-        this.blockedUntilTimeStep = blockedUntilTimeStep;
-    }
 }

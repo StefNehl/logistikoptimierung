@@ -125,16 +125,16 @@ public class  Factory {
         addLog("Hour: " + hourCount, FactoryObjectMessageTypes.Factory);
 
         var copyOfSteps = new ArrayList<>(factorySteps);
-        for(long i = startTime; i <= maxRunTime; i = i + this.timeStepToJump)
-        {
-            int oneHourInSeconds = 3600;
-            if(i % oneHourInSeconds == 0)
-            {
-                hourCount++;
-                addLog("Hour: " + hourCount, FactoryObjectMessageTypes.Factory);
-            }
+        var eventTimeSteps = new ArrayList<Long>();
+        long starTime = 0;
+        eventTimeSteps.add(starTime);
 
-            this.currentTimeStep = i;
+        while (true)
+        {
+            this.currentTimeStep = eventTimeSteps.get(0);
+            if(this.currentTimeStep >= maxRunTime)
+                break;
+
             var remainingSteps = new ArrayList<>(copyOfSteps);
 
             for (var step : remainingSteps)
@@ -149,12 +149,32 @@ public class  Factory {
                     continue;
 
                 copyOfSteps.remove(step);
+
+                var newEventTimeStep = step.getFactoryObject().getBlockedUntilTimeStep();
+                if(eventTimeSteps.contains(newEventTimeStep))
+                    continue;
+
+                for(var timeStep : eventTimeSteps)
+                {
+                    var currentIndex = eventTimeSteps.indexOf(timeStep);
+                    if(timeStep > newEventTimeStep)
+                    {
+                        eventTimeSteps.add(currentIndex, newEventTimeStep);
+                        break;
+                    }
+                    else if(currentIndex == eventTimeSteps.size() - 1)
+                    {
+                        eventTimeSteps.add(currentIndex + 1, newEventTimeStep);
+                        break;
+                    }
+                }
             }
 
-            if(copyOfSteps.isEmpty())
-                return i;
-
+            eventTimeSteps.remove(this.currentTimeStep);
+            if(eventTimeSteps.isEmpty())
+                break;
         }
+
         nrOfRemainingSteps = copyOfSteps.size();
         this.getWarehouse().addCurrentWarehouseStockMessage();
         return maxRunTime;

@@ -12,6 +12,7 @@ public class FactoryObject {
     private final String name;
     private Factory factory;
     private final FactoryObjectMessageTypes factoryObjectType;
+    private long blockedUntilTimeStep;
 
     /**
      * Creates a factory object. Factory objects are drivers, transporters, factory steps and productions.
@@ -61,6 +62,22 @@ public class FactoryObject {
     {
         factory.addLog("Not Implemented", factoryObjectType);
         return false;
+    }
+
+    /**
+     * Gets the time step until this factory object is blocked
+     * @return long time step
+     */
+    public long getBlockedUntilTimeStep() {
+        return blockedUntilTimeStep;
+    }
+
+    /**
+     * sets the time step until this factory object is blocked
+     * @param blockedUntilTimeStep
+     */
+    public void setBlockedUntilTimeStep(long blockedUntilTimeStep) {
+        this.blockedUntilTimeStep = blockedUntilTimeStep;
     }
 
     /**
