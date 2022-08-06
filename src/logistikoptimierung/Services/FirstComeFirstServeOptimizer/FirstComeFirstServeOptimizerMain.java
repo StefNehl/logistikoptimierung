@@ -376,6 +376,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
     private List<FactoryStep> splitBomOnMachines(Order order, List<FactoryStep> factoryStepsBefore)
     {
         var factorySteps = new ArrayList<FactoryStep>();
+        factoryStepsBefore = new ArrayList<>(factoryStepsBefore);
         var processesToProduce = this.factory
                 .getProductionProcessesForProduct((Product) order.getProduct().item());
 
@@ -423,21 +424,50 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             for(var material : process.getMaterialPositions())
             {
                 var amountMaterialNeeded = material.amount();
-                for(var step : factoryStepsBefore)
-                {
-                    if(step.getItemToManipulate().equals(material.item()))
-                    {
-                        amountMaterialNeeded -= step.getDoTimeStep();
-                    }
 
-                    if(amountMaterialNeeded < 0)
+                if(this.factory.checkIfItemHasASupplier(material.item()))
+                {
+                    //For Transportation of Material
+                    for(var step : factoryStepsBefore)
                     {
-                        var travelTime =((Material) material.item()).getTravelTime();
-                        var startTimeOfStep = step.getDoTimeStep();
-                        var returnTimeOfStep = startTimeOfStep + travelTime;
-                        if(startTime < returnTimeOfStep)
-                            startTime = returnTimeOfStep;
-                        break;
+                        if(step.getStepType() != FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse)
+                            continue;
+
+                        if(step.getItemToManipulate().equals(material.item()))
+                            amountMaterialNeeded -= step.getAmountOfItems();
+
+                        if(amountMaterialNeeded <= 0)
+                        {
+                            var travelTime =((Material) material.item()).getTravelTime();
+                            var startTimeOfStep = step.getDoTimeStep();
+                            var returnTimeOfStep = startTimeOfStep + travelTime;
+                            if(startTime < returnTimeOfStep)
+                                startTime = returnTimeOfStep;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    //For Production of Material
+                    for(var step : factorySteps)
+                    {
+                        if(step.getStepType() != FactoryStepTypes.Produce)
+                            continue;
+
+                        if(step.getItemToManipulate().equals(material.item()))
+                            amountMaterialNeeded -= material.amount();
+
+                        if(amountMaterialNeeded <= 0)
+                        {
+                            var processOfMaterial = this.factory.getProductionProcessForProduct((Product) material.item());
+                            var productionTime = processOfMaterial.getProductionTime();
+                            var startTimeOfStep = step.getDoTimeStep();
+                            var finishedTimeStep = startTimeOfStep + productionTime;
+                            if(startTime < finishedTimeStep)
+                                startTime = finishedTimeStep;
+                            break;
+                        }
                     }
                 }
             }

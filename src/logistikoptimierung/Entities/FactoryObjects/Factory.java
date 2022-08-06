@@ -150,7 +150,8 @@ public class  Factory {
 
                 copyOfSteps.remove(step);
 
-                var newEventTimeStep = step.getFactoryObject().getBlockedUntilTimeStep();
+                //One time step after the blocked until time
+                var newEventTimeStep = step.getFactoryObject().getBlockedUntilTimeStep() + 1;
                 if(eventTimeSteps.contains(newEventTimeStep))
                     continue;
 
