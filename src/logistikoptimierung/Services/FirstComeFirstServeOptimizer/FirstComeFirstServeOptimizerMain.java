@@ -183,13 +183,20 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
                 for(var step : factoryStepsToDoBefore)
                 {
+                    if(step.getStepType() != FactoryStepTypes.Produce &&
+                            step.getStepType() != FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse)
+                        continue;
+
                     if(step.getItemToManipulate().equals(order.getProduct().item()))
                     {
                         var startTimeFromStep = step.getDoTimeStep();
-                        var productionTime = 0;
+                        var additionalTime = 0;
                         if(order.getProduct().item() instanceof Product)
-                            productionTime = this.factory.getProductionProcessForProduct((Product) order.getProduct().item()).getProductionTime();
-                        startTimeStep = startTimeFromStep + productionTime;
+                            additionalTime = this.factory.getProductionProcessForProduct((Product) order.getProduct().item()).getProductionTime();
+                        if(order.getProduct().item()instanceof Material)
+                            additionalTime = ((Material) order.getProduct().item()).getTravelTime();
+
+                        startTimeStep = startTimeFromStep + additionalTime;
                         break;
                     }
                 }

@@ -173,7 +173,7 @@ public class  Factory {
 
             eventTimeSteps.remove(this.currentTimeStep);
             if(eventTimeSteps.isEmpty())
-                break;
+                return this.currentTimeStep;
         }
 
         nrOfRemainingSteps = copyOfSteps.size();

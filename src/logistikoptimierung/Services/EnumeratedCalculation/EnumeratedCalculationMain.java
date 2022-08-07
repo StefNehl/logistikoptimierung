@@ -82,7 +82,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(newInstance);
         this.bestSolution = firstComeFirstServeOptimizer.optimize(nrOfOrdersToOptimize);
-
         var firstComeFirstServeResult = this.factory.startFactory(this.orderList, this.bestSolution, this.bestTimeSolution, factoryMessageSettings);
         firstComeFirstServeResult++;
         this.bestTimeSolution = firstComeFirstServeResult;

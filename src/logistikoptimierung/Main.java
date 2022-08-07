@@ -40,7 +40,7 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 10;
+        int nrOfOrderToOptimize = 5;
         String contractList = CSVDataImportService.MERGED_CONTRACTS;
         long maxRuntimeInSeconds = 10000000;
         int nrOfDrivers = 6;
@@ -50,7 +50,7 @@ public class Main
 
         //testTheCalculationOfNrOfOrders(factoryMessageSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
         TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
-        //TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList, maxSystemRunTimeInSeconds);
+        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList, maxSystemRunTimeInSeconds);
     }
 
     /**
@@ -77,10 +77,10 @@ public class Main
         var optimizer = new FirstComeFirstServeOptimizerMain(instance);
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+        var result = instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
         var endTime = System.nanoTime();
 
-        printResult(factoryTaskList, instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
+        printResult(factoryTaskList, instance.factory().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
         instance.factory().resetFactory();
     }
 
@@ -113,11 +113,10 @@ public class Main
                 convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
-
+        var result = instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
         var endTime = System.nanoTime();
 
-        printResult(factoryTaskList, instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
+        printResult(factoryTaskList, instance.factory().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
         System.out.println("Nr of Simulations: " + optimizer.getNrOfSimulations());
         instance.factory().resetFactory();
     }
