@@ -95,22 +95,6 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
     }
 
     /**
-     * Finds the latest time step of a list with factory steps
-     * @param factorySteps list to look
-     * @return latest time step
-     */
-    private long findLatestTimeStamp(List<FactoryStep> factorySteps)
-    {
-        long timeStamp = 0;
-        for(var step : factorySteps)
-        {
-            if(step.getDoTimeStep() > timeStamp)
-                timeStamp = step.getDoTimeStep();
-        }
-        return timeStamp;
-    }
-
-    /**
      * Gets the factory steps for sending the product to the customer
      * @param order order to handle
      * @param factoryStepsBefore factory steps which are done before
