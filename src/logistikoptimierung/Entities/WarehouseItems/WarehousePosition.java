@@ -1,12 +1,12 @@
 package logistikoptimierung.Entities.WarehouseItems;
 
 /**
- * Create a material position which handles the warehouse item and the amount.
- * Material Positions are used for transport and in the warehouse
+ * Create a warehouse position which handles a warehouse item and the amount.
+ * Warehouse Positions are used for transportation, production, order handling and in the warehouse
  * @param item the item in the material position
  * @param amount the amount of the item in the material postion
  */
-public record MaterialPosition(WarehouseItem item, int amount) {
+public record WarehousePosition(WarehouseItem item, int amount) {
 
     @Override
     public String toString()

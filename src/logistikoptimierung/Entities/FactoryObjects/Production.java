@@ -1,7 +1,7 @@
 
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
+import logistikoptimierung.Entities.WarehouseItems.WarehousePosition;
 import logistikoptimierung.Entities.WarehouseItems.Product;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
@@ -28,8 +28,8 @@ public class Production extends FactoryObject
     private final int maxNrOfOutputBufferBatches;
 
     private final Set<ProductionProcess> processesInInputBuffer = new HashSet<>();
-    private MaterialPosition productInProduction;
-    private final Set<MaterialPosition> productsInOutputBuffer = new HashSet<>();
+    private WarehousePosition productInProduction;
+    private final Set<WarehousePosition> productsInOutputBuffer = new HashSet<>();
 
     private FactoryStepTypes currentTask;
 
@@ -100,7 +100,7 @@ public class Production extends FactoryObject
 
                 if(process == null)
                 {
-                    addPProcessNotFoundMessage(item);
+                    addProcessNotFoundMessage(item);
                     return false;
                 }
 
@@ -177,7 +177,7 @@ public class Production extends FactoryObject
                 return true;
             }
             case MoveProductFromOutputBufferToWarehouse -> {
-                MaterialPosition productToMove = null;
+                WarehousePosition productToMove = null;
                 for(var product : productsInOutputBuffer)
                 {
                     if(product.item().equals(item))
@@ -227,9 +227,9 @@ public class Production extends FactoryObject
     /**
      * Produce a product. Simulates the production of a product
      * @param processInInput process for the production
-     * @return a material position with the product and the batch size as amount
+     * @return a warehouse position with the product and the batch size as amount
      */
-    private MaterialPosition produce(ProductionProcess processInInput)
+    private WarehousePosition produce(ProductionProcess processInInput)
     {
         processesInInputBuffer.remove(processInInput);
         remainingNrOfInputBufferBatches++;
@@ -239,7 +239,7 @@ public class Production extends FactoryObject
         super.setBlockedUntilTimeStep(blockedUntilTimeStep);
         addProduceItemMessage(processInInput.getProductToProduce());
 
-        return new MaterialPosition(processInInput.getProductToProduce(), processInInput.getProductionBatchSize());
+        return new WarehousePosition(processInInput.getProductToProduce(), processInInput.getProductionBatchSize());
     }
 
     /**
@@ -265,7 +265,7 @@ public class Production extends FactoryObject
 
     }
 
-    private void addPProcessNotFoundMessage(WarehouseItem product)
+    private void addProcessNotFoundMessage(WarehouseItem product)
     {
         var message = super.getName() + product.getName() + " Process for product not found";
         super.addErrorLogMessage(message);

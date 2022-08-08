@@ -1,6 +1,6 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
+import logistikoptimierung.Entities.WarehouseItems.WarehousePosition;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public class Warehouse extends FactoryObject
 {
-    private final List<MaterialPosition> warehouseItems;
+    private final List<WarehousePosition> warehouseItems;
     private int remainingWarehouseCapacity;
     private final int warehouseCapacity;
     private final Factory factory;
@@ -42,79 +42,79 @@ public class Warehouse extends FactoryObject
     }
 
     /**
-     * Adds an item as material position to the warehouse
-     * @param materialPosition the material position with the warehouse item and the amount to add
+     * Adds an item as warehouse position to the warehouse
+     * @param warehousePosition the warehouse position with the warehouse item and the amount to add
      * @return returns true if the add was possible, false if not
      */
-    public boolean addItemToWarehouse(MaterialPosition materialPosition)
+    public boolean addItemToWarehouse(WarehousePosition warehousePosition)
     {
-        if(remainingWarehouseCapacity < materialPosition.amount())
+        if(remainingWarehouseCapacity < warehousePosition.amount())
         {
             addCapacityReachedMessage();
             return false;
         }
 
-        remainingWarehouseCapacity = remainingWarehouseCapacity - materialPosition.amount();
+        remainingWarehouseCapacity = remainingWarehouseCapacity - warehousePosition.amount();
 
-        MaterialPosition warehousePosition = null;
+        WarehousePosition positionToOverwrite = null;
         var indexToRemove = 0;
 
         for(var wp : warehouseItems)
         {
-            if(Objects.equals(wp.item().getName(), materialPosition.item().getName()))
+            if(wp.item().getName().equals(warehousePosition.item().getName()))
             {
-                warehousePosition = new MaterialPosition(materialPosition.item(),
-                        wp.amount() + materialPosition.amount());
+                positionToOverwrite = new WarehousePosition(warehousePosition.item(),
+                        wp.amount() + warehousePosition.amount());
                 indexToRemove = warehouseItems.indexOf(wp);
             }
         }
 
-        if(warehousePosition != null)
+        if(positionToOverwrite != null)
         {
             warehouseItems.remove(indexToRemove);
-            warehouseItems.add(warehousePosition);
+            warehouseItems.add(positionToOverwrite);
         }
         else
         {
-            warehouseItems.add(materialPosition);
+            warehouseItems.add(warehousePosition);
         }
 
-        addAddItemMessage(materialPosition);
+        addAddItemMessage(warehousePosition);
         addCurrentWarehouseStockMessage();
         return true;
     }
 
     /**
-     * removes a material position from the warehouse
-     * @param materialPosition the material position to remove (with warehouse item and amount)
-     * @return the material position if possible, returns null if not
+     * removes a warehouse position from the warehouse
+     * @param warehousePosition the warehouse position to remove (with warehouse item and amount)
+     * @return the warehouse position if possible, returns null if not
      */
-    public MaterialPosition removeItemFromWarehouse(MaterialPosition materialPosition)
+    public WarehousePosition removeItemFromWarehouse(WarehousePosition warehousePosition)
     {
         for (var item : warehouseItems)
         {
-            if(item.item().equals(materialPosition.item()))
+            if(item.item().equals(warehousePosition.item()))
             {
                 var index = warehouseItems.indexOf(item);
                 var itemToOverwrite = warehouseItems.get(index);
 
-                if(itemToOverwrite.amount() < materialPosition.amount())
+                if(itemToOverwrite.amount() < warehousePosition.amount())
                 {
-                    addItemNotFoundMessage(materialPosition.item());
+                    addItemNotFoundMessage(warehousePosition.item());
                     return null;
                 }
 
-                remainingWarehouseCapacity = remainingWarehouseCapacity + materialPosition.amount();
-                var newPosition = new MaterialPosition(materialPosition.item(),
-                        itemToOverwrite.amount() - materialPosition.amount());
+                remainingWarehouseCapacity = remainingWarehouseCapacity + warehousePosition.amount();
+                var newPosition = new WarehousePosition(warehousePosition.item(),
+                        itemToOverwrite.amount() - warehousePosition.amount());
                 warehouseItems.set(index, newPosition);
-                addItemRemovedMessage(materialPosition);
+                addItemRemovedMessage(warehousePosition);
                 addCurrentWarehouseStockMessage();
                 return item;
             }
         }
 
-        addItemNotFoundMessage(materialPosition.item());
+        addItemNotFoundMessage(warehousePosition.item());
         return null;
     }
 
@@ -162,7 +162,7 @@ public class Warehouse extends FactoryObject
     /**
      * @return every item which is available in the warehouse
      */
-    public List<MaterialPosition> getWarehouseItems() {
+    public List<WarehousePosition> getWarehouseItems() {
         return warehouseItems;
     }
 
@@ -172,7 +172,7 @@ public class Warehouse extends FactoryObject
         this.factory.addLog(message, FactoryObjectMessageTypes.Warehouse);
     }
 
-    private void addAddItemMessage(MaterialPosition item)
+    private void addAddItemMessage(WarehousePosition item)
     {
         var message = super.getName() + " Task: add item " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
         this.factory.addLog(message, FactoryObjectMessageTypes.WarehouseStock);
@@ -184,7 +184,7 @@ public class Warehouse extends FactoryObject
         this.factory.addLog(message, FactoryObjectMessageTypes.Warehouse);
     }
 
-    private void addItemRemovedMessage(MaterialPosition item)
+    private void addItemRemovedMessage(WarehousePosition item)
     {
         var message = super.getName() + " Task: remove " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
         this.factory.addLog(message, FactoryObjectMessageTypes.WarehouseStock);
@@ -203,7 +203,7 @@ public class Warehouse extends FactoryObject
         this.factory.addLog("Remaining warehouse capacity: " + this.remainingWarehouseCapacity, FactoryObjectMessageTypes.CurrentWarehouseStock);
     }
 
-    private String listToString(List<MaterialPosition> list)
+    private String listToString(List<WarehousePosition> list)
     {
         StringBuilder stringResult = new StringBuilder("\n" + list.get(0).toString());
 

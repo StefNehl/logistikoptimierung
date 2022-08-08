@@ -323,32 +323,32 @@ public class  Factory {
     }
 
     /**
-     * Gets the every production processes for a specific product to produce with the respect of the batch size.
+     * Gets the every warehouse item for the production processes for a specific product to produce with the respect of the batch size.
      * The list contains every batch which needs to be produced to fulfill the amount of the product.
      * @param product the product to produce
      * @param amount the amount needed for the product to produce
      * @param produceEverything true if everything gets produced also Stahl and Bauholz (both have also a supplier)
-     * @return list with production processes, empty list if no production process was found for the item.
+     * @return list with warehouse position, empty list if no production process was found for the item.
      */
-    public List<MaterialPosition> getMaterialPositionsForProductWithRespectOfBatchSize(WarehouseItem product, int amount, boolean produceEverything)
+    public List<WarehousePosition> getWarehousePositionsForProductWithRespectOfBatchSize(WarehouseItem product, int amount, boolean produceEverything)
     {
-        var materialList = new ArrayList<MaterialPosition>();
-        addMaterialPositionRecursiveToListWithRespectOfBatchSize(product,1,  amount, produceEverything,  materialList);
+        var materialList = new ArrayList<WarehousePosition>();
+        addWarehousePositionsRecursiveToListWithRespectOfBatchSize(product,1,  amount, produceEverything,  materialList);
         return materialList;
     }
 
-    private void addMaterialPositionRecursiveToListWithRespectOfBatchSize(WarehouseItem item,
-                                                    int batchSize,
-                                                    int nrOfBatches,
-                                                    boolean produceEverything,
-                                                    List<MaterialPosition> materialPositions)
+    private void addWarehousePositionsRecursiveToListWithRespectOfBatchSize(WarehouseItem item,
+                                                                            int batchSize,
+                                                                            int nrOfBatches,
+                                                                            boolean produceEverything,
+                                                                            List<WarehousePosition> warehousePositions)
     {
         var process = getProductionProcessForProduct((Product) item);
 
         if(!produceEverything && checkIfItemHasASupplier(item))
         {
-            var subMaterialPosition = new MaterialPosition(item, batchSize * nrOfBatches);
-            materialPositions.add(subMaterialPosition);
+            var subMaterialPosition = new WarehousePosition(item, batchSize * nrOfBatches);
+            warehousePositions.add(subMaterialPosition);
             return;
         }
 
@@ -359,23 +359,23 @@ public class  Factory {
             var nrOfBatchesToProduce = (int) Math.ceil((double) amountNeeded / (double) processBatchSizeForProduct);
             var amountToProduce = nrOfBatchesToProduce * processBatchSizeForProduct;
 
-            var newMaterialPosition = new MaterialPosition(item, amountToProduce);
-            materialPositions.add(newMaterialPosition);
+            var newMaterialPosition = new WarehousePosition(item, amountToProduce);
+            warehousePositions.add(newMaterialPosition);
 
             for (var subItem : process.getMaterialPositions())
             {
                 if(subItem.item() instanceof Product)
                 {
-                    addMaterialPositionRecursiveToListWithRespectOfBatchSize(subItem.item(),
+                    addWarehousePositionsRecursiveToListWithRespectOfBatchSize(subItem.item(),
                             subItem.amount(),
                             nrOfBatchesToProduce,
                             produceEverything,
-                            materialPositions);
+                            warehousePositions);
                 }
                 else if(subItem.item() instanceof Material)
                 {
-                    var subMaterialPosition = new MaterialPosition(subItem.item(), subItem.amount() * nrOfBatchesToProduce);
-                    materialPositions.add(subMaterialPosition);
+                    var subMaterialPosition = new WarehousePosition(subItem.item(), subItem.amount() * nrOfBatchesToProduce);
+                    warehousePositions.add(subMaterialPosition);
                 }
             }
         }

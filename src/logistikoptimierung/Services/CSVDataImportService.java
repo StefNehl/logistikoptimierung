@@ -233,7 +233,7 @@ public class CSVDataImportService implements IDataService
                 idCount++;
             }
 
-            var bom = new ArrayList<MaterialPosition>();
+            var bom = new ArrayList<WarehousePosition>();
             var productName = dataItem[3];
             var productBatchSize = Integer.parseInt(dataItem[2]);
             var productionTimeString = dataItem[4];
@@ -258,7 +258,7 @@ public class CSVDataImportService implements IDataService
                     var materials = findWarehouseItem(materialName, items);
                     for(var material : materials )
                     {
-                        var materialPosition = new MaterialPosition(material, materialBatchSize);
+                        var materialPosition = new WarehousePosition(material, materialBatchSize);
                         bom.add(materialPosition);
                         startCount = startCount + 2;
                     }
@@ -281,7 +281,7 @@ public class CSVDataImportService implements IDataService
             var product = findWarehouseItem(productName, items);
 
             var amount = Integer.parseInt(dataItem[3]);
-            var materialPosition = new MaterialPosition(product.get(0), amount);
+            var materialPosition = new WarehousePosition(product.get(0), amount);
 
             var income = Integer.parseInt(dataItem[4]);
             var transportType = dataItem[5];

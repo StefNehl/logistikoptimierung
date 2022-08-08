@@ -121,7 +121,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Adds a log message to with the current warehouse stock</div>
 </div>
 <div class="col-first odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#addItemToWarehouse(logistikoptimierung.Entities.WarehouseItems.MaterialPosition)">addItemToWarehouse</a></span>&#8203;(<a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a>&nbsp;materialPosition)</code></div>
+<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#addItemToWarehouse(logistikoptimierung.Entities.WarehouseItems.MaterialPosition)">addItemToWarehouse</a></span>&#8203;(<a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a>&nbsp;warehousePosition)</code></div>
 <div class="col-last odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">
 <div class="block">Adds an item as material position to the warehouse</div>
 </div>
@@ -138,7 +138,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#getWarehouseItems()">getWarehouseItems</a></span>()</code></div>
 <div class="col-last even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a></code></div>
-<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#removeItemFromWarehouse(logistikoptimierung.Entities.WarehouseItems.MaterialPosition)">removeItemFromWarehouse</a></span>&#8203;(<a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a>&nbsp;materialPosition)</code></div>
+<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#removeItemFromWarehouse(logistikoptimierung.Entities.WarehouseItems.MaterialPosition)">removeItemFromWarehouse</a></span>&#8203;(<a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a>&nbsp;warehousePosition)</code></div>
 <div class="col-last odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">
 <div class="block">removes a material position from the warehouse</div>
 </div>
@@ -204,11 +204,11 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="addItemToWarehouse(logistikoptimierung.Entities.WarehouseItems.MaterialPosition)">
 <h3>addItemToWarehouse</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addItemToWarehouse</span>&#8203;<span class="parameters">(<a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a>&nbsp;materialPosition)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addItemToWarehouse</span>&#8203;<span class="parameters">(<a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a>&nbsp;warehousePosition)</span></div>
 <div class="block">Adds an item as material position to the warehouse</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>materialPosition</code> - the material position with the warehouse item and the amount to add</dd>
+<dd><code>warehousePosition</code> - the material position with the warehouse item and the amount to add</dd>
 <dt>Returns:</dt>
 <dd>returns true if the add was possible, false if not</dd>
 </dl>
@@ -217,11 +217,11 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="removeItemFromWarehouse(logistikoptimierung.Entities.WarehouseItems.MaterialPosition)">
 <h3>removeItemFromWarehouse</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a></span>&nbsp;<span class="element-name">removeItemFromWarehouse</span>&#8203;<span class="parameters">(<a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a>&nbsp;materialPosition)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a></span>&nbsp;<span class="element-name">removeItemFromWarehouse</span>&#8203;<span class="parameters">(<a href="../WarehouseItems/MaterialPosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">MaterialPosition</a>&nbsp;warehousePosition)</span></div>
 <div class="block">removes a material position from the warehouse</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>materialPosition</code> - the material position to remove (with warehouse item and amount)</dd>
+<dd><code>warehousePosition</code> - the material position to remove (with warehouse item and amount)</dd>
 <dt>Returns:</dt>
 <dd>the material position if possible, returns null if not</dd>
 </dl>

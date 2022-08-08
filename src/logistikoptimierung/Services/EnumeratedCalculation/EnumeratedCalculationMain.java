@@ -238,10 +238,10 @@ public class EnumeratedCalculationMain implements IOptimizationService
             {
                 //Check if item to deliver was produced
                 if(step.getItemToManipulate()
-                        .equals(order.getProduct().item()))
+                        .equals(order.getWarehousePosition().item()))
                 {
                     var production = (Production)step.getFactoryObject();
-                    var process = production.getProductionProcessForProduct((Product) order.getProduct().item());
+                    var process = production.getProductionProcessForProduct((Product) order.getWarehousePosition().item());
                     if(process == null)
                         continue;
 
@@ -267,7 +267,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             if(step.getStepType().equals(FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse))
             {
                 if(step.getItemToManipulate().getName()
-                        .equals(order.getProduct().item().getName()))
+                        .equals(order.getWarehousePosition().item().getName()))
                 {
                     amountOfProductInWarehouse += step.getAmountOfItems();
                     stepsToDoBefore.add(step);
@@ -277,7 +277,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             if(step.getStepType().equals(FactoryStepTypes.ConcludeOrderTransportToCustomer))
             {
                 var oldOrder = (Order)step.getItemToManipulate();
-                if(oldOrder.getProduct().item().getName().equals(order.getProduct().item().getName()))
+                if(oldOrder.getWarehousePosition().item().getName().equals(order.getWarehousePosition().item().getName()))
                 {
                     amountOfProductInWarehouse -= step.getAmountOfItems();
                     stepsToDoBefore.add(step);
@@ -285,7 +285,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             }
         }
 
-        if(amountOfProductInWarehouse < order.getProduct().amount())
+        if(amountOfProductInWarehouse < order.getWarehousePosition().amount())
         {
             //System.out.println("Abort solution: Not enough products in the Warehouse to deliver");
             return steps;
@@ -731,7 +731,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         for (var order : orderList)
         {
             var processes = this.factory.getProductionProcessesForProduct(
-                    order.getProduct().item());
+                    order.getWarehousePosition().item());
 
             var filteredProcesses = new ArrayList<ProductionProcess>();
             for(var process : processes)
@@ -823,10 +823,10 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             for(var order : orderList)
             {
-                if(planningItem.getProcess().getProductToProduce().equals(order.getProduct().item()))
+                if(planningItem.getProcess().getProductToProduce().equals(order.getWarehousePosition().item()))
                 {
-                    amountToProduce += order.getProduct().amount();
-                    orderMap.put(order.getOrderNr(), order.getProduct().amount());
+                    amountToProduce += order.getWarehousePosition().amount();
+                    orderMap.put(order.getOrderNr(), order.getWarehousePosition().amount());
                 }
             }
 
@@ -918,9 +918,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param productionPlanningItems production processes for the orders to optimize
      * @return list of material positions
      */
-    private List<MaterialPosition> addAcquiringPlaningItemsForEveryBatch(List<ProductionPlanningItem> productionPlanningItems)
+    private List<WarehousePosition> addAcquiringPlaningItemsForEveryBatch(List<ProductionPlanningItem> productionPlanningItems)
     {
-        var materialPositionsToAcquire = new ArrayList<MaterialPosition>();
+        var materialPositionsToAcquire = new ArrayList<WarehousePosition>();
         for(var processPlaningItem : getFlatProductionProcessList(productionPlanningItems))
         {
             var materialPositions = processPlaningItem.getProcess().getMaterialPositions();
@@ -930,7 +930,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 if(!this.factory.checkIfItemHasASupplier(materialPosition.item()))
                     continue;
 
-                materialPositionsToAcquire.add(new MaterialPosition(materialPosition.item(), materialPosition.amount()));
+                materialPositionsToAcquire.add(new WarehousePosition(materialPosition.item(), materialPosition.amount()));
             }
         }
 
@@ -942,21 +942,21 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param materialList not condensed material position list
      * @return condensed material position list
      */
-    private List<MaterialPosition> condenseMaterialList(List<MaterialPosition> materialList)
+    private List<WarehousePosition> condenseMaterialList(List<WarehousePosition> materialList)
     {
-        var newMaterialList = new ArrayList<MaterialPosition>();
+        var newMaterialList = new ArrayList<WarehousePosition>();
 
         for (var item: materialList)
         {
             var position = findMaterialPositionByName(item.item().getName(), newMaterialList);
             if(position == null)
             {
-                var newPosition = new MaterialPosition(item.item(), item.amount());
+                var newPosition = new WarehousePosition(item.item(), item.amount());
                 newMaterialList.add(newPosition);
                 continue;
             }
 
-            var newPosition = new MaterialPosition(item.item(), position.amount() + item.amount());
+            var newPosition = new WarehousePosition(item.item(), position.amount() + item.amount());
             newMaterialList.remove(position);
             newMaterialList.add(newPosition);
         }
@@ -970,7 +970,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param materialList material list to search
      * @return material position
      */
-    private MaterialPosition findMaterialPositionByName(String name, List<MaterialPosition> materialList)
+    private WarehousePosition findMaterialPositionByName(String name, List<WarehousePosition> materialList)
     {
         for (var position : materialList)
         {
@@ -986,13 +986,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param orderList orders to check for direct delivery
      * @return a list of material positions
      */
-    private List<MaterialPosition> addAcquiringPlaningItemsForDirectDelivery(List<Order> orderList)
+    private List<WarehousePosition> addAcquiringPlaningItemsForDirectDelivery(List<Order> orderList)
     {
-        var materialPositionsToAcquire = new ArrayList<MaterialPosition>();
+        var materialPositionsToAcquire = new ArrayList<WarehousePosition>();
         for(var order : orderList)
         {
-            if(this.factory.checkIfItemHasASupplier(order.getProduct().item()))
-                materialPositionsToAcquire.add(new MaterialPosition(order.getProduct().item(), order.getProduct().amount()));
+            if(this.factory.checkIfItemHasASupplier(order.getWarehousePosition().item()))
+                materialPositionsToAcquire.add(new WarehousePosition(order.getWarehousePosition().item(), order.getWarehousePosition().amount()));
         }
         return materialPositionsToAcquire;
     }
@@ -1002,13 +1002,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param subOrderList orders to check
      * @return list of material positions
      */
-    private List<MaterialPosition> addDeliveryPlanningItems(List<Order> subOrderList)
+    private List<WarehousePosition> addDeliveryPlanningItems(List<Order> subOrderList)
     {
-        var deliveryItems = new ArrayList<MaterialPosition>();
+        var deliveryItems = new ArrayList<WarehousePosition>();
         for (var order : subOrderList)
         {
-            deliveryItems.add(new MaterialPosition(order,
-                    order.getProduct().amount()));
+            deliveryItems.add(new WarehousePosition(order,
+                    order.getWarehousePosition().amount()));
         }
         return deliveryItems;
     }

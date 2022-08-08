@@ -6,7 +6,7 @@ package logistikoptimierung.Entities.WarehouseItems;
 public class Order extends WarehouseItem
 {
     private final String area;
-    private MaterialPosition product;
+    private WarehousePosition warehousePosition;
     private final double income;
     private final String transportType;
     private final String engine;
@@ -18,7 +18,7 @@ public class Order extends WarehouseItem
      * @param orderId sets the order id
      * @param orderNr sets the order nr
      * @param area sets the area for transportation
-     * @param product sets the production with the amount which is needed as material position
+     * @param warehousePosition sets the warehouse with the amount which is needed as warehouse position
      * @param income sets the income of the
      * @param transportType sets the transport type for transportation
      * @param engine sets the engine for transportation
@@ -27,7 +27,7 @@ public class Order extends WarehouseItem
     public Order(String orderId,
                  int orderNr,
                  String area,
-                 MaterialPosition product,
+                 WarehousePosition warehousePosition,
                  double income,
                  String transportType,
                  String engine,
@@ -36,7 +36,7 @@ public class Order extends WarehouseItem
         super(orderId, orderId, WarehouseItemType.Order);
         this.orderNr = orderNr;
         this.area = area;
-        this.product = product;
+        this.warehousePosition = warehousePosition;
         this.income = income;
         this.transportType = transportType;
         this.engine = engine;
@@ -58,10 +58,10 @@ public class Order extends WarehouseItem
     }
 
     /**
-     * @return the product as material position with the needed amount
+     * @return the product as warehouse position with the needed item and amount
      */
-    public MaterialPosition getProduct() {
-        return product;
+    public WarehousePosition getWarehousePosition() {
+        return warehousePosition;
     }
 
     /**
@@ -70,7 +70,7 @@ public class Order extends WarehouseItem
      */
     public void deductProductAmount(int amountToDeduct)
     {
-        this.product = new MaterialPosition(this.product.item(), this.product.amount() - amountToDeduct);
+        this.warehousePosition = new WarehousePosition(this.warehousePosition.item(), this.warehousePosition.amount() - amountToDeduct);
     }
 
     /**
@@ -108,8 +108,8 @@ public class Order extends WarehouseItem
     public Order createCopyOfOrder()
     {
 
-        var materialPosition = new MaterialPosition(getProduct().item(),
-                getProduct().amount());
+        var materialPosition = new WarehousePosition(getWarehousePosition().item(),
+                getWarehousePosition().amount());
 
         return new Order(super.getItemId(), this.orderNr, this.area, materialPosition, this.income, this.transportType, this.engine, this.travelTime);
     }

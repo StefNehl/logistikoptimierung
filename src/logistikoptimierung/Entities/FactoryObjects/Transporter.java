@@ -1,7 +1,7 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
 import logistikoptimierung.Entities.WarehouseItems.Material;
-import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
+import logistikoptimierung.Entities.WarehouseItems.WarehousePosition;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
@@ -22,7 +22,7 @@ public class Transporter extends FactoryObject
     private final String engine;
     private final int capacity;
 
-    private MaterialPosition loadedItem;
+    private WarehousePosition loadedItem;
     private FactoryStepTypes currentTask;
 
     /**
@@ -106,7 +106,7 @@ public class Transporter extends FactoryObject
             case ConcludeOrderTransportToCustomer -> {
 
                 //Check if material is available
-                if(!this.getFactory().getWarehouse().checkIfMaterialIsAvailable(((Order)item).getProduct().item(), amountOfItems))
+                if(!this.getFactory().getWarehouse().checkIfMaterialIsAvailable(((Order)item).getWarehousePosition().item(), amountOfItems))
                 {
                     super.addErrorLogMessage("Material: " + item + " in the amount: " + amountOfItems + " not available");
                     return false;
@@ -137,9 +137,9 @@ public class Transporter extends FactoryObject
                     return false;
                 }
 
-                if(workingOrder.getProduct().amount() > 0)
+                if(workingOrder.getWarehousePosition().amount() > 0)
                 {
-                    super.addErrorLogMessage("Order can't be closed. " + workingOrder.getProduct().amount() + " of " + workingOrder.getProduct().item() + " is still to deliver");
+                    super.addErrorLogMessage("Order can't be closed. " + workingOrder.getWarehousePosition().amount() + " of " + workingOrder.getWarehousePosition().item() + " is still to deliver");
                     return false;
                 }
                 this.getFactory().increaseIncome(workingOrder.getIncome());
@@ -165,7 +165,7 @@ public class Transporter extends FactoryObject
         return capacity;
     }
 
-    private MaterialPosition getMaterialFromSupplier(int amount, Material material, Driver driver)
+    private WarehousePosition getMaterialFromSupplier(int amount, Material material, Driver driver)
     {
         if(amount > this.capacity)
         {
@@ -183,7 +183,7 @@ public class Transporter extends FactoryObject
         super.setBlockedUntilTimeStep(this.getFactory().getCurrentTimeStep() + drivingTime);
         driver.setBlockedUntilTimeStep(super.getBlockedUntilTimeStep());
 
-        var newPosition = new MaterialPosition(material, amount);
+        var newPosition = new WarehousePosition(material, amount);
         addDriveLogMessage(newPosition);
 
         return newPosition;
@@ -247,7 +247,7 @@ public class Transporter extends FactoryObject
     {
         if(amountOfItems > this.capacity)
         {
-            addCapacityExceededMessage(order.getProduct().item(), amountOfItems);
+            addCapacityExceededMessage(order.getWarehousePosition().item(), amountOfItems);
             return false;
         }
 
@@ -260,7 +260,7 @@ public class Transporter extends FactoryObject
         super.setBlockedUntilTimeStep(this.getFactory().getCurrentTimeStep() + order.getTravelTime());
         driver.setBlockedUntilTimeStep(super.getBlockedUntilTimeStep());
         this.getFactory().getWarehouse().removeItemFromWarehouse(
-                new MaterialPosition(order.getProduct().item(), amountOfItems));
+                new WarehousePosition(order.getWarehousePosition().item(), amountOfItems));
         order.deductProductAmount(amountOfItems);
 
         return true;
@@ -272,7 +272,7 @@ public class Transporter extends FactoryObject
         super.addErrorLogMessage(message);
     }
 
-    private void addDriveLogMessage(MaterialPosition position)
+    private void addDriveLogMessage(WarehousePosition position)
     {
         var message = super.getName() + " Task: get Material " + position.item().getName() + " Amount: " + position.amount();
         super.addLogMessage(message);

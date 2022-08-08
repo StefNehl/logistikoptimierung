@@ -1,6 +1,6 @@
 package logistikoptimierung.Entities.FactoryObjects;
 
-import logistikoptimierung.Entities.WarehouseItems.MaterialPosition;
+import logistikoptimierung.Entities.WarehouseItems.WarehousePosition;
 import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class ProductionProcess
     private final int productionTime;
 
     private final Production production;
-    List<MaterialPosition> materialPositions;
+    List<WarehousePosition> warehousePositions;
 
     /**
      * Creates the production process for a product to produce.
@@ -23,18 +23,18 @@ public class ProductionProcess
      * @param productionBatchSize the batch size of the product
      * @param productionTime the production time
      * @param production the parent production
-     * @param materialPositions list of material position needed for the production
+     * @param warehousePositions list of warehouse positions (materials or products) needed for the production
      */
     public ProductionProcess(WarehouseItem productToProduce, int productionBatchSize,
                              int productionTime,
                              Production production,
-                             List<MaterialPosition> materialPositions)
+                             List<WarehousePosition> warehousePositions)
     {
         this.productToProduce = productToProduce;
         this.productionBatchSize = productionBatchSize;
         this.productionTime = productionTime;
         this.production = production;
-        this.materialPositions = materialPositions;
+        this.warehousePositions = warehousePositions;
     }
 
     /**
@@ -66,10 +66,10 @@ public class ProductionProcess
     }
 
     /**
-     * @return gets a list of the material position which are needed for the production
+     * @return gets a list of the warehouse positions (material, product) which are needed for the production
      */
-    public List<MaterialPosition> getMaterialPositions() {
-        return materialPositions;
+    public List<WarehousePosition> getMaterialPositions() {
+        return warehousePositions;
     }
 
     /**
@@ -79,7 +79,7 @@ public class ProductionProcess
      */
     public int getAmountFromMaterialPositions(WarehouseItem item)
     {
-        for(var position : this.materialPositions)
+        for(var position : this.warehousePositions)
         {
             if(position.item().equals(item))
                 return position.amount();
