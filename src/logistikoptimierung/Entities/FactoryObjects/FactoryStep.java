@@ -18,6 +18,7 @@ public class FactoryStep {
     private long doTimeStep;
     private List<FactoryStep> factoryStepsToDoBefore;
     private boolean isCompleted;
+    private long completedTime;
 
     /**
      * Creates a factory step object which should be performed at a specific time step
