@@ -4,6 +4,7 @@ import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 /**
  * Record for planning items which is used for the recursive combination in the enumerated calculation
+ * @param id unique id of the planning item (every planning item needs a unique id for comparison)
  * @param item to manipulate
  * @param amount amount of items
  * @param planningType type of the manipulation
