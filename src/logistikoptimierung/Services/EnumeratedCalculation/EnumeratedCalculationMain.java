@@ -122,11 +122,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
             var nrOfRemainingSteps = this.factory.getNrOfRemainingSteps();
             this.factory.resetFactory();
 
-            if(nrOfSimulations % 100 == 0) {
+            if(nrOfSimulations % 10000 == 0) {
                 System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
             }
 
-            if(result < bestTimeSolution)
+            if(result < bestTimeSolution && nrOfRemainingSteps == 0)
             {
                 bestTimeSolution = result;
                 bestSolution = new ArrayList<>(stepsToDo);

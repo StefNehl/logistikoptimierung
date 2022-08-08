@@ -129,12 +129,9 @@ public class  Factory {
         long starTime = 0;
         eventTimeSteps.add(starTime);
 
-        while (true)
+        while (this.currentTimeStep <= maxRunTime)
         {
             this.currentTimeStep = eventTimeSteps.get(0);
-            if(this.currentTimeStep >= maxRunTime)
-                break;
-
             var remainingSteps = new ArrayList<>(copyOfSteps);
 
             for (var step : remainingSteps)
@@ -173,12 +170,12 @@ public class  Factory {
 
             eventTimeSteps.remove(this.currentTimeStep);
             if(eventTimeSteps.isEmpty())
-                return this.currentTimeStep;
+                break;
         }
 
         nrOfRemainingSteps = copyOfSteps.size();
         this.getWarehouse().addCurrentWarehouseStockMessage();
-        return maxRunTime;
+        return this.currentTimeStep;
     }
 
     /**
