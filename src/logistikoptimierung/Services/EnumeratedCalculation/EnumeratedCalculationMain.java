@@ -126,7 +126,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
             }
 
-            if(result < bestTimeSolution && nrOfRemainingSteps == 0)
+            if(result <= bestTimeSolution && nrOfRemainingSteps == 0)
             {
                 bestTimeSolution = result;
                 bestSolution = new ArrayList<>(stepsToDo);

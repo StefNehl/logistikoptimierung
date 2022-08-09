@@ -73,7 +73,6 @@ public class Transporter extends FactoryObject
             return false;
         }
 
-        currentTask = stepType;
         switch (stepType)
         {
             case GetMaterialFromSuppliesAndMoveBackToWarehouse -> {
@@ -90,6 +89,7 @@ public class Transporter extends FactoryObject
                     super.addErrorLogMessage("Could not load item");
                     return false;
                 }
+                currentTask = stepType;
                 this.loadedItem = itemToLoad;
             }
             case MoveMaterialFromTransporterToWarehouse -> {
@@ -101,6 +101,9 @@ public class Transporter extends FactoryObject
                 var result = this.getFactory().getWarehouse().addItemToWarehouse(loadedItem);
                 if(!result)
                     return false;
+
+                this.setBlockedUntilTimeStep(currentTimeStep);
+                currentTask = stepType;
                 this.loadedItem = null;
             }
             case ConcludeOrderTransportToCustomer -> {
@@ -126,6 +129,7 @@ public class Transporter extends FactoryObject
                     return false;
                 }
 
+                currentTask = stepType;
                 return getSpecificAmountOfItemsFromOrderToCustomer(workingOrder, amountOfItems, driver);
             }
             case ClosesOrderFromCustomer -> {
@@ -142,6 +146,9 @@ public class Transporter extends FactoryObject
                     super.addErrorLogMessage("Order can't be closed. " + workingOrder.getWarehousePosition().amount() + " of " + workingOrder.getWarehousePosition().item() + " is still to deliver");
                     return false;
                 }
+
+                this.setBlockedUntilTimeStep(currentTimeStep);
+                currentTask = stepType;
                 this.getFactory().increaseIncome(workingOrder.getIncome());
             }
         }

@@ -125,6 +125,8 @@ public class  Factory {
         addLog("Hour: " + hourCount, FactoryObjectMessageTypes.Factory);
 
         var copyOfSteps = new ArrayList<>(factorySteps);
+        var stepsDone = new ArrayList<FactoryStep>();
+
         var eventTimeSteps = new ArrayList<Long>();
         long starTime = 0;
         eventTimeSteps.add(starTime);
@@ -132,6 +134,7 @@ public class  Factory {
         while (this.currentTimeStep <= maxRunTime)
         {
             this.currentTimeStep = eventTimeSteps.get(0);
+            //System.out.println("Handled: " + this.currentTimeStep);
             var remainingSteps = new ArrayList<>(copyOfSteps);
 
             for (var step : remainingSteps)
@@ -146,12 +149,14 @@ public class  Factory {
                     continue;
 
                 copyOfSteps.remove(step);
+                stepsDone.add(step);
 
                 //One time step after the blocked until time
                 var newEventTimeStep = step.getFactoryObject().getBlockedUntilTimeStep() + 1;
                 if(eventTimeSteps.contains(newEventTimeStep))
                     continue;
 
+                //System.out.println("Added: " + newEventTimeStep);
                 for(var timeStep : eventTimeSteps)
                 {
                     var currentIndex = eventTimeSteps.indexOf(timeStep);
@@ -169,6 +174,14 @@ public class  Factory {
             }
 
             eventTimeSteps.remove(this.currentTimeStep);
+
+            if(eventTimeSteps.isEmpty() && !copyOfSteps.isEmpty())
+            {
+                //System.out.println("Error");
+                //eventTimeSteps.add(this.currentTimeStep);
+                break;
+            }
+
             if(eventTimeSteps.isEmpty())
                 break;
         }

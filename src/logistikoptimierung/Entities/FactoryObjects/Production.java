@@ -85,8 +85,7 @@ public class Production extends FactoryObject
             super.addBlockMessage(super.getName(), currentTask);
             return false;
         }
-        this.currentTask = stepType;
-        this.setBlockedUntilTimeStep(currentTimeStep);
+
         switch (stepType)
         {
             case MoveMaterialsForProductFromWarehouseToInputBuffer -> {
@@ -124,6 +123,8 @@ public class Production extends FactoryObject
 
                 processesInInputBuffer.add(process);
                 remainingNrOfInputBufferBatches--;
+                this.setBlockedUntilTimeStep(currentTimeStep);
+                this.currentTask = stepType;
                 addBufferLogMessage(item, false, true);
             }
             case Produce -> {
@@ -154,6 +155,7 @@ public class Production extends FactoryObject
                     return false;
                 }
 
+                this.currentTask = stepType;
                 productInProduction = producedProduct;
                 return true;
             }
@@ -174,6 +176,8 @@ public class Production extends FactoryObject
                 productsInOutputBuffer.add(productInProduction);
                 productInProduction = null;
                 addBufferLogMessage(item, true, false);
+                this.setBlockedUntilTimeStep(currentTimeStep);
+                this.currentTask = stepType;
                 return true;
             }
             case MoveProductFromOutputBufferToWarehouse -> {
@@ -201,6 +205,8 @@ public class Production extends FactoryObject
                     remainingNrOfOutputBufferBatches--;
                     return false;
                 }
+                this.setBlockedUntilTimeStep(currentTimeStep);
+                this.currentTask = stepType;
             }
             default -> throw new IllegalStateException("Unexpected value: " + stepType);
         }
