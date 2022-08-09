@@ -43,7 +43,7 @@ public enum FactoryStepTypes
     MoveProductToOutputBuffer,
 
     /**
-     * Move product from output buffer to warehouse. Needs the Factory Object, the product in the output buffer and the nr of Batches (only 1).
+     * Move product from output buffer to warehouse. Needs the Factory Object Production, the product in the output buffer and the nr of Batches (only 1).
      * The warehouse needs to have remaining capacity, otherwise the step will fail.
      */
     MoveProductFromOutputBufferToWarehouse,
