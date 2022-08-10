@@ -26,16 +26,16 @@ public class CSVDataImportService implements IDataService
     /**
      * loads the contract of the merged and mixed up orders
      */
-    public static final String MERGED_CONTRACTS = "VermischteAuftraege.csv";
+    public static final String MERGED_ORDERS = "VermischteAuftraege.csv";
 
     /**
      * Loads the contract of the test Aufträge
      */
-    public static final String TEST_CONTRACTS = "TestAuftraege.csv";
+    public static final String TEST_ORDERS = "TestAuftraege.csv";
 
-    public static final String SIMILAR_CONTRACTS = "similarProducts.csv";
+    public static final String SIMILAR_ORDERS = "similarProducts.csv";
 
-    public static final String PARALLEL_CONTRACTS = "paraProc.csv";
+    public static final String PARALLEL_ORDERS = "paraProc.csv";
 
     private static final String DATA_PATH = "data\\";
     private static final String DELIMITER = ";";

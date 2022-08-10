@@ -89,8 +89,9 @@ public class  Factory {
     }
 
     /**
-     * Starts the simulation. The simulation iterates from 0 to the max run time, in seconds,  and tries to perform every task in the
-     * factory steps every iteration. The simulation stops if it reaches the max run time or if no factory step is left to perform.
+     * Starts the simulation. The simulation iterates and every step creates a new event time step. At every event time step the simulation
+     * tries to perform every task in the factory steps every iteration. The simulation stops if it reaches the max run time, if no factory step is left to perform
+     * or no event time step is left.
      * The factory message settings sets the amount of messages which are printed in the console while the simulation. The not printed
      * messages are stored in the object.
      * @param orderList sets the orders

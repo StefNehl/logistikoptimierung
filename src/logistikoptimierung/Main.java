@@ -40,8 +40,8 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 1;
-        String contractList = CSVDataImportService.MERGED_CONTRACTS;
+        int nrOfOrderToOptimize = 5;
+        String contractList = CSVDataImportService.PARALLEL_ORDERS;
         long maxRuntimeInSeconds = 10000000;
         int nrOfDrivers = 6;
         int warehouseCapacity = 1000;
@@ -108,7 +108,7 @@ public class Main
 
         var optimizer = new EnumeratedCalculationMain(instance,
                 maxRuntimeInSeconds,
-                false,
+                true,
                 factoryMessageSettings,
                 convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
