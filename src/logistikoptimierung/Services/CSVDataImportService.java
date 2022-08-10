@@ -20,18 +20,18 @@ public class CSVDataImportService implements IDataService
 {
     private static final String TRANSPORTER_FILENAME = "Transportmittel.csv";
     private static final String MATERIAL_WITH_TRANSPORTER_FILENAME = "RohstoffeTransportmittel.csv";
-    private static final String PRODUCTS_FILENAME = "Products.csv";
+    private static final String PRODUCTS_FILENAME = "Produkte.csv";
     private static final String PRODUCTIONS_FILENAME = "FabrikenMitPuffer.csv";
 
     /**
      * loads the contract of the merged and mixed up orders
      */
-    public static final String MERGED_CONTRACTS = "VermischteAufträge.csv";
+    public static final String MERGED_CONTRACTS = "VermischteAuftraege.csv";
 
     /**
      * Loads the contract of the test Aufträge
      */
-    public static final String TEST_CONTRACTS = "TestAufträge.csv";
+    public static final String TEST_CONTRACTS = "TestAuftraege.csv";
 
     public static final String SIMILAR_CONTRACTS = "similarProducts.csv";
 
