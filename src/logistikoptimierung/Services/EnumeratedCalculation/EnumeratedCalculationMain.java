@@ -55,7 +55,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
         this.orderList = instance.orderList();
         this.factoryMessageSettings = factoryMessageSettings;
 
-        this.availableDrivers = new ArrayList<>(this.factory.getDrivers());
         this.sortedAvailableTransportList = new ArrayList<>(this.factory.getTransporters());
         this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
         this.driverPoolItems = new ArrayList<>(this.factory.getNrOfDrivers());
@@ -92,6 +91,16 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         this.nrOfSimulations = 0;
         this.startTime = System.nanoTime();
+
+        //Create copy of driver list
+        availableDrivers = new ArrayList<Driver>();
+        var idCount = 0;
+        for(var driver : this.factory.getDrivers())
+        {
+            availableDrivers.add(new Driver(driver.getName(), idCount));
+            idCount++;
+        }
+
         getPlanningSolutionRecursive(stepToDo, planningItems, new ArrayList<>(this.factory.getProductions()));
 
         return bestSolution;
@@ -179,8 +188,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
             copyOfPlanningItems.removeAll(planningItemsToRemove);
             getPlanningSolutionRecursive(copyOfSteps, copyOfPlanningItems, availableProduction);
 
-            //Release production
-
             //Release driver
             if(planningItem.planningType() == PlanningType.Acquire ||
                     planningItem.planningType() == PlanningType.Deliver)
@@ -188,7 +195,17 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 if(this.driverPoolItems.isEmpty())
                     break;
 
+                //Last item in the list, is the latest added one.
                 var poolItem = this.driverPoolItems.remove(this.driverPoolItems.size() - 1);
+                var removedDriver = poolItem.driver();
+
+                var driveTime = 0;
+                if(planningItem.item() instanceof Order)
+                    driveTime = ((Order) planningItem.item()).getTravelTime();
+                else if(planningItem.item() instanceof Material)
+                    driveTime = ((Material) planningItem.item()).getTravelTime();
+
+                removedDriver.setBlockedUntilTimeStep(removedDriver.getBlockedUntilTimeStep() - driveTime);
                 this.availableDrivers.add(poolItem.driver());
                 addTransporterToSortedTransportList(poolItem.transporter());
             }
@@ -325,6 +342,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             var newDriver = this.availableDrivers.remove(0);
             this.sortedAvailableTransportList.remove(bestTransporter);
+
+            var driveTime = 0;
+            if(planningItem.item() instanceof Order)
+                driveTime = ((Order) planningItem.item()).getTravelTime();
+
+            newDriver.setBlockedUntilTimeStep(newDriver.getBlockedUntilTimeStep() + driveTime);
+
             var newPoolItem = new DriverPoolItem(newDriver, bestTransporter);
             driverPoolItems.add(newPoolItem);
             amount -= bestTransporter.getCapacity();
@@ -399,6 +423,12 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             var newDriver = this.availableDrivers.remove(0);
             this.sortedAvailableTransportList.remove(bestTransporter);
+
+            var driveTime = 0;
+            if (planningItem.item() instanceof Material)
+                driveTime = ((Material) planningItem.item()).getTravelTime();
+
+            newDriver.setBlockedUntilTimeStep(newDriver.getBlockedUntilTimeStep() + driveTime);
             var newPoolItem = new DriverPoolItem(newDriver, bestTransporter);
 
             driverPoolItems.add(newPoolItem);
@@ -465,7 +495,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         //No Transporter found, need to reuse already used transporter
         if(bestTransporter == null)
         {
-            var bestDriverPoolItem = getDriverPoolItemWithSmallestDifferenceFromAmountAndHigherCapacity(item, amount);
+            var bestDriverPoolItem = getDriverPoolItemWithDriverWhoIsEarliestBack(item);
             bestTransporter = bestDriverPoolItem.transporter();
 
             //Release driver from this transporter
@@ -514,6 +544,36 @@ public class EnumeratedCalculationMain implements IOptimizationService
             return fittingTransporterWithHighestCapacity;
 
         return null;
+    }
+
+    private DriverPoolItem getDriverPoolItemWithDriverWhoIsEarliestBack(WarehouseItem item)
+    {
+        DriverPoolItem bestDriverPoolItem = null;
+
+        for(var driverPoolItem : this.driverPoolItems)
+        {
+            if(item instanceof Material)
+            {
+                if(!driverPoolItem.transporter().areTransportationConstraintsFulfilledForMaterial((Material) item))
+                    continue;
+            }
+            else if(item instanceof  Order)
+            {
+                if(!driverPoolItem.transporter().areTransportationConstraintsFulfilledForOrder((Order) item))
+                    continue;
+            }
+
+            if(bestDriverPoolItem == null)
+            {
+                bestDriverPoolItem = driverPoolItem;
+                continue;
+            }
+
+            if(driverPoolItem.driver().getBlockedUntilTimeStep() < bestDriverPoolItem.driver().getBlockedUntilTimeStep())
+                bestDriverPoolItem = driverPoolItem;
+        }
+
+        return bestDriverPoolItem;
     }
 
     private DriverPoolItem getDriverPoolItemWithSmallestDifferenceFromAmountAndHigherCapacity(WarehouseItem item, int amount)
