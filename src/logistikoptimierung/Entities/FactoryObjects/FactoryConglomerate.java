@@ -4,6 +4,7 @@ import logistikoptimierung.Entities.WarehouseItems.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * This class creates an object for the factory conglomerate. The factory conglomerate  is the main object and contains the warehouse, transporters,
@@ -105,6 +106,30 @@ public class FactoryConglomerate {
                              long maxRunTime,
                              LogSettings logSettings)
     {
+        return this.startFactory(orderList, factorySteps, false, maxRunTime, logSettings);
+    }
+
+    /**
+     * Starts the simulation. The simulation iterates and every step creates a new event time step. At every event time step the simulation
+     * tries to perform every task in the factory steps every iteration. The simulation stops if it reaches the max run time, if no factory step is left to perform
+     * or no event time step is left.
+     * The log settings sets the amount of messages which are printed in the console while the simulation. The not printed
+     * messages are stored in the object.
+     * @param orderList sets the orders
+     * @param factorySteps sets the factory steps to perform
+     * @param considerCurrentWarehousePositions consider the current materials and products in the warehouse. If true,
+     *                                          transporters which should get a material, which is in the correct amount already
+     *                                          in the warehouse, does not drive to the supplier. The step gets ignored by the simulation
+     * @param maxRunTime sets the maximum runtime after the simulation stops
+     * @param logSettings sets the amount of printed messages in the console
+     * @return the time step after the factory stops (in seconds)
+     */
+    public long startFactory(List<Order> orderList,
+                             List<FactoryStep> factorySteps,
+                             boolean considerCurrentWarehousePositions,
+                             long maxRunTime,
+                             LogSettings logSettings)
+    {
         //Working Order List is used for storing the remaining amount of items in an Order
         //This list changes => copy the list
         this.workingOrderList = new ArrayList<>();
@@ -128,13 +153,13 @@ public class FactoryConglomerate {
         var copyOfSteps = new ArrayList<>(factorySteps);
         var stepsDone = new ArrayList<FactoryStep>();
 
-        var eventTimeSteps = new ArrayList<Long>();
+        var eventTimeSteps = new TreeSet<Long>();
         long starTime = 0;
         eventTimeSteps.add(starTime);
 
         while (this.currentTimeStep <= maxRunTime)
         {
-            this.currentTimeStep = eventTimeSteps.get(0);
+            this.currentTimeStep = eventTimeSteps.first();
             //System.out.println("Handled: " + this.currentTimeStep);
             var remainingSteps = new ArrayList<>(copyOfSteps);
 
@@ -154,24 +179,7 @@ public class FactoryConglomerate {
 
                 //One time step after the blocked until time
                 var newEventTimeStep = step.getFactoryObject().getBlockedUntilTimeStep() + 1;
-                if(eventTimeSteps.contains(newEventTimeStep))
-                    continue;
-
-                //System.out.println("Added: " + newEventTimeStep);
-                for(var timeStep : eventTimeSteps)
-                {
-                    var currentIndex = eventTimeSteps.indexOf(timeStep);
-                    if(timeStep > newEventTimeStep)
-                    {
-                        eventTimeSteps.add(currentIndex, newEventTimeStep);
-                        break;
-                    }
-                    else if(currentIndex == eventTimeSteps.size() - 1)
-                    {
-                        eventTimeSteps.add(currentIndex + 1, newEventTimeStep);
-                        break;
-                    }
-                }
+                eventTimeSteps.add(newEventTimeStep);
             }
 
             eventTimeSteps.remove(this.currentTimeStep);
