@@ -15,7 +15,7 @@ public class Driver extends FactoryObject
      * @param id sets the id
      */
     public Driver(String name, int id) {
-        super(name, "D" + id, FactoryObjectMessageTypes.Driver);
+        super(name, "D" + id, LogMessageTypes.Driver);
     }
 
     /**

@@ -13,7 +13,7 @@ public class FactoryStep {
     private WarehouseItem itemToManipulate;
     private FactoryObject factoryObject;
     private FactoryStepTypes stepType;
-    private Factory factory;
+    private FactoryConglomerate factoryConglomerate;
     private int amountOfItems;
     private long doTimeStep;
     private List<FactoryStep> factoryStepsToDoBefore;
@@ -22,41 +22,41 @@ public class FactoryStep {
 
     /**
      * Creates a factory step object which should be performed at a specific time step
-     * @param factory factory where the step should be performed
+     * @param factoryConglomerate factory where the step should be performed
      * @param doTimeStep the specific time step when the step should be performed
      * @param itemToManipulate the item which should be manipulated
      * @param amountOfItems the amount of items which should be manipulated
      * @param factoryObject the factory object which should perform the manipulation
      * @param stepType the type of manipulation
      */
-    public FactoryStep(Factory factory, long doTimeStep, WarehouseItem itemToManipulate, int amountOfItems, FactoryObject factoryObject, FactoryStepTypes stepType)
+    public FactoryStep(FactoryConglomerate factoryConglomerate, long doTimeStep, WarehouseItem itemToManipulate, int amountOfItems, FactoryObject factoryObject, FactoryStepTypes stepType)
     {
-        initFactoryStep(factory, doTimeStep, new ArrayList<>(), itemToManipulate, amountOfItems, factoryObject, stepType);
+        initFactoryStep(factoryConglomerate, doTimeStep, new ArrayList<>(), itemToManipulate, amountOfItems, factoryObject, stepType);
     }
 
     /**
      * Creates a factory step object which should be performed after a list of factory steps
-     * @param factory factory where the step should be performed
+     * @param factoryConglomerate factory where the step should be performed
      * @param factoryStepsToDoBefore the factory steps which needed to be completed before this step can perform
      * @param itemToManipulate the item which should be manipulated
      * @param amountOfItems the amount of items which should be manipulated
      * @param factoryObject the factory object which should perform the manipulation
      * @param stepType the type of manipulation
      */
-    public FactoryStep(Factory factory, List<FactoryStep> factoryStepsToDoBefore, WarehouseItem itemToManipulate,
+    public FactoryStep(FactoryConglomerate factoryConglomerate, List<FactoryStep> factoryStepsToDoBefore, WarehouseItem itemToManipulate,
                        int amountOfItems, FactoryObject factoryObject, FactoryStepTypes stepType)
     {
         var doTimeStamp = 0;
-        initFactoryStep(factory, doTimeStamp, factoryStepsToDoBefore, itemToManipulate, amountOfItems, factoryObject, stepType);
+        initFactoryStep(factoryConglomerate, doTimeStamp, factoryStepsToDoBefore, itemToManipulate, amountOfItems, factoryObject, stepType);
     }
 
-    private void initFactoryStep(Factory factory, long doTimeStamp, List<FactoryStep> factoryStepsToDoBefore, WarehouseItem itemToManipulate, int amountOfItems, FactoryObject factoryObject, FactoryStepTypes stepType)
+    private void initFactoryStep(FactoryConglomerate factoryConglomerate, long doTimeStamp, List<FactoryStep> factoryStepsToDoBefore, WarehouseItem itemToManipulate, int amountOfItems, FactoryObject factoryObject, FactoryStepTypes stepType)
     {
         this.itemToManipulate = itemToManipulate;
         this.factoryObject = factoryObject;
 
         this.stepType = stepType;
-        this.factory = factory;
+        this.factoryConglomerate = factoryConglomerate;
         this.amountOfItems = amountOfItems;
         this.doTimeStep = doTimeStamp;
         this.factoryStepsToDoBefore = factoryStepsToDoBefore;
@@ -68,7 +68,7 @@ public class FactoryStep {
      */
     public boolean doStep()
     {
-        this.isCompleted = factoryObject.doWork(factory.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
+        this.isCompleted = factoryObject.doWork(factoryConglomerate.getCurrentTimeStep(), itemToManipulate, amountOfItems, stepType);
         //Take care. Performance impact in the simulation
         //addStepMessage(this.isCompleted);
         return this.isCompleted;
@@ -148,7 +148,7 @@ public class FactoryStep {
 
     private void addStepMessage(boolean completed)
     {
-        this.factory.addFactoryStepLog(this + " Completed: " + completed, FactoryObjectMessageTypes.FactoryStep, completed);
+        this.factoryConglomerate.addFactoryStepLog(this + " Completed: " + completed, LogMessageTypes.FactoryStep, completed);
     }
 
     /**

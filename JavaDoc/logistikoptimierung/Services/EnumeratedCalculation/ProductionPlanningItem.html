@@ -97,7 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ProductionPlanningItem</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Creates a production planning item which is used in the enumerated calculation.</div>
+<div class="block">Creates a factory planning item which is used in the enumerated calculation.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -109,9 +109,9 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.FactoryObjects.Production)" class="member-name-link">ProductionPlanningItem</a><wbr>(<a href="../../Entities/FactoryObjects/Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a>&nbsp;production)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.FactoryObjects.Production)" class="member-name-link">ProductionPlanningItem</a><wbr>(<a href="../../Entities/FactoryObjects/Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a>&nbsp;factory)</code></div>
 <div class="col-last even-row-color">
-<div class="block">creates the object for the production planning item</div>
+<div class="block">creates the object for the factory planning item</div>
 </div>
 </div>
 </section>
@@ -153,11 +153,11 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;(logistikoptimierung.Entities.FactoryObjects.Production)">
 <h3>ProductionPlanningItem</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ProductionPlanningItem</span><wbr><span class="parameters">(<a href="../../Entities/FactoryObjects/Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a>&nbsp;production)</span></div>
-<div class="block">creates the object for the production planning item</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ProductionPlanningItem</span><wbr><span class="parameters">(<a href="../../Entities/FactoryObjects/Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a>&nbsp;factory)</span></div>
+<div class="block">creates the object for the factory planning item</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>production</code> - production to plan</dd>
+<dd><code>factory</code> - factory to plan</dd>
 </dl>
 </section>
 </li>
@@ -175,7 +175,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../Entities/FactoryObjects/Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a></span>&nbsp;<span class="element-name">getProduction</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the production which was planned</dd>
+<dd>the factory which was planned</dd>
 </dl>
 </section>
 </li>
@@ -185,7 +185,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="ProcessPlaningItem.html" title="class in logistikoptimierung.Services.EnumeratedCalculation">ProcessPlaningItem</a>&gt;</span>&nbsp;<span class="element-name">getProcessPlanningItems</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the process list of the planned production</dd>
+<dd>the process list of the planned factory</dd>
 </dl>
 </section>
 </li>

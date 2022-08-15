@@ -101,7 +101,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">FactoryObject</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Creates a factory object. Factory objects are drivers, transporters, factory steps and productions.
+<div class="block">Creates a factoryConglomerate object. Factory objects are drivers, transporters, factoryConglomerate steps and factories.
  This class should only be extended.</div>
 </section>
 <section class="summary">
@@ -118,7 +118,7 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectId,
  <a href="FactoryObjectMessageTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryObjectMessageTypes</a>&nbsp;factoryObjectType)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Creates a factory object.</div>
+<div class="block">Creates a factoryConglomerate object.</div>
 </div>
 </div>
 </section>
@@ -138,17 +138,17 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addBlockMessage(java.lang.String,logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes)" class="member-name-link">addBlockMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">adds a block log message to the factory for the current factory object</div>
+<div class="block">adds a block log message to the factoryConglomerate for the current factoryConglomerate object</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addErrorLogMessage(java.lang.String)" class="member-name-link">addErrorLogMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">adds an error log message to the factory for the current factory object</div>
+<div class="block">adds an error log message to the factoryConglomerate for the current factoryConglomerate object</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addLogMessage(java.lang.String)" class="member-name-link">addLogMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">adds a log message to the factory for the current factory object</div>
+<div class="block">adds a log message to the factoryConglomerate for the current factoryConglomerate object</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#doWork(long,logistikoptimierung.Entities.WarehouseItems.WarehouseItem,int,logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes)" class="member-name-link">doWork</a><wbr>(long&nbsp;timeStep,
@@ -156,12 +156,12 @@ loadScripts(document, 'script');</script>
  int&nbsp;amountOfItems,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Perform the task with the current factory object.</div>
+<div class="block">Perform the task with the current factoryConglomerate object.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getBlockedUntilTimeStep()" class="member-name-link">getBlockedUntilTimeStep</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Gets the time step until this factory object is blocked</div>
+<div class="block">Gets the time step until this factoryConglomerate object is blocked</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFactory()" class="member-name-link">getFactory</a>()</code></div>
@@ -172,10 +172,10 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBlockedUntilTimeStep(long)" class="member-name-link">setBlockedUntilTimeStep</a><wbr>(long&nbsp;blockedUntilTimeStep)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">sets the time step until this factory object is blocked</div>
+<div class="block">sets the time step until this factoryConglomerate object is blocked</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setFactory(logistikoptimierung.Entities.FactoryObjects.Factory)" class="member-name-link">setFactory</a><wbr>(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factory)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setFactory(logistikoptimierung.Entities.FactoryObjects.Factory)" class="member-name-link">setFactory</a><wbr>(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factoryConglomerate)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
@@ -203,7 +203,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FactoryObject</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectId,
  <a href="FactoryObjectMessageTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryObjectMessageTypes</a>&nbsp;factoryObjectType)</span></div>
-<div class="block">Creates a factory object. Factory objects are drivers, transporters, factory steps and productions.
+<div class="block">Creates a factoryConglomerate object. Factory objects are drivers, transporters, factoryConglomerate steps and factories.
  This class should only be extended.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -227,17 +227,17 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></span>&nbsp;<span class="element-name">getFactory</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the factory</dd>
+<dd>the factoryConglomerate</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="setFactory(logistikoptimierung.Entities.FactoryObjects.Factory)">
 <h3>setFactory</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setFactory</span><wbr><span class="parameters">(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factory)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setFactory</span><wbr><span class="parameters">(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factoryConglomerate)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>factory</code> - sets the factory</dd>
+<dd><code>factoryConglomerate</code> - sets the factoryConglomerate</dd>
 </dl>
 </section>
 </li>
@@ -247,7 +247,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getName</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the name of the factory object</dd>
+<dd>the name of the factoryConglomerate object</dd>
 </dl>
 </section>
 </li>
@@ -258,7 +258,7 @@ loadScripts(document, 'script');</script>
  <a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;item,
  int&nbsp;amountOfItems,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</span></div>
-<div class="block">Perform the task with the current factory object.</div>
+<div class="block">Perform the task with the current factoryConglomerate object.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>timeStep</code> - time step to perform</dd>
@@ -274,7 +274,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getBlockedUntilTimeStep()">
 <h3>getBlockedUntilTimeStep</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">getBlockedUntilTimeStep</span>()</div>
-<div class="block">Gets the time step until this factory object is blocked</div>
+<div class="block">Gets the time step until this factoryConglomerate object is blocked</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>long time step</dd>
@@ -285,7 +285,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="setBlockedUntilTimeStep(long)">
 <h3>setBlockedUntilTimeStep</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setBlockedUntilTimeStep</span><wbr><span class="parameters">(long&nbsp;blockedUntilTimeStep)</span></div>
-<div class="block">sets the time step until this factory object is blocked</div>
+<div class="block">sets the time step until this factoryConglomerate object is blocked</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>blockedUntilTimeStep</code> - </dd>
@@ -296,7 +296,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="addLogMessage(java.lang.String)">
 <h3>addLogMessage</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addLogMessage</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message)</span></div>
-<div class="block">adds a log message to the factory for the current factory object</div>
+<div class="block">adds a log message to the factoryConglomerate for the current factoryConglomerate object</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>message</code> - message to log</dd>
@@ -307,7 +307,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="addErrorLogMessage(java.lang.String)">
 <h3>addErrorLogMessage</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addErrorLogMessage</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message)</span></div>
-<div class="block">adds an error log message to the factory for the current factory object</div>
+<div class="block">adds an error log message to the factoryConglomerate for the current factoryConglomerate object</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>message</code> - message to log</dd>
@@ -319,7 +319,7 @@ loadScripts(document, 'script');</script>
 <h3>addBlockMessage</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addBlockMessage</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;message,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</span></div>
-<div class="block">adds a block log message to the factory for the current factory object</div>
+<div class="block">adds a block log message to the factoryConglomerate for the current factoryConglomerate object</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>message</code> - message to log</dd>

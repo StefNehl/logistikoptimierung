@@ -43,7 +43,7 @@ public class Transporter extends FactoryObject
      */
     public Transporter(String name, int id, String area, String type, String engine, int maxCapacity)
     {
-        super(name, "T" + id, FactoryObjectMessageTypes.Transporter);
+        super(name, "T" + id, LogMessageTypes.Transporter);
         this.area = area;
         this.type = type;
         this.engine = engine;

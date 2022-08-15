@@ -1,6 +1,6 @@
 package logistikoptimierung.Services.FirstComeFirstServeOptimizer;
 
-import logistikoptimierung.Entities.FactoryObjects.Production;
+import logistikoptimierung.Entities.FactoryObjects.Factory;
 
 /**
  * A planning item for the production
@@ -8,23 +8,23 @@ import logistikoptimierung.Entities.FactoryObjects.Production;
 public class ProductionPlanningItem
 {
     private long blockedTime;
-    private final Production production;
+    private final Factory factory;
 
     /**
      * Creates a new production planning item
-     * @param production production to plan
+     * @param factory production to plan
      */
-    public ProductionPlanningItem(Production production)
+    public ProductionPlanningItem(Factory factory)
     {
         this.blockedTime = 0;
-        this.production = production;
+        this.factory = factory;
     }
 
     /**
      * @return the production which is planned
      */
-    public Production getProduction() {
-        return production;
+    public Factory getProduction() {
+        return factory;
     }
 
     /**

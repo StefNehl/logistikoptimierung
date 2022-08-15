@@ -6,7 +6,7 @@ package logistikoptimierung.Entities.FactoryObjects;
  * @param message message to log
  * @param factoryObjectType type of log
  */
-public record FactoryObjectMessage(long timeStep, String message, FactoryObjectMessageTypes factoryObjectType) {
+public record LogMessage(long timeStep, String message, LogMessageTypes factoryObjectType) {
     @Override
     public String toString()
     {

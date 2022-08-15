@@ -5,7 +5,6 @@ import logistikoptimierung.Entities.WarehouseItems.WarehouseItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Warehouse simulates the stock with the add and remove operation.
@@ -15,19 +14,19 @@ public class Warehouse extends FactoryObject
     private final List<WarehousePosition> warehouseItems;
     private int remainingWarehouseCapacity;
     private final int warehouseCapacity;
-    private final Factory factory;
+    private final FactoryConglomerate factoryConglomerate;
 
     /**
      * Create an object of the warehouse. This object simulates the add and remove of warehouse items from the warehouse.
      * It has a certain capacity.
      * @param name sets name of the warehouse
      * @param warehouseCapacity sets the capacity
-     * @param factory sets the factory
+     * @param factoryConglomerate sets the factory
      */
-    public Warehouse(String name, int warehouseCapacity, Factory factory)
+    public Warehouse(String name, int warehouseCapacity, FactoryConglomerate factoryConglomerate)
     {
-        super(name, name, FactoryObjectMessageTypes.Warehouse);
-        this.factory = factory;
+        super(name, name, LogMessageTypes.Warehouse);
+        this.factoryConglomerate = factoryConglomerate;
         this.warehouseItems = new ArrayList<>();
         this.warehouseCapacity = warehouseCapacity;
         this.remainingWarehouseCapacity = warehouseCapacity;
@@ -169,25 +168,25 @@ public class Warehouse extends FactoryObject
     private void addCapacityReachedMessage()
     {
         var message = super.getName() + " Capacity reached";
-        this.factory.addLog(message, FactoryObjectMessageTypes.Warehouse);
+        this.factoryConglomerate.addLog(message, LogMessageTypes.Warehouse);
     }
 
     private void addAddItemMessage(WarehousePosition item)
     {
         var message = super.getName() + " Task: add item " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
-        this.factory.addLog(message, FactoryObjectMessageTypes.WarehouseStock);
+        this.factoryConglomerate.addLog(message, LogMessageTypes.WarehouseStock);
     }
 
     private void addItemNotFoundMessage(WarehouseItem item)
     {
         var message = super.getName() + " " + item.getName() + " not found or not enough amount in warehouse";
-        this.factory.addLog(message, FactoryObjectMessageTypes.Warehouse);
+        this.factoryConglomerate.addLog(message, LogMessageTypes.Warehouse);
     }
 
     private void addItemRemovedMessage(WarehousePosition item)
     {
         var message = super.getName() + " Task: remove " + item.item().getName() +" amount: " + item.amount() + " RC: " + this.remainingWarehouseCapacity;
-        this.factory.addLog(message, FactoryObjectMessageTypes.WarehouseStock);
+        this.factoryConglomerate.addLog(message, LogMessageTypes.WarehouseStock);
     }
 
     /**
@@ -199,8 +198,8 @@ public class Warehouse extends FactoryObject
             return;
 
         var message = listToString(this.warehouseItems);
-        this.factory.addLog(message, FactoryObjectMessageTypes.CurrentWarehouseStock);
-        this.factory.addLog("Remaining warehouse capacity: " + this.remainingWarehouseCapacity, FactoryObjectMessageTypes.CurrentWarehouseStock);
+        this.factoryConglomerate.addLog(message, LogMessageTypes.CurrentWarehouseStock);
+        this.factoryConglomerate.addLog("Remaining warehouse capacity: " + this.remainingWarehouseCapacity, LogMessageTypes.CurrentWarehouseStock);
     }
 
     private String listToString(List<WarehousePosition> list)

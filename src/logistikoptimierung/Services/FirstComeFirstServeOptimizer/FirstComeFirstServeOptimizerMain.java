@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
-    private final Factory factory;
+    private final FactoryConglomerate factoryConglomerate;
     private final List<Order> orderList;
     private List<TransporterPlanningItem> transporterPlanningItems;
     private List<ProductionPlanningItem> productionPlanningItems;
@@ -28,18 +28,18 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
      */
     public FirstComeFirstServeOptimizerMain(Instance instance)
     {
-        this.factory = instance.factory();
+        this.factoryConglomerate = instance.factoryConglomerate();
         this.orderList = instance.orderList();
         this.transporterPlanningItems = new ArrayList<>();
 
-        for (var transporter: this.factory.getTransporters())
+        for (var transporter: this.factoryConglomerate.getTransporters())
         {
             transporterPlanningItems.add(new TransporterPlanningItem(transporter));
         }
 
         this.productionPlanningItems = new ArrayList<>();
 
-        for(var production : this.factory.getProductions())
+        for(var production : this.factoryConglomerate.getProductions())
         {
             productionPlanningItems.add(new ProductionPlanningItem(production));
         }
@@ -176,7 +176,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                         var startTimeFromStep = step.getDoTimeStep();
                         var additionalTime = 0;
                         if(order.getWarehousePosition().item() instanceof Product)
-                            additionalTime = this.factory.getProductionProcessForProduct((Product) order.getWarehousePosition().item()).getProductionTime();
+                            additionalTime = this.factoryConglomerate.getProductionProcessForProduct((Product) order.getWarehousePosition().item()).getProductionTime();
                         if(order.getWarehousePosition().item()instanceof Material)
                             additionalTime = ((Material) order.getWarehousePosition().item()).getTravelTime();
 
@@ -207,7 +207,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 travelTime = ((Material) item).getTravelTime();
 
                 factorySteps.add(new FactoryStep(
-                        factory,
+                        factoryConglomerate,
                         transporterPlanningItem.getBlockedTime(),
                         item,
                         transporterAmount,
@@ -215,7 +215,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                         FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse));
 
                 factorySteps.add(new FactoryStep(
-                        factory,
+                        factoryConglomerate,
                         transporterPlanningItem.getBlockedTime() + travelTime,
                         item,
                         transporterAmount,
@@ -227,7 +227,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             {
                 travelTime = ((Order) item).getTravelTime();
                 factorySteps.add(new FactoryStep(
-                        factory,
+                        factoryConglomerate,
                         startTimeStep,
                         item,
                         transporterAmount,
@@ -237,7 +237,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 if(remainingAmount == 0)
                 {
                     factorySteps.add(new FactoryStep(
-                            factory,
+                            factoryConglomerate,
                             startTimeStep,
                             item,
                             transporterAmount,
@@ -291,7 +291,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         }
 
         var productToProduce = (Product)order.getWarehousePosition().item();
-        var materialList = this.factory
+        var materialList = this.factoryConglomerate
                 .getWarehousePositionsForProductWithRespectOfBatchSize(
                         productToProduce,
                         order.getWarehousePosition().amount(), false);
@@ -301,7 +301,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
         for(var materialPosition : materialList)
         {
             //get everything. Also, Stahl and Bauholz
-            if(!factory.checkIfItemHasASupplier(materialPosition.item()))
+            if(!factoryConglomerate.checkIfItemHasASupplier(materialPosition.item()))
                 continue;
 
             factorySteps.addAll(getTransportationFactoryStepsForOneTask(
@@ -368,7 +368,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
     {
         var factorySteps = new ArrayList<FactoryStep>();
         factoryStepsBefore = new ArrayList<>(factoryStepsBefore);
-        var processesToProduce = this.factory
+        var processesToProduce = this.factoryConglomerate
                 .getProductionProcessesForProduct((Product) order.getWarehousePosition().item());
 
         var fittingProcessPlaningItems = new ProductionPlanningItem[processesToProduce.size()];
@@ -383,7 +383,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             }
         }
 
-        var materialToProduces = this.factory
+        var materialToProduces = this.factoryConglomerate
                 .getWarehousePositionsForProductWithRespectOfBatchSize((Product) order.getWarehousePosition().item(),
                         order.getWarehousePosition().amount(), false);
 
@@ -392,7 +392,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             var processPlaningItem = fittingProcessPlaningItems[i];
             var process = processesToProduce.get(i);
 
-            if(this.factory.checkIfItemHasASupplier(process.getProductToProduce()))
+            if(this.factoryConglomerate.checkIfItemHasASupplier(process.getProductToProduce()))
                 continue;
 
             var amountNeeded = 0;
@@ -400,7 +400,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             var nrOfBatchesNeeded = 0;
             for(var productToProduce : materialToProduces)
             {
-                if(this.factory.checkIfItemHasASupplier(productToProduce.item()))
+                if(this.factoryConglomerate.checkIfItemHasASupplier(productToProduce.item()))
                     continue;
                 if(process.getProductToProduce().equals(productToProduce.item()))
                 {
@@ -416,7 +416,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             {
                 var amountMaterialNeeded = material.amount();
 
-                if(this.factory.checkIfItemHasASupplier(material.item()))
+                if(this.factoryConglomerate.checkIfItemHasASupplier(material.item()))
                 {
                     //For Transportation of Material
                     for(var step : factoryStepsBefore)
@@ -451,7 +451,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
                         if(amountMaterialNeeded <= 0)
                         {
-                            var processOfMaterial = this.factory.getProductionProcessForProduct((Product) material.item());
+                            var processOfMaterial = this.factoryConglomerate.getProductionProcessForProduct((Product) material.item());
                             var productionTime = processOfMaterial.getProductionTime();
                             var startTimeOfStep = step.getDoTimeStep();
                             var finishedTimeStep = startTimeOfStep + productionTime;
@@ -470,7 +470,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 var productionStart = processPlaningItem.getBlockedTime();
                 var productionTime = process.getProductionTime();
 
-                var newStep = new FactoryStep(factory,
+                var newStep = new FactoryStep(factoryConglomerate,
                         productionStart,
                         process.getProductToProduce(),
                         1,
@@ -479,7 +479,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 factorySteps.add(newStep);
 
 
-                newStep = new FactoryStep(factory,
+                newStep = new FactoryStep(factoryConglomerate,
                         productionStart,
                         process.getProductToProduce(),
                         1,
@@ -488,7 +488,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                 factorySteps.add(newStep);
 
 
-                newStep = new FactoryStep(factory,
+                newStep = new FactoryStep(factoryConglomerate,
                         productionStart + productionTime,
                         process.getProductToProduce(),
                         1,
@@ -496,7 +496,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                         FactoryStepTypes.MoveProductToOutputBuffer);
                 factorySteps.add(newStep);
 
-                newStep = new FactoryStep(factory,
+                newStep = new FactoryStep(factoryConglomerate,
                         productionStart + productionTime,
                         process.getProductToProduce(),
                         1,

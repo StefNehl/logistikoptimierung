@@ -86,7 +86,7 @@ public class CSVDataImportService implements IDataService
                     loadCsv(path + filename), availableItems);
 
 
-            var factory = new Factory("Test 1",
+            var factory = new FactoryConglomerate("Test 1",
                     warehouseCapacity,
                     productions,
                     nrOfDrivers,
@@ -203,10 +203,10 @@ public class CSVDataImportService implements IDataService
         return products;
     }
 
-    private List<Production> loadProduction(List<String[]> data, List<WarehouseItem> items)
+    private List<Factory> loadProduction(List<String[]> data, List<WarehouseItem> items)
     {
-        var productionList = new ArrayList<Production>();
-        Production currentProduction = null;
+        var productionList = new ArrayList<Factory>();
+        Factory currentFactory = null;
         var currentProductionProcesses = new ArrayList<ProductionProcess>();
         var idCount = 0;
 
@@ -222,14 +222,14 @@ public class CSVDataImportService implements IDataService
                 var bufferOutput = Integer.parseInt(bufferStrings[1].substring(0, 1));
 
                 currentProductionProcesses = new ArrayList<>();
-                currentProduction = new Production(
+                currentFactory = new Factory(
                         productionName,
                         idCount,
                         currentProductionProcesses,
                         bufferInput,
                         bufferOutput);
 
-                productionList.add(currentProduction);
+                productionList.add(currentFactory);
                 idCount++;
             }
 
@@ -246,7 +246,7 @@ public class CSVDataImportService implements IDataService
                         product,
                         productBatchSize,
                         productionTime,
-                        currentProduction,
+                        currentFactory,
                         bom);
 
                 int startCount = 5;

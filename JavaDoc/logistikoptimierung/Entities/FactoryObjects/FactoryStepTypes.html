@@ -103,7 +103,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">FactoryStepTypes</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&gt;</span></div>
-<div class="block">Different factory steps which the factory can perform</div>
+<div class="block">Different factoryConglomerate steps which the factoryConglomerate can perform</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -233,8 +233,8 @@ the order they are declared.</div>
 <section class="detail" id="MoveMaterialsForProductFromWarehouseToInputBuffer">
 <h3>MoveMaterialsForProductFromWarehouseToInputBuffer</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a></span>&nbsp;<span class="element-name">MoveMaterialsForProductFromWarehouseToInputBuffer</span></div>
-<div class="block">Move materials for product from warehouse to input buffer. Needs a Factory Object Production, the product which this production
- should produce and the amount of batches (currently only 1 is supported). Every material needed for the production needs to
+<div class="block">Move materials for product from warehouse to input buffer. Needs a Factory Object Production, the product which this factory
+ should produce and the amount of batches (currently only 1 is supported). Every material needed for the factory needs to
  be in the warehouse, otherwise the step will fail</div>
 </section>
 </li>
@@ -242,7 +242,7 @@ the order they are declared.</div>
 <section class="detail" id="Produce">
 <h3>Produce</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a></span>&nbsp;<span class="element-name">Produce</span></div>
-<div class="block">Produce. Need a Factory object Production, and alle the materials for the production in the Input buffer of this production.
+<div class="block">Produce. Need a Factory object Production, and alle the materials for the factory in the Input buffer of this factory.
  Amount is the nr of batches (currently only 1 is supported).</div>
 </section>
 </li>
@@ -276,7 +276,7 @@ the order they are declared.</div>
 <h3>ClosesOrderFromCustomer</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a></span>&nbsp;<span class="element-name">ClosesOrderFromCustomer</span></div>
 <div class="block">Transporter closes order from the customer. Needs the Factory Object Transporter, and the warehouse item Order to close.
- The parameter Amount is ignored in the step. This step will also increase the income of the factory. This step will fail,
+ The parameter Amount is ignored in the step. This step will also increase the income of the factoryConglomerate. This step will fail,
  if the needed amount of the Order > 0. Furthermore, if the amount in the Order was not deduct to zero by the ConcludeOrderTransportToCustomer
  Step.</div>
 </section>

@@ -18,9 +18,9 @@ import java.util.*;
  */
 public class EnumeratedCalculationMain implements IOptimizationService
 {
-    private final Factory factory;
+    private final FactoryConglomerate factoryConglomerate;
     private final List<Order> orderList;
-    private FactoryMessageSettings factoryMessageSettings;
+    private LogSettings logSettings;
 
     private List<Transporter> sortedAvailableTransportList;
     private List<Driver> availableDrivers;
@@ -42,22 +42,22 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * are used in the optimization.
      * @param instance with the factory and the orderlist where the optimization should happen
      * @param maxRuntime maximum run time for the optimization
-     * @param factoryMessageSettings factory messages settings for the simulating factory
+     * @param logSettings factory messages settings for the simulating factory
      * @param condenseMaterialSupplies condenses the supplying of the material to
      */
     public EnumeratedCalculationMain(Instance instance,
                                      long maxRuntime,
                                      boolean condenseMaterialSupplies,
-                                     FactoryMessageSettings factoryMessageSettings,
+                                     LogSettings logSettings,
                                      long maxSystemRunTimeInNanoSeconds)
     {
-        this.factory = instance.factory();
+        this.factoryConglomerate = instance.factoryConglomerate();
         this.orderList = instance.orderList();
-        this.factoryMessageSettings = factoryMessageSettings;
+        this.logSettings = logSettings;
 
-        this.sortedAvailableTransportList = new ArrayList<>(this.factory.getTransporters());
+        this.sortedAvailableTransportList = new ArrayList<>(this.factoryConglomerate.getTransporters());
         this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
-        this.driverPoolItems = new ArrayList<>(this.factory.getNrOfDrivers());
+        this.driverPoolItems = new ArrayList<>(this.factoryConglomerate.getNrOfDrivers());
 
         this.bestTimeSolution = maxRuntime;
         this.condenseMaterialSupplies = condenseMaterialSupplies;
@@ -77,14 +77,14 @@ public class EnumeratedCalculationMain implements IOptimizationService
             subOrderList.add(this.orderList.get(i));
         }
 
-        var newInstance = new Instance(this.factory, this.orderList);
+        var newInstance = new Instance(this.factoryConglomerate, this.orderList);
 
         var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(newInstance);
         this.bestSolution = firstComeFirstServeOptimizer.optimize(nrOfOrdersToOptimize);
-        var firstComeFirstServeResult = this.factory.startFactory(this.orderList, this.bestSolution, this.bestTimeSolution, factoryMessageSettings);
+        var firstComeFirstServeResult = this.factoryConglomerate.startFactory(this.orderList, this.bestSolution, this.bestTimeSolution, logSettings);
         firstComeFirstServeResult++;
         this.bestTimeSolution = firstComeFirstServeResult;
-        this.factory.resetFactory();
+        this.factoryConglomerate.resetFactory();
 
         var planningItems = getAllNeededFactoryPlanningItemsForOrder(subOrderList);
         System.out.println("Nr of planning items: " + planningItems.size());
@@ -95,13 +95,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
         //Create copy of driver list
         availableDrivers = new ArrayList<Driver>();
         var idCount = 0;
-        for(var driver : this.factory.getDrivers())
+        for(var driver : this.factoryConglomerate.getDrivers())
         {
             availableDrivers.add(new Driver(driver.getName(), idCount));
             idCount++;
         }
 
-        getPlanningSolutionRecursive(stepToDo, planningItems, new ArrayList<>(this.factory.getProductions()));
+        getPlanningSolutionRecursive(stepToDo, planningItems, new ArrayList<>(this.factoryConglomerate.getProductions()));
 
         return bestSolution;
     }
@@ -119,7 +119,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param stepsToDo Steps to perform before the current step
      * @param planningItems planning item to add the factory steps
      */
-    private void getPlanningSolutionRecursive(List<FactoryStep> stepsToDo, List<PlanningItem> planningItems, List<Production> availableProduction)
+    private void getPlanningSolutionRecursive(List<FactoryStep> stepsToDo, List<PlanningItem> planningItems, List<Factory> availableFactory)
     {
         if(maxSystemRunTime != 0 && System.nanoTime() > (maxSystemRunTime + startTime))
             return;
@@ -127,9 +127,9 @@ public class EnumeratedCalculationMain implements IOptimizationService
         if(planningItems.isEmpty())
         {
             nrOfSimulations++;
-            long result = this.factory.startFactory(this.orderList, stepsToDo, bestTimeSolution, factoryMessageSettings);
-            var nrOfRemainingSteps = this.factory.getNrOfRemainingSteps();
-            this.factory.resetFactory();
+            long result = this.factoryConglomerate.startFactory(this.orderList, stepsToDo, bestTimeSolution, logSettings);
+            var nrOfRemainingSteps = this.factoryConglomerate.getNrOfRemainingSteps();
+            this.factoryConglomerate.resetFactory();
 
             if(nrOfSimulations % 10000 == 0) {
                 //System.out.println("Nr of simulations: " + nrOfSimulations + " Result: " + result + " Nr Remaining Steps:" + nrOfRemainingSteps);
@@ -167,17 +167,17 @@ public class EnumeratedCalculationMain implements IOptimizationService
             //Check if planning item can be processed in parallel
             if(planningItem.planningType().equals(PlanningType.Produce))
             {
-                var productionProcess = this.factory.getProductionProcessForProduct((Product) planningItem.item());
-                if(availableProduction.contains(productionProcess.getProduction()))
+                var productionProcess = this.factoryConglomerate.getProductionProcessForProduct((Product) planningItem.item());
+                if(availableFactory.contains(productionProcess.getProduction()))
                 {
                     stepsToDo.addAll(stepsToAdd);
-                    availableProduction.remove(productionProcess.getProduction());
+                    availableFactory.remove(productionProcess.getProduction());
                     planningItemsToRemove.add(planningItem);
                     continue;
                 }
                 else
                 {
-                    availableProduction = new ArrayList<>(this.factory.getProductions());
+                    availableFactory = new ArrayList<>(this.factoryConglomerate.getProductions());
                 }
             }
 
@@ -186,7 +186,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             copyOfSteps.addAll(stepsToAdd);
             copyOfPlanningItems.remove(planningItem);
             copyOfPlanningItems.removeAll(planningItemsToRemove);
-            getPlanningSolutionRecursive(copyOfSteps, copyOfPlanningItems, availableProduction);
+            getPlanningSolutionRecursive(copyOfSteps, copyOfPlanningItems, availableFactory);
 
             //Release driver
             if(planningItem.planningType() == PlanningType.Acquire ||
@@ -257,7 +257,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 if(step.getItemToManipulate()
                         .equals(order.getWarehousePosition().item()))
                 {
-                    var production = (Production)step.getFactoryObject();
+                    var production = (Factory)step.getFactoryObject();
                     var process = production.getProductionProcessForProduct((Product) order.getWarehousePosition().item());
                     if(process == null)
                         continue;
@@ -267,7 +267,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                     continue;
                 }
 
-                var production = (Production) step.getFactoryObject();
+                var production = (Factory) step.getFactoryObject();
                 var process = production.getProductionProcessForProduct((Product) step.getItemToManipulate());
 
                 //Check if any other production process was using the item
@@ -332,7 +332,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             else
                 amountToTransport = bestTransporter.getCapacity();
 
-            var newStep = new FactoryStep(this.factory, stepsToDoBefore,
+            var newStep = new FactoryStep(this.factoryConglomerate, stepsToDoBefore,
                     planningItem.item(),
                     amountToTransport,
                     bestTransporter,
@@ -357,7 +357,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             lastAmountToTransport = amountToTransport;
         }
 
-        var newStep = new FactoryStep(this.factory, stepsToDoBefore,
+        var newStep = new FactoryStep(this.factoryConglomerate, stepsToDoBefore,
                 planningItem.item(),
                 lastAmountToTransport,
                 lastTransport,
@@ -403,7 +403,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             else
                 amountToTransport = bestTransporter.getCapacity();
 
-            var newStep = new FactoryStep(this.factory, 0,
+            var newStep = new FactoryStep(this.factoryConglomerate, 0,
                     planningItem.item(),
                     amountToTransport,
                     bestTransporter,
@@ -411,7 +411,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             steps.add(newStep);
 
-            newStep = new FactoryStep(this.factory, 0,
+            newStep = new FactoryStep(this.factoryConglomerate, 0,
                     planningItem.item(),
                     amountToTransport,
                     bestTransporter,
@@ -441,7 +441,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
     private boolean checkIfWarehouseIsFull(List<FactoryStep> stepsToDo, int amountToAdd)
     {
-        var warehouseCapacity = this.factory.getWarehouse().getWarehouseCapacity();
+        var warehouseCapacity = this.factoryConglomerate.getWarehouse().getWarehouseCapacity();
         warehouseCapacity -= amountToAdd;
         for(var step : stepsToDo)
         {
@@ -454,14 +454,14 @@ public class EnumeratedCalculationMain implements IOptimizationService
             if(step.getStepType().equals(FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer))
             {
                 //add
-                var process = this.factory.getProductionProcessForProduct((Product) step.getItemToManipulate());
+                var process = this.factoryConglomerate.getProductionProcessForProduct((Product) step.getItemToManipulate());
                 warehouseCapacity += process.getProductionBatchSize();
             }
 
             if(step.getStepType().equals(FactoryStepTypes.MoveProductFromOutputBufferToWarehouse))
             {
                 //reduce
-                var process = this.factory.getProductionProcessForProduct((Product) step.getItemToManipulate());
+                var process = this.factoryConglomerate.getProductionProcessForProduct((Product) step.getItemToManipulate());
                 warehouseCapacity -= process.getProductionBatchSize();
             }
 
@@ -636,7 +636,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     {
         var steps = new ArrayList<FactoryStep>();
         var process = this
-                .factory
+                .factoryConglomerate
                 .getProductionProcessForProduct((Product) planningItem.item());
 
         var stepsToDoBefore = new ArrayList<FactoryStep>();
@@ -662,7 +662,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                     //Check if product was produced
                     if(step.getItemToManipulate().equals(materialPosition.item()))
                     {
-                        var subProcess = this.factory.getProductionProcessForProduct((Product) step.getItemToManipulate());
+                        var subProcess = this.factoryConglomerate.getProductionProcessForProduct((Product) step.getItemToManipulate());
                         materialInWarehouse += subProcess.getProductionBatchSize();
                         stepsToDoBefore.add(step);
                     }
@@ -671,7 +671,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 //Check if any other production consumed the material before
                 if(step.getStepType().equals(FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer))
                 {
-                    var productionProcess = this.factory.getProductionProcessForProduct((Product) step.getItemToManipulate());
+                    var productionProcess = this.factoryConglomerate.getProductionProcessForProduct((Product) step.getItemToManipulate());
                     for(var materialPositionForProcess : productionProcess.getMaterialPositions())
                     {
                         if(materialPositionForProcess.item().equals(materialPosition.item()))
@@ -690,7 +690,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             }
         }
 
-        var newStep = new FactoryStep(this.factory, stepsToDoBefore,
+        var newStep = new FactoryStep(this.factoryConglomerate, stepsToDoBefore,
                 planningItem.item(),
                 1,
                 process.getProduction(),
@@ -700,7 +700,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         stepsToDoBefore = new ArrayList<>();
         stepsToDoBefore.add(newStep);
-        newStep = new FactoryStep(this.factory, stepsToDoBefore,
+        newStep = new FactoryStep(this.factoryConglomerate, stepsToDoBefore,
                 planningItem.item(),
                 1,
                 process.getProduction(),
@@ -710,7 +710,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         stepsToDoBefore = new ArrayList<>();
         stepsToDoBefore.add(newStep);
-        newStep = new FactoryStep(this.factory, stepsToDoBefore,
+        newStep = new FactoryStep(this.factoryConglomerate, stepsToDoBefore,
                 planningItem.item(),
                 1,
                 process.getProduction(),
@@ -721,7 +721,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         stepsToDoBefore = new ArrayList<>();
         stepsToDoBefore.add(newStep);
-        newStep = new FactoryStep(this.factory, stepsToDoBefore,
+        newStep = new FactoryStep(this.factoryConglomerate, stepsToDoBefore,
                 planningItem.item(),
                 planningItem.amount(),
                 process.getProduction(),
@@ -782,7 +782,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
     private ArrayList<ProductionPlanningItem> createProcessList(List<Order> orderList)
     {
         var productionItems = new ArrayList<ProductionPlanningItem>();
-        for (var production : this.factory.getProductions())
+        for (var production : this.factoryConglomerate.getProductions())
         {
             productionItems.add(new ProductionPlanningItem(production));
         }
@@ -790,13 +790,13 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var orderCount = 1;
         for (var order : orderList)
         {
-            var processes = this.factory.getProductionProcessesForProduct(
+            var processes = this.factoryConglomerate.getProductionProcessesForProduct(
                     order.getWarehousePosition().item());
 
             var filteredProcesses = new ArrayList<ProductionProcess>();
             for(var process : processes)
             {
-                if(this.factory.checkIfItemHasASupplier(process.getProductToProduce()))
+                if(this.factoryConglomerate.checkIfItemHasASupplier(process.getProductToProduce()))
                     continue;
                 filteredProcesses.add(process);
             }
@@ -838,10 +838,10 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
     private int getProcessDepthRecursive(WarehouseItem item)
     {
-        if(this.factory.checkIfItemHasASupplier(item))
+        if(this.factoryConglomerate.checkIfItemHasASupplier(item))
             return 0;
 
-        var process = this.factory.getProductionProcessForProduct((Product) item);
+        var process = this.factoryConglomerate.getProductionProcessForProduct((Product) item);
         for (var position : process.getMaterialPositions())
         {
             return getProcessDepthRecursive(position.item()) + 1;
@@ -987,7 +987,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
             for(var materialPosition : materialPositions)
             {
-                if(!this.factory.checkIfItemHasASupplier(materialPosition.item()))
+                if(!this.factoryConglomerate.checkIfItemHasASupplier(materialPosition.item()))
                     continue;
 
                 materialPositionsToAcquire.add(new WarehousePosition(materialPosition.item(), materialPosition.amount()));
@@ -1051,7 +1051,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var materialPositionsToAcquire = new ArrayList<WarehousePosition>();
         for(var order : orderList)
         {
-            if(this.factory.checkIfItemHasASupplier(order.getWarehousePosition().item()))
+            if(this.factoryConglomerate.checkIfItemHasASupplier(order.getWarehousePosition().item()))
                 materialPositionsToAcquire.add(new WarehousePosition(order.getWarehousePosition().item(), order.getWarehousePosition().amount()));
         }
         return materialPositionsToAcquire;

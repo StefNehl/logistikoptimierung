@@ -10,8 +10,8 @@ public class FactoryObject {
 
     private final String objectId;
     private final String name;
-    private Factory factory;
-    private final FactoryObjectMessageTypes factoryObjectType;
+    private FactoryConglomerate factoryConglomerate;
+    private final LogMessageTypes factoryObjectType;
     private long blockedUntilTimeStep;
 
     /**
@@ -21,7 +21,7 @@ public class FactoryObject {
      * @param objectId id of the object
      * @param factoryObjectType type of the object
      */
-    public FactoryObject(String name, String objectId, FactoryObjectMessageTypes factoryObjectType)
+    public FactoryObject(String name, String objectId, LogMessageTypes factoryObjectType)
     {
         this.name = name;
         this.objectId = objectId;
@@ -31,16 +31,16 @@ public class FactoryObject {
     /**
      * @return the factory
      */
-    public Factory getFactory() {
-        return factory;
+    public FactoryConglomerate getFactory() {
+        return factoryConglomerate;
     }
 
     /**
-     * @param factory sets the factory
+     * @param factoryConglomerate sets the factory
      */
-    public void setFactory(Factory factory)
+    public void setFactory(FactoryConglomerate factoryConglomerate)
     {
-        this.factory = factory;
+        this.factoryConglomerate = factoryConglomerate;
     }
 
     /**
@@ -60,7 +60,7 @@ public class FactoryObject {
      */
     public boolean doWork(long timeStep, WarehouseItem item, int amountOfItems, FactoryStepTypes stepType)
     {
-        factory.addLog("Not Implemented", factoryObjectType);
+        factoryConglomerate.addLog("Not Implemented", factoryObjectType);
         return false;
     }
 
@@ -86,7 +86,7 @@ public class FactoryObject {
      */
     public void addLogMessage(String message)
     {
-        this.factory.addLog(message, factoryObjectType);
+        this.factoryConglomerate.addLog(message, factoryObjectType);
     }
 
     /**
@@ -95,7 +95,7 @@ public class FactoryObject {
      */
     public void addErrorLogMessage(String message)
     {
-        this.factory.addLog(message, factoryObjectType);
+        this.factoryConglomerate.addLog(message, factoryObjectType);
     }
 
     /**
@@ -105,7 +105,7 @@ public class FactoryObject {
      */
     public void addBlockMessage(String message, FactoryStepTypes stepType)
     {
-        this.factory.addBlockLog(message, stepType, factoryObjectType);
+        this.factoryConglomerate.addBlockLog(message, stepType, factoryObjectType);
     }
 
     @Override

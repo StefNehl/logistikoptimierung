@@ -12,7 +12,7 @@ package logistikoptimierung.Entities.FactoryObjects;
  * @param printWarehouseStockChangeMessages true => prints messages from the warehouse if the stock was changed
  * @param printCurrentWarehouseStockAfterChangeMessages true => prints messages from the current warehouse stock if the stock was changed
  */
-public record FactoryMessageSettings(
+public record LogSettings(
         boolean activateLogging,
         boolean printDriverMessages,
         boolean printFactoryMessage,

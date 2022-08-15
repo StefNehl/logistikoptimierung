@@ -92,21 +92,21 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance"><a href="FactoryObject.html" title="class in logistikoptimierung.Entities.FactoryObjects">logistikoptimierung.Entities.FactoryObjects.FactoryObject</a>
-<div class="inheritance">logistikoptimierung.Entities.FactoryObjects.Production</div>
+<div class="inheritance">logistikoptimierung.Entities.FactoryObjects.Factory</div>
 </div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Production</span>
 <span class="extends-implements">extends <a href="FactoryObject.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryObject</a></span></div>
-<div class="block">This class create an object of the production. The production can have several production processes for different items.
- The possible tasks for the production are:
+<div class="block">This class create an object of the factory. The factory can have several factory processes for different items.
+ The possible tasks for the factory are:
  - Move the materials to the input buffer
  - Produce a specific product
  - Move the produced product to the output buffer
  - Move the produced product from the output buffer to the warehouse
  Furthermore, the class simulates the blocked time, and the size of the input/output buffer and checks
- if the material for the production is available.</div>
+ if the material for the factory is available.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -124,7 +124,7 @@ loadScripts(document, 'script');</script>
  int&nbsp;maxNrOfInputBufferBatches,
  int&nbsp;maxNrOfOutputBufferBatches)</code></div>
 <div class="col-last even-row-color">
-<div class="block">This class create an object of the production.</div>
+<div class="block">This class create an object of the factory.</div>
 </div>
 </div>
 </section>
@@ -146,7 +146,7 @@ loadScripts(document, 'script');</script>
  int&nbsp;amountOfItems,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Performs a task with the production.</div>
+<div class="block">Performs a task with the factory.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="ProductionProcess.html" title="class in logistikoptimierung.Entities.FactoryObjects">ProductionProcess</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getProductionProcesses()" class="member-name-link">getProductionProcesses</a>()</code></div>
@@ -154,12 +154,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ProductionProcess.html" title="class in logistikoptimierung.Entities.FactoryObjects">ProductionProcess</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getProductionProcessForProduct(logistikoptimierung.Entities.WarehouseItems.Product)" class="member-name-link">getProductionProcessForProduct</a><wbr>(<a href="../WarehouseItems/Product.html" title="class in logistikoptimierung.Entities.WarehouseItems">Product</a>&nbsp;item)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Return the production process for the product to produce.</div>
+<div class="block">Return the factory process for the product to produce.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resetProduction()" class="member-name-link">resetProduction</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Resets the production.</div>
+<div class="block">Resets the factory.</div>
 </div>
 </div>
 </div>
@@ -189,20 +189,20 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="ProductionProcess.html" title="class in logistikoptimierung.Entities.FactoryObjects">ProductionProcess</a>&gt;&nbsp;productionProcesses,
  int&nbsp;maxNrOfInputBufferBatches,
  int&nbsp;maxNrOfOutputBufferBatches)</span></div>
-<div class="block">This class create an object of the production. The production can have several production processes for different items.
- The possible tasks for the production are:
+<div class="block">This class create an object of the factory. The factory can have several factory processes for different items.
+ The possible tasks for the factory are:
  - Move the materials to the input buffer
  - Produce a specific product
  - Move the produced product to the output buffer
  - Move the produced product from the output buffer to the warehouse
 
  Furthermore, the class simulates the blocked time, and the size of the input/output buffer and checks
- if the material for the production is available.</div>
+ if the material for the factory is available.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>name</code> - sets the name</dd>
 <dd><code>id</code> - sets the unique id</dd>
-<dd><code>productionProcesses</code> - sets the different production processes</dd>
+<dd><code>productionProcesses</code> - sets the different factory processes</dd>
 <dd><code>maxNrOfInputBufferBatches</code> - sets the maximum amount of items in the input buffer</dd>
 <dd><code>maxNrOfOutputBufferBatches</code> - sets the maximum amount of items in the output buffer</dd>
 </dl>
@@ -223,11 +223,11 @@ loadScripts(document, 'script');</script>
  <a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;item,
  int&nbsp;amountOfItems,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</span></div>
-<div class="block">Performs a task with the production.
+<div class="block">Performs a task with the factory.
  Task types are:
  - MoveMaterialsForProductFromWarehouseToInputBuffer => gets the material for the specific product to produce from the warehouse
  - Produce => produce the product
- - MoveProductToOutputBuffer => move the product from the production to the output buffer
+ - MoveProductToOutputBuffer => move the product from the factory to the output buffer
  - MoveProductFromOutputBufferToWarehouse => moves the product form the output buffer to the warehouse</div>
 <dl class="notes">
 <dt>Overrides:</dt>
@@ -246,12 +246,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getProductionProcessForProduct(logistikoptimierung.Entities.WarehouseItems.Product)">
 <h3>getProductionProcessForProduct</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ProductionProcess.html" title="class in logistikoptimierung.Entities.FactoryObjects">ProductionProcess</a></span>&nbsp;<span class="element-name">getProductionProcessForProduct</span><wbr><span class="parameters">(<a href="../WarehouseItems/Product.html" title="class in logistikoptimierung.Entities.WarehouseItems">Product</a>&nbsp;item)</span></div>
-<div class="block">Return the production process for the product to produce.</div>
+<div class="block">Return the factory process for the product to produce.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>item</code> - the Product which should be produce</dd>
 <dt>Returns:</dt>
-<dd>the production process for the product to produce. Returns null if the production does not include a
+<dd>the factory process for the product to produce. Returns null if the factory does not include a
  process for the product.</dd>
 </dl>
 </section>
@@ -262,7 +262,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="ProductionProcess.html" title="class in logistikoptimierung.Entities.FactoryObjects">ProductionProcess</a>&gt;</span>&nbsp;<span class="element-name">getProductionProcesses</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>returns a list of every process of this production</dd>
+<dd>returns a list of every process of this factory</dd>
 </dl>
 </section>
 </li>
@@ -270,8 +270,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="resetProduction()">
 <h3>resetProduction</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetProduction</span>()</div>
-<div class="block">Resets the production. The input/output buffers are set back to empty. The blocking time step is set back to 0.
- Current task to None. And the item which is in production gets removed.</div>
+<div class="block">Resets the factory. The input/output buffers are set back to empty. The blocking time step is set back to 0.
+ Current task to None. And the item which is in factory gets removed.</div>
 </section>
 </li>
 </ul>

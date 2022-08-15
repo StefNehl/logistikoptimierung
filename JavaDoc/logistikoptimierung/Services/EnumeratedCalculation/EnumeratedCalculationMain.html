@@ -103,8 +103,8 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="../../Contracts/IOptimizationService.html" title="interface in logistikoptimierung.Contracts">IOptimizationService</a></span></div>
 <div class="block">Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.
- For this the algorithm gets every needed step for transportation, production and delivery and orders them in
- every combination and simulates the factory to find the best result.
+ For this the algorithm gets every needed step for transportation, factory and delivery and orders them in
+ every combination and simulates the factoryConglomerate to find the best result.
  For the transport and driver constraints a Driver pool in the size of the nr of drivers and if the pool is full the
  first driver is used again. This ensures with the trying of every combination that different drivers  and transporters
  are used in the optimization.</div>
@@ -122,7 +122,7 @@ implements <a href="../../Contracts/IOptimizationService.html" title="interface 
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.Instance,long,boolean,logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings,long)" class="member-name-link">EnumeratedCalculationMain</a><wbr>(<a href="../../Entities/Instance.html" title="class in logistikoptimierung.Entities">Instance</a>&nbsp;instance,
  long&nbsp;maxRuntime,
  boolean&nbsp;condenseMaterialSupplies,
- <a href="../../Entities/FactoryObjects/FactoryMessageSettings.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryMessageSettings</a>&nbsp;factoryMessageSettings,
+ <a href="../../Entities/FactoryObjects/FactoryMessageSettings.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryMessageSettings</a>&nbsp;logSettings,
  long&nbsp;maxSystemRunTimeInNanoSeconds)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.</div>
@@ -172,19 +172,19 @@ implements <a href="../../Contracts/IOptimizationService.html" title="interface 
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">EnumeratedCalculationMain</span><wbr><span class="parameters">(<a href="../../Entities/Instance.html" title="class in logistikoptimierung.Entities">Instance</a>&nbsp;instance,
  long&nbsp;maxRuntime,
  boolean&nbsp;condenseMaterialSupplies,
- <a href="../../Entities/FactoryObjects/FactoryMessageSettings.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryMessageSettings</a>&nbsp;factoryMessageSettings,
+ <a href="../../Entities/FactoryObjects/FactoryMessageSettings.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryMessageSettings</a>&nbsp;logSettings,
  long&nbsp;maxSystemRunTimeInNanoSeconds)</span></div>
 <div class="block">Creates an object of the optimizer with an enumeration of the possibilities and combinations for handling the order.
- For this the algorithm gets every needed step for transportation, production and delivery and orders them in
- every combination and simulates the factory to find the best result.
+ For this the algorithm gets every needed step for transportation, factory and delivery and orders them in
+ every combination and simulates the factoryConglomerate to find the best result.
  For the transport and driver constraints a Driver pool in the size of the nr of drivers and if the pool is full the
  first driver is used again. This ensures with the trying of every combination that different drivers  and transporters
  are used in the optimization.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>instance</code> - with the factory and the orderlist where the optimization should happen</dd>
+<dd><code>instance</code> - with the factoryConglomerate and the orderlist where the optimization should happen</dd>
 <dd><code>maxRuntime</code> - maximum run time for the optimization</dd>
-<dd><code>factoryMessageSettings</code> - factory messages settings for the simulating factory</dd>
+<dd><code>logSettings</code> - factoryConglomerate messages settings for the simulating factoryConglomerate</dd>
 <dd><code>condenseMaterialSupplies</code> - condenses the supplying of the material to</dd>
 </dl>
 </section>
@@ -209,7 +209,7 @@ implements <a href="../../Contracts/IOptimizationService.html" title="interface 
 <dt>Parameters:</dt>
 <dd><code>nrOfOrdersToOptimize</code> - nr of orders which should be optimized.</dd>
 <dt>Returns:</dt>
-<dd>a list of factory steps for the simulation</dd>
+<dd>a list of factoryConglomerate steps for the simulation</dd>
 </dl>
 </section>
 </li>

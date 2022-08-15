@@ -3,7 +3,7 @@ package logistikoptimierung.Entities.FactoryObjects;
 /**
  * Sets the message type for filtering the factory log messages
  */
-public enum FactoryObjectMessageTypes
+public enum LogMessageTypes
 {
     /**
      * Messages for drivers

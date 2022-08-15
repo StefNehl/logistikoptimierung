@@ -98,11 +98,11 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-factory">factory</span></code> - for which the optimization should be done</dd>
+<dd><code><span id="param-factoryConglomerate">factoryConglomerate</span></code> - for which the optimization should be done</dd>
 <dd><code><span id="param-orderList">orderList</span></code> - for which the optimization should be done</dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">Instance</span>(<a href="FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factory, <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="WarehouseItems/Order.html" title="class in logistikoptimierung.Entities.WarehouseItems">Order</a>&gt;&nbsp;orderList)
+<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">Instance</span>(<a href="FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factoryConglomerate, <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="WarehouseItems/Order.html" title="class in logistikoptimierung.Entities.WarehouseItems">Order</a>&gt;&nbsp;orderList)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
 <div class="block">Record which stores the object for an instance to optimize</div>
 </section>
@@ -116,7 +116,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.FactoryObjects.Factory,java.util.List)" class="member-name-link">Instance</a><wbr>(<a href="FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factory,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.FactoryObjects.Factory,java.util.List)" class="member-name-link">Instance</a><wbr>(<a href="FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factoryConglomerate,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="WarehouseItems/Order.html" title="class in logistikoptimierung.Entities.WarehouseItems">Order</a>&gt;&nbsp;orderList)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>Instance</code> record class.</div>
@@ -141,9 +141,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#factory()" class="member-name-link">factory</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#factoryConglomerate()" class="member-name-link">factoryConglomerate</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <a href="#param-factory"><code>factory</code></a> record component.</div>
+<div class="block">Returns the value of the <a href="#param-factoryConglomerate"><code>factoryConglomerate</code></a> record component.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
@@ -180,12 +180,12 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;(logistikoptimierung.Entities.FactoryObjects.Factory,java.util.List)">
 <h3>Instance</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Instance</span><wbr><span class="parameters">(<a href="FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factory,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Instance</span><wbr><span class="parameters">(<a href="FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factoryConglomerate,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="WarehouseItems/Order.html" title="class in logistikoptimierung.Entities.WarehouseItems">Order</a>&gt;&nbsp;orderList)</span></div>
 <div class="block">Creates an instance of a <code>Instance</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>factory</code> - the value for the <a href="#param-factory"><code>factory</code></a> record component</dd>
+<dd><code>factoryConglomerate</code> - the value for the <a href="#param-factoryConglomerate"><code>factoryConglomerate</code></a> record component</dd>
 <dd><code>orderList</code> - the value for the <a href="#param-orderList"><code>orderList</code></a> record component</dd>
 </dl>
 </section>
@@ -240,13 +240,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="factory()">
-<h3>factory</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></span>&nbsp;<span class="element-name">factory</span>()</div>
-<div class="block">Returns the value of the <a href="#param-factory"><code>factory</code></a> record component.</div>
+<section class="detail" id="factoryConglomerate()">
+<h3>factoryConglomerate</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></span>&nbsp;<span class="element-name">factoryConglomerate</span>()</div>
+<div class="block">Returns the value of the <a href="#param-factoryConglomerate"><code>factoryConglomerate</code></a> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the value of the <a href="#param-factory"><code>factory</code></a> record component</dd>
+<dd>the value of the <a href="#param-factoryConglomerate"><code>factoryConglomerate</code></a> record component</dd>
 </dl>
 </section>
 </li>

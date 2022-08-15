@@ -1,6 +1,6 @@
 package logistikoptimierung;
 
-import logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings;
+import logistikoptimierung.Entities.FactoryObjects.LogSettings;
 import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
 import logistikoptimierung.Entities.Instance;
 import logistikoptimierung.Services.CSVDataImportService;
@@ -27,7 +27,7 @@ public class Main
     public static void main(String[] args) {
 	// write your code here
 
-        var factoryMessageSettings = new FactoryMessageSettings(
+        var logSettings = new LogSettings(
                 false,
                 false,
                 false,
@@ -48,22 +48,22 @@ public class Main
 
         var maxSystemRunTimeInSeconds = 1800;
 
-        //testTheCalculationOfNrOfOrders(factoryMessageSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
-        TestFirstComeFirstServe(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
-        TestProductionProcessOptimization(factoryMessageSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList, maxSystemRunTimeInSeconds);
+        //testTheCalculationOfNrOfOrders(logSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
+        TestFirstComeFirstServe(logSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList);
+        TestProductionProcessOptimization(logSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, nrOfDrivers, warehouseCapacity, contractList, maxSystemRunTimeInSeconds);
     }
 
     /**
      * Loads the data with the contract list from the parameter, does the first come first serve optimization and
      * tests the first come first serve optimization.
-     * @param factoryMessageSettings message settings for the factory
+     * @param logSettings message settings for the factory
      * @param nrOfOrderToOptimize nr of orders to optimize
      * @param maxRuntimeInSeconds max Runtime for the simulation
      * @param nrOfDrivers nr of drivers in the factory
      * @param warehouseCapacity warehouse capacity in the factory
      * @param contractListName name of the contract list for the instance
      */
-    private static void TestFirstComeFirstServe(FactoryMessageSettings factoryMessageSettings,
+    private static void TestFirstComeFirstServe(LogSettings logSettings,
                                                 int nrOfOrderToOptimize,
                                                 long maxRuntimeInSeconds,
                                                 int nrOfDrivers,
@@ -77,24 +77,24 @@ public class Main
         var optimizer = new FirstComeFirstServeOptimizerMain(instance);
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        var result = instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+        var result = instance.factoryConglomerate().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, logSettings);
         var endTime = System.nanoTime();
 
-        printResult(factoryTaskList, instance.factory().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
-        instance.factory().resetFactory();
+        printResult(factoryTaskList, instance.factoryConglomerate().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
+        instance.factoryConglomerate().resetFactory();
     }
 
     /**
      * Loads the data with the contract list from the parameter, does the enumerated calculation optimization and
      * tests the optimization.
-     * @param factoryMessageSettings message settings for the factory
+     * @param logSettings message settings for the factory
      * @param nrOfOrderToOptimize nr of orders to optimize
      * @param maxRuntimeInSeconds max Runtime for the simulation
      * @param nrOfDrivers nr of drivers in the factory
      * @param warehouseCapacity warehouse capacity in the factory
      * @param contractListName name of the contract list for the instance
      */
-    private static void TestProductionProcessOptimization(FactoryMessageSettings factoryMessageSettings,
+    private static void TestProductionProcessOptimization(LogSettings logSettings,
                                                           int nrOfOrderToOptimize,
                                                           long maxRuntimeInSeconds,
                                                           int nrOfDrivers,
@@ -109,16 +109,16 @@ public class Main
         var optimizer = new EnumeratedCalculationMain(instance,
                 maxRuntimeInSeconds,
                 true,
-                factoryMessageSettings,
+                logSettings,
                 convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        var result = instance.factory().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, factoryMessageSettings);
+        var result = instance.factoryConglomerate().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, logSettings);
         var endTime = System.nanoTime();
 
-        printResult(factoryTaskList, instance.factory().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
+        printResult(factoryTaskList, instance.factoryConglomerate().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
         System.out.println("Nr of Simulations: " + optimizer.getNrOfSimulations());
-        instance.factory().resetFactory();
+        instance.factoryConglomerate().resetFactory();
     }
 
     /**
@@ -163,13 +163,13 @@ public class Main
 
     /**
      * Tests the calculation of nr of orders
-     * @param factoryMessageSettings message settings for the factory
+     * @param logSettings message settings for the factory
      * @param runtimeInSeconds Runtime for the orders
      * @param nrOfDrivers nr of drivers in the factory
      * @param warehouseCapacity warehouse capacity in the factory
      * @param contractListName name of the contract list for the instance
      */
-    private static void testTheCalculationOfNrOfOrders(FactoryMessageSettings factoryMessageSettings,
+    private static void testTheCalculationOfNrOfOrders(LogSettings logSettings,
                                                        long runtimeInSeconds,
                                                        int nrOfDrivers,
                                                        int warehouseCapacity,
@@ -178,7 +178,7 @@ public class Main
     {
         var dataService = new CSVDataImportService(nrOfDrivers, warehouseCapacity);
         var instance = dataService.loadData(contractListName);
-        calculateMaxNrOfOrders(runtimeInSeconds, instance, factoryMessageSettings, convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
+        calculateMaxNrOfOrders(runtimeInSeconds, instance, logSettings, convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
     }
 
     /**
@@ -187,7 +187,7 @@ public class Main
      */
     private static void calculateMaxNrOfOrders(long runTimeInSeconds,
                                                Instance instance,
-                                               FactoryMessageSettings factoryMessageSettings,
+                                               LogSettings logSettings,
                                                long maxSystemRunTimeInSeconds)
     {
         var bestSteps = new ArrayList<FactoryStep>();
@@ -202,10 +202,10 @@ public class Main
             if(factorySteps.isEmpty())
                 break;
 
-            instance.factory().startFactory(instance.orderList(), factorySteps, runTimeInSeconds, factoryMessageSettings);
+            instance.factoryConglomerate().startFactory(instance.orderList(), factorySteps, runTimeInSeconds, logSettings);
 
-            var nrOfRemainingSteps = instance.factory().getNrOfRemainingSteps();
-            instance.factory().resetFactory();
+            var nrOfRemainingSteps = instance.factoryConglomerate().getNrOfRemainingSteps();
+            instance.factoryConglomerate().resetFactory();
             if(nrOfRemainingSteps > 0)
                 break;
             nrOfOrders++;
@@ -216,7 +216,7 @@ public class Main
             var enumCalculation = new EnumeratedCalculationMain(instance,
                     runTimeInSeconds,
                     false,
-                    factoryMessageSettings,
+                    logSettings,
                     convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
             var factorySteps = enumCalculation.optimize(nrOfOrders);
 
@@ -224,19 +224,19 @@ public class Main
             if(factorySteps.isEmpty())
                 break;
 
-            instance.factory().startFactory(instance.orderList(), factorySteps, runTimeInSeconds, factoryMessageSettings);
-            var nrOfRemainingSteps = instance.factory().getNrOfRemainingSteps();
+            instance.factoryConglomerate().startFactory(instance.orderList(), factorySteps, runTimeInSeconds, logSettings);
+            var nrOfRemainingSteps = instance.factoryConglomerate().getNrOfRemainingSteps();
 
             if(nrOfRemainingSteps > 0)
                 break;
 
-            instance.factory().resetFactory();
+            instance.factoryConglomerate().resetFactory();
             nrOfOrders++;
             bestSteps = new ArrayList<>(factorySteps);
         }
 
         var endTime = System.nanoTime();
-        printResult(bestSteps, instance.factory().getCurrentIncome(), instance.factory().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
+        printResult(bestSteps, instance.factoryConglomerate().getCurrentIncome(), instance.factoryConglomerate().getCurrentTimeStep(), convertNanoSecondsToSeconds(endTime - startTime));
         System.out.println("Nr of orders done: " + nrOfOrders);
     }
 

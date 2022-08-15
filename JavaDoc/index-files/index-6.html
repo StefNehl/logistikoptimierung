@@ -55,7 +55,7 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/ProductionProcess.html#getAmountFromMaterialPositions(logistikoptimierung.Entities.WarehouseItems.WarehouseItem)" class="member-name-link">getAmountFromMaterialPositions(WarehouseItem)</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/ProductionProcess.html" title="class in logistikoptimierung.Entities.FactoryObjects">ProductionProcess</a></dt>
 <dd>
-<div class="block">Returns the amount for a warehouse item which is needed for the production process to produce</div>
+<div class="block">Returns the amount for a warehouse item which is needed for the factory process to produce</div>
 </dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/FactoryStep.html#getAmountOfItems()" class="member-name-link">getAmountOfItems()</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/FactoryStep.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryStep</a></dt>
 <dd>&nbsp;</dd>
@@ -73,7 +73,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/FactoryObject.html#getBlockedUntilTimeStep()" class="member-name-link">getBlockedUntilTimeStep()</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/FactoryObject.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryObject</a></dt>
 <dd>
-<div class="block">Gets the time step until this factory object is blocked</div>
+<div class="block">Gets the time step until this factoryConglomerate object is blocked</div>
 </dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/Transporter.html#getCapacity()" class="member-name-link">getCapacity()</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/Transporter.html" title="class in logistikoptimierung.Entities.FactoryObjects">Transporter</a></dt>
 <dd>&nbsp;</dd>
@@ -83,7 +83,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/FactoryStep.html#getDoTimeStep()" class="member-name-link">getDoTimeStep()</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/FactoryStep.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryStep</a></dt>
 <dd>
-<div class="block">get the time step when the factory step should be performed</div>
+<div class="block">get the time step when the factoryConglomerate step should be performed</div>
 </dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html#getDrivers()" class="member-name-link">getDrivers()</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></dt>
 <dd>&nbsp;</dd>
@@ -97,7 +97,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html#getFactoryObject()" class="member-name-link">getFactoryObject()</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></dt>
 <dd>
-<div class="block">Returns a list of factory objects which are transporters and productions</div>
+<div class="block">Returns a list of factoryConglomerate objects which are transporters and factories</div>
 </dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/FactoryStep.html#getFactoryObject()" class="member-name-link">getFactoryObject()</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/FactoryStep.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryStep</a></dt>
 <dd>&nbsp;</dd>
@@ -159,15 +159,15 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html#getProductionProcessesForProduct(logistikoptimierung.Entities.WarehouseItems.WarehouseItem)" class="member-name-link">getProductionProcessesForProduct(WarehouseItem)</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></dt>
 <dd>
-<div class="block">Gets the every production processes for a specific product to produce.</div>
+<div class="block">Gets the every factory processes for a specific product to produce.</div>
 </dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html#getProductionProcessForProduct(logistikoptimierung.Entities.WarehouseItems.Product)" class="member-name-link">getProductionProcessForProduct(Product)</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></dt>
 <dd>
-<div class="block">Returns the production process for the product.</div>
+<div class="block">Returns the factory process for the product.</div>
 </dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/Production.html#getProductionProcessForProduct(logistikoptimierung.Entities.WarehouseItems.Product)" class="member-name-link">getProductionProcessForProduct(Product)</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a></dt>
 <dd>
-<div class="block">Return the production process for the product to produce.</div>
+<div class="block">Return the factory process for the product to produce.</div>
 </dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html#getProductions()" class="member-name-link">getProductions()</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></dt>
 <dd>&nbsp;</dd>
@@ -201,7 +201,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html#getWarehousePositionsForProductWithRespectOfBatchSize(logistikoptimierung.Entities.WarehouseItems.WarehouseItem,int,boolean)" class="member-name-link">getWarehousePositionsForProductWithRespectOfBatchSize(WarehouseItem, int, boolean)</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></dt>
 <dd>
-<div class="block">Gets the every warehouse item for the production processes for a specific product to produce with the respect of the batch size.</div>
+<div class="block">Gets the every warehouse item for the factory processes for a specific product to produce with the respect of the batch size.</div>
 </dd>
 <dt><a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html#getWorkingOrderForOrder(logistikoptimierung.Entities.WarehouseItems.Order)" class="member-name-link">getWorkingOrderForOrder(Order)</a> - Method in class logistikoptimierung.Entities.FactoryObjects.<a href="../logistikoptimierung/Entities/FactoryObjects/Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a></dt>
 <dd>

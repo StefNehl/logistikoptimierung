@@ -92,17 +92,17 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">java.lang.Record</a>
-<div class="inheritance">logistikoptimierung.Entities.FactoryObjects.FactoryMessageSettings</div>
+<div class="inheritance">logistikoptimierung.Entities.FactoryObjects.LogSettings</div>
 </div>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
 <dd><code><span id="param-printDriverMessages">printDriverMessages</span></code> - true => prints every message from the driver</dd>
-<dd><code><span id="param-printFactoryMessage">printFactoryMessage</span></code> - true => prints messages from the factory</dd>
-<dd><code><span id="param-printFactoryStepMessages">printFactoryStepMessages</span></code> - true => prints messages from the factory steps</dd>
-<dd><code><span id="param-printOnlyCompletedFactoryStepMessages">printOnlyCompletedFactoryStepMessages</span></code> - true => prints messages only from completed factory steps (printFactoryStepMessages have to be set to true)</dd>
-<dd><code><span id="param-printProductionMessages">printProductionMessages</span></code> - true => prints messages from the production</dd>
+<dd><code><span id="param-printFactoryMessage">printFactoryMessage</span></code> - true => prints messages from the factoryConglomerate</dd>
+<dd><code><span id="param-printFactoryStepMessages">printFactoryStepMessages</span></code> - true => prints messages from the factoryConglomerate steps</dd>
+<dd><code><span id="param-printOnlyCompletedFactoryStepMessages">printOnlyCompletedFactoryStepMessages</span></code> - true => prints messages only from completed factoryConglomerate steps (printFactoryStepMessages have to be set to true)</dd>
+<dd><code><span id="param-printProductionMessages">printProductionMessages</span></code> - true => prints messages from the factory</dd>
 <dd><code><span id="param-printTransportMessages">printTransportMessages</span></code> - true => prints messages from the transporters</dd>
 <dd><code><span id="param-printWarehouseMessages">printWarehouseMessages</span></code> - true => prints messages from the warehouse</dd>
 <dd><code><span id="param-printWarehouseStockChangeMessages">printWarehouseStockChangeMessages</span></code> - true => prints messages from the warehouse if the stock was changed</dd>
@@ -111,7 +111,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">FactoryMessageSettings</span>(boolean&nbsp;activateLogging, boolean&nbsp;printDriverMessages, boolean&nbsp;printFactoryMessage, boolean&nbsp;printFactoryStepMessages, boolean&nbsp;printOnlyCompletedFactoryStepMessages, boolean&nbsp;printProductionMessages, boolean&nbsp;printTransportMessages, boolean&nbsp;printWarehouseMessages, boolean&nbsp;printWarehouseStockChangeMessages, boolean&nbsp;printCurrentWarehouseStockAfterChangeMessages)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
-<div class="block">Sets the messages which should be printed in the console for the factory</div>
+<div class="block">Sets the messages which should be printed in the console for the factoryConglomerate</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

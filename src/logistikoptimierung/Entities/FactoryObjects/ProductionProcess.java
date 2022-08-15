@@ -14,7 +14,7 @@ public class ProductionProcess
     private final int productionBatchSize;
     private final int productionTime;
 
-    private final Production production;
+    private final Factory factory;
     List<WarehousePosition> warehousePositions;
 
     /**
@@ -22,18 +22,18 @@ public class ProductionProcess
      * @param productToProduce the product to produce
      * @param productionBatchSize the batch size of the product
      * @param productionTime the production time
-     * @param production the parent production
+     * @param factory the parent production
      * @param warehousePositions list of warehouse positions (materials or products) needed for the production
      */
     public ProductionProcess(WarehouseItem productToProduce, int productionBatchSize,
                              int productionTime,
-                             Production production,
+                             Factory factory,
                              List<WarehousePosition> warehousePositions)
     {
         this.productToProduce = productToProduce;
         this.productionBatchSize = productionBatchSize;
         this.productionTime = productionTime;
-        this.production = production;
+        this.factory = factory;
         this.warehousePositions = warehousePositions;
     }
 
@@ -61,8 +61,8 @@ public class ProductionProcess
     /**
      * @return gets the parent production
      */
-    public Production getProduction() {
-        return production;
+    public Factory getProduction() {
+        return factory;
     }
 
     /**

@@ -97,7 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">FactoryStep</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Creates a factory step object which should be performed at a specific time step</div>
+<div class="block">Creates a factoryConglomerate step object which should be performed at a specific time step</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -109,23 +109,23 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.FactoryObjects.Factory,long,logistikoptimierung.Entities.WarehouseItems.WarehouseItem,int,logistikoptimierung.Entities.FactoryObjects.FactoryObject,logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes)" class="member-name-link">FactoryStep</a><wbr>(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factory,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.FactoryObjects.Factory,long,logistikoptimierung.Entities.WarehouseItems.WarehouseItem,int,logistikoptimierung.Entities.FactoryObjects.FactoryObject,logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes)" class="member-name-link">FactoryStep</a><wbr>(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factoryConglomerate,
  long&nbsp;doTimeStep,
  <a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;itemToManipulate,
  int&nbsp;amountOfItems,
  <a href="FactoryObject.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryObject</a>&nbsp;factoryObject,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Creates a factory step object which should be performed at a specific time step</div>
+<div class="block">Creates a factoryConglomerate step object which should be performed at a specific time step</div>
 </div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.FactoryObjects.Factory,java.util.List,logistikoptimierung.Entities.WarehouseItems.WarehouseItem,int,logistikoptimierung.Entities.FactoryObjects.FactoryObject,logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes)" class="member-name-link">FactoryStep</a><wbr>(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factory,
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.FactoryObjects.Factory,java.util.List,logistikoptimierung.Entities.WarehouseItems.WarehouseItem,int,logistikoptimierung.Entities.FactoryObjects.FactoryObject,logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes)" class="member-name-link">FactoryStep</a><wbr>(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factoryConglomerate,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="FactoryStep.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryStep</a>&gt;&nbsp;factoryStepsToDoBefore,
  <a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;itemToManipulate,
  int&nbsp;amountOfItems,
  <a href="FactoryObject.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryObject</a>&nbsp;factoryObject,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</code></div>
 <div class="col-last odd-row-color">
-<div class="block">Creates a factory step object which should be performed after a list of factory steps</div>
+<div class="block">Creates a factoryConglomerate step object which should be performed after a list of factoryConglomerate steps</div>
 </div>
 </div>
 </section>
@@ -147,7 +147,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#compareTo(logistikoptimierung.Entities.FactoryObjects.FactoryStep)" class="member-name-link">compareTo</a><wbr>(<a href="FactoryStep.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryStep</a>&nbsp;step)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Compares this factory step with the step in the parameters</div>
+<div class="block">Compares this factoryConglomerate step with the step in the parameters</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#doStep()" class="member-name-link">doStep</a>()</code></div>
@@ -160,7 +160,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDoTimeStep()" class="member-name-link">getDoTimeStep</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">get the time step when the factory step should be performed</div>
+<div class="block">get the time step when the factoryConglomerate step should be performed</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FactoryObject.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryObject</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFactoryObject()" class="member-name-link">getFactoryObject</a>()</code></div>
@@ -200,20 +200,20 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;(logistikoptimierung.Entities.FactoryObjects.Factory,long,logistikoptimierung.Entities.WarehouseItems.WarehouseItem,int,logistikoptimierung.Entities.FactoryObjects.FactoryObject,logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes)">
 <h3>FactoryStep</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FactoryStep</span><wbr><span class="parameters">(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factory,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FactoryStep</span><wbr><span class="parameters">(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factoryConglomerate,
  long&nbsp;doTimeStep,
  <a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;itemToManipulate,
  int&nbsp;amountOfItems,
  <a href="FactoryObject.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryObject</a>&nbsp;factoryObject,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</span></div>
-<div class="block">Creates a factory step object which should be performed at a specific time step</div>
+<div class="block">Creates a factoryConglomerate step object which should be performed at a specific time step</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>factory</code> - factory where the step should be performed</dd>
+<dd><code>factoryConglomerate</code> - factoryConglomerate where the step should be performed</dd>
 <dd><code>doTimeStep</code> - the specific time step when the step should be performed</dd>
 <dd><code>itemToManipulate</code> - the item which should be manipulated</dd>
 <dd><code>amountOfItems</code> - the amount of items which should be manipulated</dd>
-<dd><code>factoryObject</code> - the factory object which should perform the manipulation</dd>
+<dd><code>factoryObject</code> - the factoryConglomerate object which should perform the manipulation</dd>
 <dd><code>stepType</code> - the type of manipulation</dd>
 </dl>
 </section>
@@ -221,20 +221,20 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;(logistikoptimierung.Entities.FactoryObjects.Factory,java.util.List,logistikoptimierung.Entities.WarehouseItems.WarehouseItem,int,logistikoptimierung.Entities.FactoryObjects.FactoryObject,logistikoptimierung.Entities.FactoryObjects.FactoryStepTypes)">
 <h3>FactoryStep</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FactoryStep</span><wbr><span class="parameters">(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factory,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FactoryStep</span><wbr><span class="parameters">(<a href="Factory.html" title="class in logistikoptimierung.Entities.FactoryObjects">Factory</a>&nbsp;factoryConglomerate,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="FactoryStep.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryStep</a>&gt;&nbsp;factoryStepsToDoBefore,
  <a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;itemToManipulate,
  int&nbsp;amountOfItems,
  <a href="FactoryObject.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryObject</a>&nbsp;factoryObject,
  <a href="FactoryStepTypes.html" title="enum class in logistikoptimierung.Entities.FactoryObjects">FactoryStepTypes</a>&nbsp;stepType)</span></div>
-<div class="block">Creates a factory step object which should be performed after a list of factory steps</div>
+<div class="block">Creates a factoryConglomerate step object which should be performed after a list of factoryConglomerate steps</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>factory</code> - factory where the step should be performed</dd>
-<dd><code>factoryStepsToDoBefore</code> - the factory steps which needed to be completed before this step can perform</dd>
+<dd><code>factoryConglomerate</code> - factoryConglomerate where the step should be performed</dd>
+<dd><code>factoryStepsToDoBefore</code> - the factoryConglomerate steps which needed to be completed before this step can perform</dd>
 <dd><code>itemToManipulate</code> - the item which should be manipulated</dd>
 <dd><code>amountOfItems</code> - the amount of items which should be manipulated</dd>
-<dd><code>factoryObject</code> - the factory object which should perform the manipulation</dd>
+<dd><code>factoryObject</code> - the factoryConglomerate object which should perform the manipulation</dd>
 <dd><code>stepType</code> - the type of manipulation</dd>
 </dl>
 </section>
@@ -292,7 +292,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getDoTimeStep()">
 <h3>getDoTimeStep</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">getDoTimeStep</span>()</div>
-<div class="block">get the time step when the factory step should be performed</div>
+<div class="block">get the time step when the factoryConglomerate step should be performed</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>time step</dd>
@@ -305,7 +305,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FactoryObject.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryObject</a></span>&nbsp;<span class="element-name">getFactoryObject</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the factory where the time step should be performed</dd>
+<dd>the factoryConglomerate where the time step should be performed</dd>
 </dl>
 </section>
 </li>
@@ -343,7 +343,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="compareTo(logistikoptimierung.Entities.FactoryObjects.FactoryStep)">
 <h3>compareTo</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">compareTo</span><wbr><span class="parameters">(<a href="FactoryStep.html" title="class in logistikoptimierung.Entities.FactoryObjects">FactoryStep</a>&nbsp;step)</span></div>
-<div class="block">Compares this factory step with the step in the parameters</div>
+<div class="block">Compares this factoryConglomerate step with the step in the parameters</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>step</code> - step to compare</dd>

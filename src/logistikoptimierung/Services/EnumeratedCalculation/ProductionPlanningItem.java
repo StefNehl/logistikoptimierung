@@ -1,6 +1,6 @@
 package logistikoptimierung.Services.EnumeratedCalculation;
 
-import logistikoptimierung.Entities.FactoryObjects.Production;
+import logistikoptimierung.Entities.FactoryObjects.Factory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,24 +10,24 @@ import java.util.List;
  */
 public class ProductionPlanningItem
 {
-    private final Production production;
+    private final Factory factory;
     private final List<ProcessPlaningItem> processPlanningItems;
 
     /**
      * creates the object for the production planning item
-     * @param production production to plan
+     * @param factory production to plan
      */
-    public ProductionPlanningItem(Production production)
+    public ProductionPlanningItem(Factory factory)
     {
-        this.production = production;
+        this.factory = factory;
         this.processPlanningItems = new ArrayList<>();
     }
 
     /**
      * @return the production which was planned
      */
-    public Production getProduction() {
-        return production;
+    public Factory getProduction() {
+        return factory;
     }
 
     /**

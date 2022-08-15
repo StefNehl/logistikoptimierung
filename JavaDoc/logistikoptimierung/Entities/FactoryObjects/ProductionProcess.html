@@ -97,7 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ProductionProcess</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The production process for a product</div>
+<div class="block">The factory process for a product</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -112,10 +112,10 @@ loadScripts(document, 'script');</script>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(logistikoptimierung.Entities.WarehouseItems.WarehouseItem,int,int,logistikoptimierung.Entities.FactoryObjects.Production,java.util.List)" class="member-name-link">ProductionProcess</a><wbr>(<a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;productToProduce,
  int&nbsp;productionBatchSize,
  int&nbsp;productionTime,
- <a href="Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a>&nbsp;production,
+ <a href="Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a>&nbsp;factory,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../WarehouseItems/WarehousePosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehousePosition</a>&gt;&nbsp;warehousePositions)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Creates the production process for a product to produce.</div>
+<div class="block">Creates the factory process for a product to produce.</div>
 </div>
 </div>
 </section>
@@ -134,7 +134,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getAmountFromMaterialPositions(logistikoptimierung.Entities.WarehouseItems.WarehouseItem)" class="member-name-link">getAmountFromMaterialPositions</a><wbr>(<a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;item)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the amount for a warehouse item which is needed for the production process to produce</div>
+<div class="block">Returns the amount for a warehouse item which is needed for the factory process to produce</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../WarehouseItems/WarehousePosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehousePosition</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMaterialPositions()" class="member-name-link">getMaterialPositions</a>()</code></div>
@@ -177,16 +177,16 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ProductionProcess</span><wbr><span class="parameters">(<a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;productToProduce,
  int&nbsp;productionBatchSize,
  int&nbsp;productionTime,
- <a href="Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a>&nbsp;production,
+ <a href="Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a>&nbsp;factory,
  <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../WarehouseItems/WarehousePosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehousePosition</a>&gt;&nbsp;warehousePositions)</span></div>
-<div class="block">Creates the production process for a product to produce.</div>
+<div class="block">Creates the factory process for a product to produce.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>productToProduce</code> - the product to produce</dd>
 <dd><code>productionBatchSize</code> - the batch size of the product</dd>
-<dd><code>productionTime</code> - the production time</dd>
-<dd><code>production</code> - the parent production</dd>
-<dd><code>warehousePositions</code> - list of warehouse positions (materials or products) needed for the production</dd>
+<dd><code>productionTime</code> - the factory time</dd>
+<dd><code>factory</code> - the parent factory</dd>
+<dd><code>warehousePositions</code> - list of warehouse positions (materials or products) needed for the factory</dd>
 </dl>
 </section>
 </li>
@@ -224,7 +224,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getProductionTime</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the production time</dd>
+<dd>the factory time</dd>
 </dl>
 </section>
 </li>
@@ -234,7 +234,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Production.html" title="class in logistikoptimierung.Entities.FactoryObjects">Production</a></span>&nbsp;<span class="element-name">getProduction</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>gets the parent production</dd>
+<dd>gets the parent factory</dd>
 </dl>
 </section>
 </li>
@@ -244,7 +244,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../WarehouseItems/WarehousePosition.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehousePosition</a>&gt;</span>&nbsp;<span class="element-name">getMaterialPositions</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>gets a list of the warehouse positions (material, product) which are needed for the production</dd>
+<dd>gets a list of the warehouse positions (material, product) which are needed for the factory</dd>
 </dl>
 </section>
 </li>
@@ -252,12 +252,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getAmountFromMaterialPositions(logistikoptimierung.Entities.WarehouseItems.WarehouseItem)">
 <h3>getAmountFromMaterialPositions</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getAmountFromMaterialPositions</span><wbr><span class="parameters">(<a href="../WarehouseItems/WarehouseItem.html" title="class in logistikoptimierung.Entities.WarehouseItems">WarehouseItem</a>&nbsp;item)</span></div>
-<div class="block">Returns the amount for a warehouse item which is needed for the production process to produce</div>
+<div class="block">Returns the amount for a warehouse item which is needed for the factory process to produce</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>item</code> - warehouse item</dd>
 <dt>Returns:</dt>
-<dd>the amount, 0 if the process does not need the warehouse item for the production</dd>
+<dd>the amount, 0 if the process does not need the warehouse item for the factory</dd>
 </dl>
 </section>
 </li>

@@ -103,7 +103,7 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="../../Contracts/IOptimizationService.html" title="interface in logistikoptimierung.Contracts">IOptimizationService</a></span></div>
 <div class="block">Creates an object of the optimizer with the first come first serve principal.
- For this the algorithm gets every needed step for transportation, production and delivery and orders them via
+ For this the algorithm gets every needed step for transportation, factory and delivery and orders them via
  the priority of the order. So the first order is handled first, then the next and so on.</div>
 </section>
 <section class="summary">
@@ -161,11 +161,11 @@ implements <a href="../../Contracts/IOptimizationService.html" title="interface 
 <h3>FirstComeFirstServeOptimizerMain</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">FirstComeFirstServeOptimizerMain</span><wbr><span class="parameters">(<a href="../../Entities/Instance.html" title="class in logistikoptimierung.Entities">Instance</a>&nbsp;instance)</span></div>
 <div class="block">Creates an object of the optimizer with the first come first serve principal.
- For this the algorithm gets every needed step for transportation, production and delivery and orders them via
+ For this the algorithm gets every needed step for transportation, factory and delivery and orders them via
  the priority of the order. So the first order is handled first, then the next and so on.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>instance</code> - the instance with the factory and the orderlist where the optimization should happen</dd>
+<dd><code>instance</code> - the instance with the factoryConglomerate and the orderlist where the optimization should happen</dd>
 </dl>
 </section>
 </li>
@@ -188,7 +188,7 @@ implements <a href="../../Contracts/IOptimizationService.html" title="interface 
 <dt>Parameters:</dt>
 <dd><code>nrOfOrdersToOptimize</code> - nr of orders to optimize</dd>
 <dt>Returns:</dt>
-<dd>returns a list of factory steps for the simulation of the factory</dd>
+<dd>returns a list of factoryConglomerate steps for the simulation of the factoryConglomerate</dd>
 </dl>
 </section>
 </li>
