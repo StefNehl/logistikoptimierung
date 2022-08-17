@@ -101,12 +101,12 @@ public class FactoryConglomerate {
      * @param logSettings sets the amount of printed messages in the console
      * @return the time step after the factory stops (in seconds)
      */
-    public long startFactory(List<Order> orderList,
-                             List<FactoryStep> factorySteps,
-                             long maxRunTime,
-                             LogSettings logSettings)
+    public long startSimulation(List<Order> orderList,
+                                List<FactoryStep> factorySteps,
+                                long maxRunTime,
+                                LogSettings logSettings)
     {
-        return this.startFactory(orderList, factorySteps, false, maxRunTime, logSettings);
+        return this.startSimulation(orderList, factorySteps, false, maxRunTime, logSettings);
     }
 
     /**
@@ -124,11 +124,11 @@ public class FactoryConglomerate {
      * @param logSettings sets the amount of printed messages in the console
      * @return the time step after the factory stops (in seconds)
      */
-    public long startFactory(List<Order> orderList,
-                             List<FactoryStep> factorySteps,
-                             boolean considerCurrentWarehousePositions,
-                             long maxRunTime,
-                             LogSettings logSettings)
+    public long startSimulation(List<Order> orderList,
+                                List<FactoryStep> factorySteps,
+                                boolean considerCurrentWarehousePositions,
+                                long maxRunTime,
+                                LogSettings logSettings)
     {
         //Working Order List is used for storing the remaining amount of items in an Order
         //This list changes => copy the list

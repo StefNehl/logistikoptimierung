@@ -32,6 +32,7 @@ public enum FactoryStepTypes
 
     /**
      * Produce. Need a Factory object Production, and alle the materials for the production in the Input buffer of this production.
+     * If the material is not in the input buffer or there is no remaining space in the output buffer, this step will fail. 
      * Amount is the nr of batches (currently only 1 is supported).
      */
     Produce,
