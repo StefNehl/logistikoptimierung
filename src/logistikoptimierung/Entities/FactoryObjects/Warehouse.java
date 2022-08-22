@@ -44,7 +44,7 @@ public class Warehouse extends FactoryObject
     public void setWarehouseCapacity(int warehouseCapacity)
     {
         this.warehouseCapacity = warehouseCapacity;
-        this.remainingWarehouseCapacity = remainingWarehouseCapacity;
+        this.remainingWarehouseCapacity = warehouseCapacity;
     }
 
     /**

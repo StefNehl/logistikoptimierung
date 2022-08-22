@@ -1,6 +1,5 @@
 package logistikoptimierung;
 
-import logistikoptimierung.Contracts.IDataService;
 import logistikoptimierung.Entities.FactoryObjects.*;
 import logistikoptimierung.Entities.Instance;
 import logistikoptimierung.Entities.WarehouseItems.Product;
@@ -10,7 +9,6 @@ import logistikoptimierung.Services.EnumeratedCalculation.EnumeratedCalculationM
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +46,7 @@ public class Main
         long maxRuntimeInSeconds = 10000000;
         int nrOfDrivers = 6;
         int warehouseCapacity = 1000;
+        boolean fillWarehouseWith20PercentOfNeededMaterials = false;
 
         var maxSystemRunTimeInSeconds = 1800;
 
@@ -58,8 +57,8 @@ public class Main
         instance.setLogSettings(logSettings);
 
         //testTheCalculationOfNrOfOrders(maxRuntimeInSeconds, maxSystemRunTimeInSeconds, instance);
-        TestFirstComeFirstServe(nrOfOrderToOptimize, maxRuntimeInSeconds, true, instance);
-        TestProductionProcessOptimization(nrOfOrderToOptimize, maxRuntimeInSeconds, maxSystemRunTimeInSeconds, true, instance);
+        TestFirstComeFirstServe(nrOfOrderToOptimize, maxRuntimeInSeconds, fillWarehouseWith20PercentOfNeededMaterials, instance);
+        TestProductionProcessOptimization(nrOfOrderToOptimize, maxRuntimeInSeconds, maxSystemRunTimeInSeconds, fillWarehouseWith20PercentOfNeededMaterials, instance);
     }
 
     /**
@@ -67,12 +66,12 @@ public class Main
      * tests the first come first serve optimization.
      * @param nrOfOrderToOptimize nr of orders to optimize
      * @param maxRuntimeInSeconds max Runtime for the simulation
-     * @param fillWarehouseWith50PercentOfNeededMaterials true if the warehouse should be filled with 50 percent of the needed materials
+     * @param fillWarehouseWith20PercentOfNeededMaterials true if the warehouse should be filled with 50 percent of the needed materials
      * @param instance instance for the simulation
      */
     private static void TestFirstComeFirstServe(int nrOfOrderToOptimize,
                                                 long maxRuntimeInSeconds,
-                                                boolean fillWarehouseWith50PercentOfNeededMaterials,
+                                                boolean fillWarehouseWith20PercentOfNeededMaterials,
                                                 Instance instance)
     {
         var startTime = System.nanoTime();
@@ -80,8 +79,8 @@ public class Main
         var optimizer = new FirstComeFirstServeOptimizerMain(instance);
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        if(fillWarehouseWith50PercentOfNeededMaterials)
-            fillWarehouseWith50PercentOfMaterialsNeeded(factoryTaskList, instance.getFactoryConglomerate().getWarehouse());
+        if(fillWarehouseWith20PercentOfNeededMaterials)
+            fillWarehouseWith20PercentOfMaterialsNeeded(factoryTaskList, instance.getFactoryConglomerate().getWarehouse());
 
         var result = instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factoryTaskList, maxRuntimeInSeconds);
         var endTime = System.nanoTime();
@@ -95,14 +94,14 @@ public class Main
      * tests the optimization.
      * @param nrOfOrderToOptimize nr of orders to optimize
      * @param maxRuntimeInSeconds max Runtime for the simulation
-     * @param fillWarehouseWith50PercentOfNeededMaterials true if the warehouse should be filled with 50 percent of the needed materials
+     * @param fillWarehouseWith20PercentOfNeededMaterials true if the warehouse should be filled with 50 percent of the needed materials
      * @param maxSystemRunTimeInSeconds max real runtime for the calculation (will abort the calculation after the nr of seconds)
      * @param instance instance for the simulation
      */
     private static void TestProductionProcessOptimization(int nrOfOrderToOptimize,
                                                           long maxRuntimeInSeconds,
                                                           long maxSystemRunTimeInSeconds,
-                                                          boolean fillWarehouseWith50PercentOfNeededMaterials,
+                                                          boolean fillWarehouseWith20PercentOfNeededMaterials,
                                                           Instance instance)
     {
         var startTime = System.nanoTime();
@@ -115,8 +114,8 @@ public class Main
 
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        if(fillWarehouseWith50PercentOfNeededMaterials)
-            fillWarehouseWith50PercentOfMaterialsNeeded(factoryTaskList, instance.getFactoryConglomerate().getWarehouse());
+        if(fillWarehouseWith20PercentOfNeededMaterials)
+            fillWarehouseWith20PercentOfMaterialsNeeded(factoryTaskList, instance.getFactoryConglomerate().getWarehouse());
 
         var result = instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factoryTaskList, maxRuntimeInSeconds);
         var endTime = System.nanoTime();
@@ -126,13 +125,13 @@ public class Main
         instance.getFactoryConglomerate().resetFactory();
     }
 
-    private static void fillWarehouseWith50PercentOfMaterialsNeeded(List<FactoryStep> factorySteps, Warehouse warehouse)
+    private static void fillWarehouseWith20PercentOfMaterialsNeeded(List<FactoryStep> factorySteps, Warehouse warehouse)
     {
         var warehousePositions = new ArrayList<WarehousePosition>();
 
         for(var step : factorySteps)
         {
-            var amount = get50PercentOfAmountOfStep(step);
+            var amount = get20PercentOfAmountOfStep(step);
             if(amount == 0)
                 continue;
             warehousePositions.add(new WarehousePosition(step.getItemToManipulate(), amount));
@@ -142,18 +141,18 @@ public class Main
             warehouse.addItemToWarehouse(position);
     }
 
-    private static int get50PercentOfAmountOfStep(FactoryStep step)
+    private static int get20PercentOfAmountOfStep(FactoryStep step)
     {
         if(step.getStepType() == FactoryStepTypes.Produce)
         {
             var getFactory = (Factory)step.getFactoryObject();
             var productionProcess = getFactory.getProductionProcessForProduct((Product) step.getItemToManipulate());
-            return productionProcess.getProductionBatchSize() / 2;
+            return productionProcess.getProductionBatchSize() / 5;
 
         }
 
         if(step.getStepType() == FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse)
-            return step.getAmountOfItems() / 2;
+            return step.getAmountOfItems() / 5;
 
         return 0;
     }
