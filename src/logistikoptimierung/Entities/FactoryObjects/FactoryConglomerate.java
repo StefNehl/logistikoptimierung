@@ -106,7 +106,7 @@ public class FactoryConglomerate {
                              long maxRunTime,
                              LogSettings logSettings)
     {
-        return this.startFactory(orderList, factorySteps, false, maxRunTime, logSettings);
+        return startFactory(orderList, factorySteps, false, maxRunTime, logSettings);
     }
 
     /**
@@ -117,16 +117,13 @@ public class FactoryConglomerate {
      * messages are stored in the object.
      * @param orderList sets the orders
      * @param factorySteps sets the factory steps to perform
-     * @param considerCurrentWarehousePositions consider the current materials and products in the warehouse. If true,
-     *                                          transporters which should get a material, which is in the correct amount already
-     *                                          in the warehouse, does not drive to the supplier. The step gets ignored by the simulation
      * @param maxRunTime sets the maximum runtime after the simulation stops
      * @param logSettings sets the amount of printed messages in the console
      * @return the time step after the factory stops (in seconds)
      */
     public long startFactory(List<Order> orderList,
                              List<FactoryStep> factorySteps,
-                             boolean considerCurrentWarehousePositions,
+                             boolean checkIfMaterialIsAlreadyInWarehouse,
                              long maxRunTime,
                              LogSettings logSettings)
     {
@@ -171,6 +168,12 @@ public class FactoryConglomerate {
                 if(!step.areAllStepsBeforeCompleted())
                     continue;
 
+
+                //Check If Material is already in Warehouse
+                if(checkIfMaterialIsAlreadyInWarehouse &&
+                        checkIfStepIsForMaterialOrProductIsAlreadyInWarehouse(step, copyOfSteps))
+                    continue;
+
                 if(!step.doStep())
                     continue;
 
@@ -184,13 +187,6 @@ public class FactoryConglomerate {
 
             eventTimeSteps.remove(this.currentTimeStep);
 
-            if(eventTimeSteps.isEmpty() && !copyOfSteps.isEmpty())
-            {
-                //System.out.println("Error");
-                //eventTimeSteps.add(this.currentTimeStep);
-                break;
-            }
-
             if(eventTimeSteps.isEmpty())
                 break;
         }
@@ -198,6 +194,29 @@ public class FactoryConglomerate {
         nrOfRemainingSteps = copyOfSteps.size();
         this.getWarehouse().addCurrentWarehouseStockMessage();
         return this.currentTimeStep;
+    }
+
+    private boolean checkIfStepIsForMaterialOrProductIsAlreadyInWarehouse(FactoryStep step, List<FactoryStep> copyOfSteps)
+    {
+        switch (step.getStepType())
+        {
+            case GetMaterialFromSuppliesAndMoveBackToWarehouse:
+            case MoveMaterialsForProductFromWarehouseToInputBuffer:
+            case Produce:
+            case MoveProductToOutputBuffer:
+            case MoveProductFromOutputBufferToWarehouse:
+                var materialPosition = new WarehousePosition(step.getItemToManipulate(), step.getAmountOfItems());
+                var materialFromWarehouse = this.warehouse.removeItemFromWarehouse(materialPosition);
+                if(materialFromWarehouse == null)
+                    break;
+
+                step.setCompletedToTrue();
+                copyOfSteps.remove(step);
+                this.warehouse.addItemToWarehouse(materialFromWarehouse);
+                return true;
+        }
+
+        return false;
     }
 
     /**

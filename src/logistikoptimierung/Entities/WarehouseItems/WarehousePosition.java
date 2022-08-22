@@ -13,4 +13,9 @@ public record WarehousePosition(WarehouseItem item, int amount) {
     {
         return item.getName() + " Amount: " + amount;
     }
+
+    public WarehousePosition copy()
+    {
+        return new WarehousePosition(this.item, this.amount);
+    }
 }

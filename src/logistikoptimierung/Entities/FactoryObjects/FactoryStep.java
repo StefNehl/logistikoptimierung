@@ -18,7 +18,6 @@ public class FactoryStep {
     private long doTimeStep;
     private List<FactoryStep> factoryStepsToDoBefore;
     private boolean isCompleted;
-    private long completedTime;
 
     /**
      * Creates a factory step object which should be performed at a specific time step
@@ -72,6 +71,14 @@ public class FactoryStep {
         //Take care. Performance impact in the simulation
         //addStepMessage(this.isCompleted);
         return this.isCompleted;
+    }
+
+    /**
+     * Sets the completed status to true
+     */
+    public void setCompletedToTrue()
+    {
+        this.isCompleted = true;
     }
 
     /**

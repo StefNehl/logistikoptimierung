@@ -159,6 +159,24 @@ public class Warehouse extends FactoryObject
     }
 
     /**
+     * Creates a copy of the current warehouse, with a copy of all the position currently in the warehouse.
+     * With the same factory conglomerate.
+     * @return a copy of the Warehouse
+     */
+    public Warehouse copy()
+    {
+        var newWarehouse = new Warehouse(this.getName(), this.warehouseCapacity, this.factoryConglomerate);
+
+        for(var warehousePosition : this.getWarehouseItems())
+        {
+            var copyOfPosition = warehousePosition.copy();
+            newWarehouse.addItemToWarehouse(copyOfPosition);
+        }
+
+        return newWarehouse;
+    }
+
+    /**
      * @return every item which is available in the warehouse
      */
     public List<WarehousePosition> getWarehouseItems() {
