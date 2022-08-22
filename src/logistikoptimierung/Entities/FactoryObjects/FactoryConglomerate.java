@@ -22,7 +22,7 @@ public class FactoryConglomerate {
     private final Warehouse warehouse;
     private final List<Factory> factories;
     private final List<Transporter> transporters;
-    private final List<Driver> drivers;
+    private List<Driver> drivers;
     private final List<Material> suppliedMaterials;
     private final List<Product> availableProducts;
 
@@ -43,9 +43,7 @@ public class FactoryConglomerate {
      * @param availableProducts sets the available productions
      */
     public FactoryConglomerate(String name,
-                               int warehouseCapacity,
                                List<Factory> factories,
-                               int nrOfDrivers,
                                List<Transporter> transporters,
                                List<Material> suppliedMaterials,
                                List<Product> availableProducts) {
@@ -54,7 +52,7 @@ public class FactoryConglomerate {
         this.currentIncome = 0;
 
         this.startTime = 0;
-        this.warehouse = new Warehouse("WH", warehouseCapacity, this);
+        this.warehouse = new Warehouse("WH", this);
         this.factories = new ArrayList<>(factories);
         for(var production : this.factories)
             production.setFactory(this);
@@ -63,11 +61,7 @@ public class FactoryConglomerate {
         for(var transporter : this.transporters)
             transporter.setFactory(this);
 
-        drivers = new ArrayList<>();
-        for(int i = 0; i < nrOfDrivers; i++)
-        {
-            drivers.add(new Driver(i + "", i));
-        }
+
 
         this.suppliedMaterials = new ArrayList<>(suppliedMaterials);
         this.availableProducts = new ArrayList<>(availableProducts);
@@ -258,6 +252,15 @@ public class FactoryConglomerate {
         }
 
         this.workingOrderList.clear();
+    }
+
+    public void setNrOfDrivers(int nrOfDrivers)
+    {
+        this.drivers = new ArrayList<>();
+        for(int i = 0; i < nrOfDrivers; i++)
+        {
+            drivers.add(new Driver(i + "", i));
+        }
     }
 
     /**

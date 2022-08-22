@@ -12,5 +12,5 @@ public interface IDataService {
      * @param filename gives the file name of the contract list
      * @return an instance for the optimization and simulation
      */
-    Instance loadData(String filename);
+    Instance loadDataAndCreateInstance(String filename);
 }

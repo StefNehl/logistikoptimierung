@@ -28,8 +28,8 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
      */
     public FirstComeFirstServeOptimizerMain(Instance instance)
     {
-        this.factoryConglomerate = instance.factoryConglomerate();
-        this.orderList = instance.orderList();
+        this.factoryConglomerate = instance.getFactoryConglomerate();
+        this.orderList = instance.getOrderList();
         this.transporterPlanningItems = new ArrayList<>();
 
         for (var transporter: this.factoryConglomerate.getTransporters())

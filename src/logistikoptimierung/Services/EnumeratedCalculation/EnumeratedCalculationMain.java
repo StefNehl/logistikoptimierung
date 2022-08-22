@@ -51,8 +51,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
                                      LogSettings logSettings,
                                      long maxSystemRunTimeInNanoSeconds)
     {
-        this.factoryConglomerate = instance.factoryConglomerate();
-        this.orderList = instance.orderList();
+        this.factoryConglomerate = instance.getFactoryConglomerate();
+        this.orderList = instance.getOrderList();
         this.logSettings = logSettings;
 
         this.sortedAvailableTransportList = new ArrayList<>(this.factoryConglomerate.getTransporters());

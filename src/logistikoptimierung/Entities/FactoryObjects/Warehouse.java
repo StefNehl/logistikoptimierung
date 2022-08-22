@@ -13,22 +13,20 @@ public class Warehouse extends FactoryObject
 {
     private final List<WarehousePosition> warehouseItems;
     private int remainingWarehouseCapacity;
-    private final int warehouseCapacity;
+    private int warehouseCapacity;
     private final FactoryConglomerate factoryConglomerate;
 
     /**
      * Create an object of the warehouse. This object simulates the add and remove of warehouse items from the warehouse.
      * It has a certain capacity.
      * @param name sets name of the warehouse
-     * @param warehouseCapacity sets the capacity
      * @param factoryConglomerate sets the factory
      */
-    public Warehouse(String name, int warehouseCapacity, FactoryConglomerate factoryConglomerate)
+    public Warehouse(String name, FactoryConglomerate factoryConglomerate)
     {
         super(name, name, LogMessageTypes.Warehouse);
         this.factoryConglomerate = factoryConglomerate;
         this.warehouseItems = new ArrayList<>();
-        this.warehouseCapacity = warehouseCapacity;
         this.remainingWarehouseCapacity = warehouseCapacity;
     }
 
@@ -38,6 +36,15 @@ public class Warehouse extends FactoryObject
     public int getWarehouseCapacity()
     {
         return warehouseCapacity;
+    }
+
+    /**
+     * warehouseCapacity sets the capacity
+     */
+    public void setWarehouseCapacity(int warehouseCapacity)
+    {
+        this.warehouseCapacity = warehouseCapacity;
+        this.remainingWarehouseCapacity = remainingWarehouseCapacity;
     }
 
     /**
@@ -165,7 +172,8 @@ public class Warehouse extends FactoryObject
      */
     public Warehouse copy()
     {
-        var newWarehouse = new Warehouse(this.getName(), this.warehouseCapacity, this.factoryConglomerate);
+        var newWarehouse = new Warehouse(this.getName(), this.factoryConglomerate);
+        newWarehouse.setWarehouseCapacity(this.warehouseCapacity);
 
         for(var warehousePosition : this.getWarehouseItems())
         {
