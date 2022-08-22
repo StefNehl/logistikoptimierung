@@ -89,6 +89,7 @@ public class Main
      * @param logSettings message settings for the factory
      * @param nrOfOrderToOptimize nr of orders to optimize
      * @param maxRuntimeInSeconds max Runtime for the simulation
+     * @param maxSystemRunTimeInSeconds max real runtime for the calculation (will abort the calculation after the nr of seconds)
      */
     private static void TestProductionProcessOptimization(LogSettings logSettings,
                                                           int nrOfOrderToOptimize,
