@@ -101,12 +101,12 @@ public class FactoryConglomerate {
      * @param logSettings sets the amount of printed messages in the console
      * @return the time step after the factory stops (in seconds)
      */
-    public long startFactory(List<Order> orderList,
-                             List<FactoryStep> factorySteps,
-                             long maxRunTime,
-                             LogSettings logSettings)
+    public long startSimulation(List<Order> orderList,
+                                List<FactoryStep> factorySteps,
+                                long maxRunTime,
+                                LogSettings logSettings)
     {
-        return startFactory(orderList, factorySteps, false, maxRunTime, logSettings);
+        return startSimulation(orderList, factorySteps, false, maxRunTime, logSettings);
     }
 
     /**
@@ -118,14 +118,16 @@ public class FactoryConglomerate {
      * @param orderList sets the orders
      * @param factorySteps sets the factory steps to perform
      * @param maxRunTime sets the maximum runtime after the simulation stops
+     * @param checkIfMaterialIsAlreadyInWarehouse checks if the materials is already in the warehouse for the step. If yes,
+     *                                            the step will not be performed
      * @param logSettings sets the amount of printed messages in the console
      * @return the time step after the factory stops (in seconds)
      */
-    public long startFactory(List<Order> orderList,
-                             List<FactoryStep> factorySteps,
-                             boolean checkIfMaterialIsAlreadyInWarehouse,
-                             long maxRunTime,
-                             LogSettings logSettings)
+    public long startSimulation(List<Order> orderList,
+                                List<FactoryStep> factorySteps,
+                                boolean checkIfMaterialIsAlreadyInWarehouse,
+                                long maxRunTime,
+                                LogSettings logSettings)
     {
         //Working Order List is used for storing the remaining amount of items in an Order
         //This list changes => copy the list
