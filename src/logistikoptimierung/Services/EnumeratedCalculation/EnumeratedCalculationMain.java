@@ -42,18 +42,15 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * are used in the optimization.
      * @param instance with the factory and the orderlist where the optimization should happen
      * @param maxRuntime maximum run time for the optimization
-     * @param logSettings factory messages settings for the simulating factory
      * @param condenseMaterialSupplies condenses the supplying of the material to
      */
     public EnumeratedCalculationMain(Instance instance,
                                      long maxRuntime,
                                      boolean condenseMaterialSupplies,
-                                     LogSettings logSettings,
                                      long maxSystemRunTimeInNanoSeconds)
     {
         this.factoryConglomerate = instance.getFactoryConglomerate();
         this.orderList = instance.getOrderList();
-        this.logSettings = logSettings;
 
         this.sortedAvailableTransportList = new ArrayList<>(this.factoryConglomerate.getTransporters());
         this.sortedAvailableTransportList.sort(Comparator.comparingInt(Transporter::getCapacity));
@@ -81,7 +78,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(newInstance);
         this.bestSolution = firstComeFirstServeOptimizer.optimize(nrOfOrdersToOptimize);
-        var firstComeFirstServeResult = this.factoryConglomerate.startSimulation(this.orderList, this.bestSolution, this.bestTimeSolution, logSettings);
+        var firstComeFirstServeResult = this.factoryConglomerate.startSimulation(this.orderList, this.bestSolution, this.bestTimeSolution);
         firstComeFirstServeResult++;
         this.bestTimeSolution = firstComeFirstServeResult;
         this.factoryConglomerate.resetFactory();
@@ -127,7 +124,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         if(planningItems.isEmpty())
         {
             nrOfSimulations++;
-            long result = this.factoryConglomerate.startSimulation(this.orderList, stepsToDo, bestTimeSolution, logSettings);
+            long result = this.factoryConglomerate.startSimulation(this.orderList, stepsToDo, bestTimeSolution);
             var nrOfRemainingSteps = this.factoryConglomerate.getNrOfRemainingSteps();
             this.factoryConglomerate.resetFactory();
 

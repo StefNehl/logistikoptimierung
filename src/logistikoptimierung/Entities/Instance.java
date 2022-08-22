@@ -1,6 +1,7 @@
 package logistikoptimierung.Entities;
 
 import logistikoptimierung.Entities.FactoryObjects.FactoryConglomerate;
+import logistikoptimierung.Entities.FactoryObjects.LogSettings;
 import logistikoptimierung.Entities.WarehouseItems.Order;
 
 import java.util.List;
@@ -76,5 +77,14 @@ public class Instance
     public void setWarehouseCapacity(int warehouseCapacity) {
         this.warehouseCapacity = warehouseCapacity;
         this.factoryConglomerate.getWarehouse().setWarehouseCapacity(warehouseCapacity);
+    }
+
+    /**
+     * Sets the messaging in the console of the factory conglomerate
+     * @param logSettings log settings for the factory conglomerate
+     */
+    public void setLogSettings(LogSettings logSettings)
+    {
+        this.factoryConglomerate.setLogSettings(logSettings);
     }
 }

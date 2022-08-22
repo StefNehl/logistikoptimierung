@@ -35,9 +35,7 @@ public class FactoryConglomerate {
      * This class creates an object for the factory conglomerate. The factory conglomerate  is the main object and contains the warehouse, transporters,
      * drivers, and different factories. This class also starts the simulation.
      * @param name sets the name
-     * @param warehouseCapacity sets the capacity of the warehouse
      * @param factories sets the productions with the production processes
-     * @param nrOfDrivers sets the nr of available drivers
      * @param transporters sets the transporters
      * @param suppliedMaterials sets the materials for supply
      * @param availableProducts sets the available productions
@@ -81,6 +79,18 @@ public class FactoryConglomerate {
                 this.timeStepToJump = process.getProductionTime();
         }
 
+        this.logSettings = new LogSettings(
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+        );
     }
 
     /**
@@ -92,15 +102,13 @@ public class FactoryConglomerate {
      * @param orderList sets the orders
      * @param factorySteps sets the factory steps to perform
      * @param maxRunTime sets the maximum runtime after the simulation stops
-     * @param logSettings sets the amount of printed messages in the console
      * @return the time step after the factory stops (in seconds)
      */
     public long startSimulation(List<Order> orderList,
                                 List<FactoryStep> factorySteps,
-                                long maxRunTime,
-                                LogSettings logSettings)
+                                long maxRunTime)
     {
-        return startSimulation(orderList, factorySteps, false, maxRunTime, logSettings);
+        return startSimulation(orderList, factorySteps, false, maxRunTime);
     }
 
     /**
@@ -114,14 +122,12 @@ public class FactoryConglomerate {
      * @param maxRunTime sets the maximum runtime after the simulation stops
      * @param checkIfMaterialIsAlreadyInWarehouse checks if the materials is already in the warehouse for the step. If yes,
      *                                            the step will not be performed
-     * @param logSettings sets the amount of printed messages in the console
      * @return the time step after the factory stops (in seconds)
      */
     public long startSimulation(List<Order> orderList,
                                 List<FactoryStep> factorySteps,
                                 boolean checkIfMaterialIsAlreadyInWarehouse,
-                                long maxRunTime,
-                                LogSettings logSettings)
+                                long maxRunTime)
     {
         //Working Order List is used for storing the remaining amount of items in an Order
         //This list changes => copy the list
@@ -138,7 +144,6 @@ public class FactoryConglomerate {
 
         logMessages.clear();
         nrOfRemainingSteps = 0;
-        this.logSettings = logSettings;
 
         int hourCount = 1;
         addLog("Hour: " + hourCount, LogMessageTypes.Factory);
@@ -254,6 +259,10 @@ public class FactoryConglomerate {
         this.workingOrderList.clear();
     }
 
+    /**
+     * Sets the nr of drivers for the factory conglomerate
+     * @param nrOfDrivers nr of drivers
+     */
     public void setNrOfDrivers(int nrOfDrivers)
     {
         this.drivers = new ArrayList<>();
@@ -261,6 +270,15 @@ public class FactoryConglomerate {
         {
             drivers.add(new Driver(i + "", i));
         }
+    }
+
+    /**
+     * sets the log settings for the factory
+     * @param logSettings sets the amount of printed messages in the console
+     */
+    public void setLogSettings(LogSettings logSettings)
+    {
+        this.logSettings = logSettings;
     }
 
     /**

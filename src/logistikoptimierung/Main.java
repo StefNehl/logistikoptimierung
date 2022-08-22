@@ -1,14 +1,16 @@
 package logistikoptimierung;
 
 import logistikoptimierung.Contracts.IDataService;
-import logistikoptimierung.Entities.FactoryObjects.LogSettings;
-import logistikoptimierung.Entities.FactoryObjects.FactoryStep;
+import logistikoptimierung.Entities.FactoryObjects.*;
 import logistikoptimierung.Entities.Instance;
+import logistikoptimierung.Entities.WarehouseItems.Product;
+import logistikoptimierung.Entities.WarehouseItems.WarehousePosition;
 import logistikoptimierung.Services.CSVDataImportService;
 import logistikoptimierung.Services.EnumeratedCalculation.EnumeratedCalculationMain;
 import logistikoptimierung.Services.FirstComeFirstServeOptimizer.FirstComeFirstServeOptimizerMain;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -53,22 +55,24 @@ public class Main
         var instance = dataService.loadDataAndCreateInstance(contractList);
         instance.setNrOfDrivers(nrOfDrivers);
         instance.setWarehouseCapacity(warehouseCapacity);
+        instance.setLogSettings(logSettings);
 
-        //testTheCalculationOfNrOfOrders(logSettings, 22000, nrOfDrivers, warehouseCapacity, contractList);
-        TestFirstComeFirstServe(logSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, instance);
-        TestProductionProcessOptimization(logSettings, nrOfOrderToOptimize, maxRuntimeInSeconds, maxSystemRunTimeInSeconds, instance);
+        //testTheCalculationOfNrOfOrders(maxRuntimeInSeconds, maxSystemRunTimeInSeconds, instance);
+        TestFirstComeFirstServe(nrOfOrderToOptimize, maxRuntimeInSeconds, true, instance);
+        TestProductionProcessOptimization(nrOfOrderToOptimize, maxRuntimeInSeconds, maxSystemRunTimeInSeconds, true, instance);
     }
 
     /**
      * Loads the data with the contract list from the parameter, does the first come first serve optimization and
      * tests the first come first serve optimization.
-     * @param logSettings message settings for the factory
      * @param nrOfOrderToOptimize nr of orders to optimize
      * @param maxRuntimeInSeconds max Runtime for the simulation
+     * @param fillWarehouseWith50PercentOfNeededMaterials true if the warehouse should be filled with 50 percent of the needed materials
+     * @param instance instance for the simulation
      */
-    private static void TestFirstComeFirstServe(LogSettings logSettings,
-                                                int nrOfOrderToOptimize,
+    private static void TestFirstComeFirstServe(int nrOfOrderToOptimize,
                                                 long maxRuntimeInSeconds,
+                                                boolean fillWarehouseWith50PercentOfNeededMaterials,
                                                 Instance instance)
     {
         var startTime = System.nanoTime();
@@ -76,7 +80,10 @@ public class Main
         var optimizer = new FirstComeFirstServeOptimizerMain(instance);
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        var result = instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factoryTaskList, maxRuntimeInSeconds, logSettings);
+        if(fillWarehouseWith50PercentOfNeededMaterials)
+            fillWarehouseWith50PercentOfMaterialsNeeded(factoryTaskList, instance.getFactoryConglomerate().getWarehouse());
+
+        var result = instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factoryTaskList, maxRuntimeInSeconds);
         var endTime = System.nanoTime();
 
         printResult(factoryTaskList, instance.getFactoryConglomerate().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
@@ -86,32 +93,69 @@ public class Main
     /**
      * Loads the data with the contract list from the parameter, does the enumerated calculation optimization and
      * tests the optimization.
-     * @param logSettings message settings for the factory
      * @param nrOfOrderToOptimize nr of orders to optimize
      * @param maxRuntimeInSeconds max Runtime for the simulation
+     * @param fillWarehouseWith50PercentOfNeededMaterials true if the warehouse should be filled with 50 percent of the needed materials
      * @param maxSystemRunTimeInSeconds max real runtime for the calculation (will abort the calculation after the nr of seconds)
+     * @param instance instance for the simulation
      */
-    private static void TestProductionProcessOptimization(LogSettings logSettings,
-                                                          int nrOfOrderToOptimize,
+    private static void TestProductionProcessOptimization(int nrOfOrderToOptimize,
                                                           long maxRuntimeInSeconds,
                                                           long maxSystemRunTimeInSeconds,
+                                                          boolean fillWarehouseWith50PercentOfNeededMaterials,
                                                           Instance instance)
     {
         var startTime = System.nanoTime();
 
         var optimizer = new EnumeratedCalculationMain(instance,
                 maxRuntimeInSeconds,
-                true,
-                logSettings,
+                false,
                 convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
+
+
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        var result = instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factoryTaskList, maxRuntimeInSeconds, logSettings);
+        if(fillWarehouseWith50PercentOfNeededMaterials)
+            fillWarehouseWith50PercentOfMaterialsNeeded(factoryTaskList, instance.getFactoryConglomerate().getWarehouse());
+
+        var result = instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factoryTaskList, maxRuntimeInSeconds);
         var endTime = System.nanoTime();
 
         printResult(factoryTaskList, instance.getFactoryConglomerate().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
         System.out.println("Nr of Simulations: " + optimizer.getNrOfSimulations());
         instance.getFactoryConglomerate().resetFactory();
+    }
+
+    private static void fillWarehouseWith50PercentOfMaterialsNeeded(List<FactoryStep> factorySteps, Warehouse warehouse)
+    {
+        var warehousePositions = new ArrayList<WarehousePosition>();
+
+        for(var step : factorySteps)
+        {
+            var amount = get50PercentOfAmountOfStep(step);
+            if(amount == 0)
+                continue;
+            warehousePositions.add(new WarehousePosition(step.getItemToManipulate(), amount));
+        }
+
+        for(var position : warehousePositions)
+            warehouse.addItemToWarehouse(position);
+    }
+
+    private static int get50PercentOfAmountOfStep(FactoryStep step)
+    {
+        if(step.getStepType() == FactoryStepTypes.Produce)
+        {
+            var getFactory = (Factory)step.getFactoryObject();
+            var productionProcess = getFactory.getProductionProcessForProduct((Product) step.getItemToManipulate());
+            return productionProcess.getProductionBatchSize() / 2;
+
+        }
+
+        if(step.getStepType() == FactoryStepTypes.GetMaterialFromSuppliesAndMoveBackToWarehouse)
+            return step.getAmountOfItems() / 2;
+
+        return 0;
     }
 
     /**
@@ -156,15 +200,13 @@ public class Main
 
     /**
      * Tests the calculation of nr of orders
-     * @param logSettings message settings for the factory
      * @param runtimeInSeconds Runtime for the orders
      */
-    private static void testTheCalculationOfNrOfOrders(LogSettings logSettings,
-                                                       long runtimeInSeconds,
+    private static void testTheCalculationOfNrOfOrders(long runtimeInSeconds,
                                                        long maxSystemRunTimeInSeconds,
                                                        Instance instance)
     {
-        calculateMaxNrOfOrders(runtimeInSeconds, instance, logSettings, convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
+        calculateMaxNrOfOrders(runtimeInSeconds, instance, convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
     }
 
     /**
@@ -173,7 +215,6 @@ public class Main
      */
     private static void calculateMaxNrOfOrders(long runTimeInSeconds,
                                                Instance instance,
-                                               LogSettings logSettings,
                                                long maxSystemRunTimeInSeconds)
     {
         var bestSteps = new ArrayList<FactoryStep>();
@@ -188,7 +229,7 @@ public class Main
             if(factorySteps.isEmpty())
                 break;
 
-            instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factorySteps, runTimeInSeconds, logSettings);
+            instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factorySteps, runTimeInSeconds);
 
             var nrOfRemainingSteps = instance.getFactoryConglomerate().getNrOfRemainingSteps();
             instance.getFactoryConglomerate().resetFactory();
@@ -202,7 +243,6 @@ public class Main
             var enumCalculation = new EnumeratedCalculationMain(instance,
                     runTimeInSeconds,
                     false,
-                    logSettings,
                     convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
             var factorySteps = enumCalculation.optimize(nrOfOrders);
 
@@ -210,7 +250,7 @@ public class Main
             if(factorySteps.isEmpty())
                 break;
 
-            instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factorySteps, runTimeInSeconds, logSettings);
+            instance.getFactoryConglomerate().startSimulation(instance.getOrderList(), factorySteps, runTimeInSeconds);
             var nrOfRemainingSteps = instance.getFactoryConglomerate().getNrOfRemainingSteps();
 
             if(nrOfRemainingSteps > 0)
