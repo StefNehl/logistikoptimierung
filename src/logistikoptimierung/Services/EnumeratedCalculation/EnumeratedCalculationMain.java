@@ -81,7 +81,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
 
         var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(newInstance);
         this.bestSolution = firstComeFirstServeOptimizer.optimize(nrOfOrdersToOptimize);
-        var firstComeFirstServeResult = this.factoryConglomerate.startFactory(this.orderList, this.bestSolution, this.bestTimeSolution, logSettings);
+        var firstComeFirstServeResult = this.factoryConglomerate.startSimulation(this.orderList, this.bestSolution, this.bestTimeSolution, logSettings);
         firstComeFirstServeResult++;
         this.bestTimeSolution = firstComeFirstServeResult;
         this.factoryConglomerate.resetFactory();
@@ -127,7 +127,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
         if(planningItems.isEmpty())
         {
             nrOfSimulations++;
-            long result = this.factoryConglomerate.startFactory(this.orderList, stepsToDo, bestTimeSolution, logSettings);
+            long result = this.factoryConglomerate.startSimulation(this.orderList, stepsToDo, bestTimeSolution, logSettings);
             var nrOfRemainingSteps = this.factoryConglomerate.getNrOfRemainingSteps();
             this.factoryConglomerate.resetFactory();
 

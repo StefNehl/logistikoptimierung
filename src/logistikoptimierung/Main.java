@@ -77,7 +77,7 @@ public class Main
         var optimizer = new FirstComeFirstServeOptimizerMain(instance);
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        var result = instance.factoryConglomerate().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, logSettings);
+        var result = instance.factoryConglomerate().startSimulation(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, logSettings);
         var endTime = System.nanoTime();
 
         printResult(factoryTaskList, instance.factoryConglomerate().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
@@ -113,7 +113,7 @@ public class Main
                 convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
         var factoryTaskList = optimizer.optimize(nrOfOrderToOptimize);
 
-        var result = instance.factoryConglomerate().startFactory(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, logSettings);
+        var result = instance.factoryConglomerate().startSimulation(instance.orderList(), factoryTaskList, maxRuntimeInSeconds, logSettings);
         var endTime = System.nanoTime();
 
         printResult(factoryTaskList, instance.factoryConglomerate().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
@@ -202,7 +202,7 @@ public class Main
             if(factorySteps.isEmpty())
                 break;
 
-            instance.factoryConglomerate().startFactory(instance.orderList(), factorySteps, runTimeInSeconds, logSettings);
+            instance.factoryConglomerate().startSimulation(instance.orderList(), factorySteps, runTimeInSeconds, logSettings);
 
             var nrOfRemainingSteps = instance.factoryConglomerate().getNrOfRemainingSteps();
             instance.factoryConglomerate().resetFactory();
@@ -224,7 +224,7 @@ public class Main
             if(factorySteps.isEmpty())
                 break;
 
-            instance.factoryConglomerate().startFactory(instance.orderList(), factorySteps, runTimeInSeconds, logSettings);
+            instance.factoryConglomerate().startSimulation(instance.orderList(), factorySteps, runTimeInSeconds, logSettings);
             var nrOfRemainingSteps = instance.factoryConglomerate().getNrOfRemainingSteps();
 
             if(nrOfRemainingSteps > 0)
