@@ -156,6 +156,9 @@ public class FactoryConglomerate {
         long starTime = 0;
         eventTimeSteps.add(starTime);
 
+        //For checking and deducting the warehouse items
+        var copyOfWarehouse = warehouse.copy();
+
         while (this.currentTimeStep <= maxRunTime)
         {
             this.currentTimeStep = eventTimeSteps.first();
@@ -173,7 +176,7 @@ public class FactoryConglomerate {
 
                 //Check If Material is already in Warehouse
                 if(checkIfMaterialIsAlreadyInWarehouse &&
-                        checkIfStepIsForMaterialOrProductIsAlreadyInWarehouse(step, copyOfSteps))
+                        checkIfStepIsForMaterialOrProductIsAlreadyInWarehouse(step, copyOfSteps, copyOfWarehouse))
                     continue;
 
                 if(!step.doStep())
@@ -198,7 +201,7 @@ public class FactoryConglomerate {
         return this.currentTimeStep;
     }
 
-    private boolean checkIfStepIsForMaterialOrProductIsAlreadyInWarehouse(FactoryStep step, List<FactoryStep> copyOfSteps)
+    private boolean checkIfStepIsForMaterialOrProductIsAlreadyInWarehouse(FactoryStep step, List<FactoryStep> copyOfSteps, Warehouse copyOfWarehouse)
     {
         switch (step.getStepType())
         {
@@ -208,13 +211,12 @@ public class FactoryConglomerate {
             case MoveProductToOutputBuffer:
             case MoveProductFromOutputBufferToWarehouse:
                 var materialPosition = new WarehousePosition(step.getItemToManipulate(), step.getAmountOfItems());
-                var materialFromWarehouse = this.warehouse.removeItemFromWarehouse(materialPosition);
+                var materialFromWarehouse = copyOfWarehouse.removeItemFromWarehouse(materialPosition);
                 if(materialFromWarehouse == null)
                     break;
 
                 step.setCompletedToTrue();
                 copyOfSteps.remove(step);
-                this.warehouse.addItemToWarehouse(materialFromWarehouse);
                 return true;
         }
 
