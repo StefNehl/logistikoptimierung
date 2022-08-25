@@ -40,6 +40,7 @@ public class Warehouse extends FactoryObject
 
     /**
      * warehouseCapacity sets the capacity
+     * @param warehouseCapacity sets the warehouse capacity
      */
     public void setWarehouseCapacity(int warehouseCapacity)
     {

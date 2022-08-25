@@ -74,7 +74,7 @@ public class FactoryObject {
 
     /**
      * sets the time step until this factory object is blocked
-     * @param blockedUntilTimeStep
+     * @param blockedUntilTimeStep time step in seconds until the factory object is blocked
      */
     public void setBlockedUntilTimeStep(long blockedUntilTimeStep) {
         this.blockedUntilTimeStep = blockedUntilTimeStep;

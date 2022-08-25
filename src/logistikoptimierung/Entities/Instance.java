@@ -55,7 +55,7 @@ public class Instance
 
     /**
      * Sets the nr of drivers for the simuulation
-     * @param nrOfDrivers
+     * @param nrOfDrivers nr of drivers
      */
     public void setNrOfDrivers(int nrOfDrivers)
     {
@@ -72,7 +72,7 @@ public class Instance
 
     /**
      * sets the warehouse capacity for the simulation
-     * @param warehouseCapacity
+     * @param warehouseCapacity capacity for the warehouse
      */
     public void setWarehouseCapacity(int warehouseCapacity) {
         this.warehouseCapacity = warehouseCapacity;

@@ -14,6 +14,10 @@ public record WarehousePosition(WarehouseItem item, int amount) {
         return item.getName() + " Amount: " + amount;
     }
 
+    /**
+     * Creates a copy of this warehouse position, with the same items reference and the amount
+     * @return the copy
+     */
     public WarehousePosition copy()
     {
         return new WarehousePosition(this.item, this.amount);

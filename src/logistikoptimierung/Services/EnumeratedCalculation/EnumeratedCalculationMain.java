@@ -43,6 +43,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param instance with the factory and the orderlist where the optimization should happen
      * @param maxRuntime maximum run time for the optimization
      * @param condenseMaterialSupplies condenses the supplying of the material to
+     * @param maxSystemRunTimeInNanoSeconds sets the Runtime of the calculation in seconds, after the time is reached the best
+     *                                      result found in the time is returned
      */
     public EnumeratedCalculationMain(Instance instance,
                                      long maxRuntime,
