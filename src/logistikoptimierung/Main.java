@@ -28,6 +28,10 @@ public class Main
     public static void main(String[] args) {
 	// write your code here
 
+        String contractList = CSVDataImportService.PARALLEL_ORDERS;
+        var dataService = new CSVDataImportService();
+        var instance = dataService.loadDataAndCreateInstance(contractList);
+
         var logSettings = new LogSettings(
                 false,
                 false,
@@ -41,20 +45,14 @@ public class Main
                 false
         );
 
-        int nrOfOrderToOptimize = 5;
-        String contractList = CSVDataImportService.PARALLEL_ORDERS;
-        long maxRuntimeInSeconds = 10000000;
-        int nrOfDrivers = 6;
-        int warehouseCapacity = 1000;
-        boolean fillWarehouseWith20PercentOfNeededMaterials = false;
-
-        var maxSystemRunTimeInSeconds = 1800;
-
-        var dataService = new CSVDataImportService();
-        var instance = dataService.loadDataAndCreateInstance(contractList);
-        instance.setNrOfDrivers(nrOfDrivers);
-        instance.setWarehouseCapacity(warehouseCapacity);
         instance.setLogSettings(logSettings);
+        instance.setNrOfDrivers(6);
+        instance.setWarehouseCapacity(1000);
+
+        int nrOfOrderToOptimize = 5;
+        long maxRuntimeInSeconds = 10000000;
+        var maxSystemRunTimeInSeconds = 1800;
+        boolean fillWarehouseWith20PercentOfNeededMaterials = false;
 
         //testTheCalculationOfNrOfOrders(maxRuntimeInSeconds, maxSystemRunTimeInSeconds, instance);
         TestFirstComeFirstServe(nrOfOrderToOptimize, maxRuntimeInSeconds, fillWarehouseWith20PercentOfNeededMaterials, instance);
