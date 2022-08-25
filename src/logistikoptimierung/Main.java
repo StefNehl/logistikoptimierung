@@ -28,7 +28,7 @@ public class Main
     public static void main(String[] args) {
 	// write your code here
 
-        String contractList = CSVDataImportService.MERGED_ORDERS;
+        String contractList = CSVDataImportService.PARALLEL_ORDERS;
         var dataService = new CSVDataImportService();
         var instance = dataService.loadDataAndCreateInstance(contractList);
 
