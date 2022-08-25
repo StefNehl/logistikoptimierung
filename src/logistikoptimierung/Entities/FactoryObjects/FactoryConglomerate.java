@@ -303,9 +303,9 @@ public class FactoryConglomerate {
     }
 
     /**
-     * @return a list of productions in the factory
+     * @return a list of factories of the factory conglomerate
      */
-    public List<Factory> getProductions()
+    public List<Factory> getFactories()
     {
         return factories;
     }

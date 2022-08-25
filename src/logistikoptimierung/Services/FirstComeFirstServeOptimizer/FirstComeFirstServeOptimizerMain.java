@@ -39,7 +39,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
 
         this.productionPlanningItems = new ArrayList<>();
 
-        for(var production : this.factoryConglomerate.getProductions())
+        for(var production : this.factoryConglomerate.getFactories())
         {
             productionPlanningItems.add(new ProductionPlanningItem(production));
         }
@@ -378,7 +378,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
             var process = processesToProduce.get(i);
             for(var processPlaningItem : this.productionPlanningItems)
             {
-                if(process.getProduction().equals(processPlaningItem.getProduction()))
+                if(process.getFactory().equals(processPlaningItem.getProduction()))
                     fittingProcessPlaningItems[i] = processPlaningItem;
             }
         }
@@ -474,7 +474,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                         productionStart,
                         process.getProductToProduce(),
                         1,
-                        process.getProduction(),
+                        process.getFactory(),
                         FactoryStepTypes.MoveMaterialsForProductFromWarehouseToInputBuffer);
                 factorySteps.add(newStep);
 
@@ -483,7 +483,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                         productionStart,
                         process.getProductToProduce(),
                         1,
-                        process.getProduction(),
+                        process.getFactory(),
                         FactoryStepTypes.Produce);
                 factorySteps.add(newStep);
 
@@ -492,7 +492,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                         productionStart + productionTime,
                         process.getProductToProduce(),
                         1,
-                        process.getProduction(),
+                        process.getFactory(),
                         FactoryStepTypes.MoveProductToOutputBuffer);
                 factorySteps.add(newStep);
 
@@ -500,7 +500,7 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
                         productionStart + productionTime,
                         process.getProductToProduce(),
                         1,
-                        process.getProduction(),
+                        process.getFactory(),
                         FactoryStepTypes.MoveProductFromOutputBufferToWarehouse);
                 factorySteps.add(newStep);
             }

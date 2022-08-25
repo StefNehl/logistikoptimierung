@@ -59,9 +59,9 @@ public class ProductionProcess
     }
 
     /**
-     * @return gets the parent production
+     * @return gets the parent factory
      */
-    public Factory getProduction() {
+    public Factory getFactory() {
         return factory;
     }
 

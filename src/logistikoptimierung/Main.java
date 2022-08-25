@@ -28,7 +28,7 @@ public class Main
     public static void main(String[] args) {
 	// write your code here
 
-        String contractList = CSVDataImportService.PARALLEL_ORDERS;
+        String contractList = CSVDataImportService.MERGED_ORDERS;
         var dataService = new CSVDataImportService();
         var instance = dataService.loadDataAndCreateInstance(contractList);
 
@@ -52,6 +52,7 @@ public class Main
         int nrOfOrderToOptimize = 5;
         long maxRuntimeInSeconds = 10000000;
         var maxSystemRunTimeInSeconds = 1800;
+        //var maxSystemRunTimeInSeconds = 600;
         boolean fillWarehouseWith20PercentOfNeededMaterials = false;
 
         //testTheCalculationOfNrOfOrders(maxRuntimeInSeconds, maxSystemRunTimeInSeconds, instance);
@@ -103,10 +104,9 @@ public class Main
                                                           Instance instance)
     {
         var startTime = System.nanoTime();
-
         var optimizer = new EnumeratedCalculationMain(instance,
                 maxRuntimeInSeconds,
-                false,
+                true,
                 convertSecondsToNanoSeconds(maxSystemRunTimeInSeconds));
 
 
@@ -120,6 +120,7 @@ public class Main
 
         printResult(factoryTaskList, instance.getFactoryConglomerate().getCurrentIncome(), result, convertNanoSecondsToSeconds(endTime - startTime));
         System.out.println("Nr of Simulations: " + optimizer.getNrOfSimulations());
+        System.out.println("Nr of Cut Simulations: " + optimizer.getNrOfCutSolutions());
         instance.getFactoryConglomerate().resetFactory();
     }
 
