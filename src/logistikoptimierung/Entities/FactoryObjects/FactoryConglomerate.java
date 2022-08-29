@@ -136,10 +136,6 @@ public class FactoryConglomerate {
         {
             var copyOfOrder = order.createCopyOfOrder();
             workingOrderList.add(copyOfOrder);
-
-            //Checks every order if there is a smaller time step
-            if(this.timeStepToJump > copyOfOrder.getTravelTime())
-                this.timeStepToJump = copyOfOrder.getTravelTime();
         }
 
         logMessages.clear();

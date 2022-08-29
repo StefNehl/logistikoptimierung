@@ -82,7 +82,6 @@ public class EnumeratedCalculationMain implements IOptimizationService
         var firstComeFirstServeOptimizer = new FirstComeFirstServeOptimizerMain(newInstance);
         this.bestSolution = firstComeFirstServeOptimizer.optimize(nrOfOrdersToOptimize);
         var firstComeFirstServeResult = this.factoryConglomerate.startSimulation(this.orderList, this.bestSolution, this.bestTimeSolution);
-        firstComeFirstServeResult++;
         this.bestTimeSolution = firstComeFirstServeResult;
         this.factoryConglomerate.resetFactory();
 
@@ -158,7 +157,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
             switch (planningItem.planningType())
             {
                 case Acquire -> {
-                    stepsToAdd = getAcquireTransportSteps(stepsToDo, planningItem);
+                    stepsToAdd = getAcquireTransportSteps(planningItem);
                 }
                 case Produce -> {
                     stepsToAdd = getProductionSteps(stepsToDo, planningItem);
@@ -227,6 +226,8 @@ public class EnumeratedCalculationMain implements IOptimizationService
                 removedDriver.setBlockedUntilTimeStep(removedDriver.getBlockedUntilTimeStep() - driveTime);
                 this.availableDrivers.add(poolItem.driver());
                 addTransporterToSortedTransportList(poolItem.transporter());
+
+                //Was passiert mit Transporter welcher vorher schon befreit wurde
             }
         }
     }
@@ -392,7 +393,7 @@ public class EnumeratedCalculationMain implements IOptimizationService
      * @param planningItem planning item for the factory steps
      * @return factory steps for the planning item
      */
-    private ArrayList<FactoryStep> getAcquireTransportSteps(List<FactoryStep> stepToDo, PlanningItem planningItem)
+    private ArrayList<FactoryStep> getAcquireTransportSteps(PlanningItem planningItem)
     {
         var steps = new ArrayList<FactoryStep>();
         var amount = planningItem.amount();
@@ -565,6 +566,11 @@ public class EnumeratedCalculationMain implements IOptimizationService
         return null;
     }
 
+    /**
+     * schrenkt vielleicht den Suchraum ein
+     * @param item
+     * @return
+     */
     private DriverPoolItem getDriverPoolItemWithDriverWhoIsEarliestBack(WarehouseItem item)
     {
         DriverPoolItem bestDriverPoolItem = null;

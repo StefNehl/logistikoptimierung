@@ -56,8 +56,8 @@ public class Main
         boolean fillWarehouseWith20PercentOfNeededMaterials = false;
 
         //testTheCalculationOfNrOfOrders(maxRuntimeInSeconds, maxSystemRunTimeInSeconds, instance);
-        TestFirstComeFirstServe(nrOfOrderToOptimize, maxRuntimeInSeconds, fillWarehouseWith20PercentOfNeededMaterials, instance);
-        TestProductionProcessOptimization(nrOfOrderToOptimize, maxRuntimeInSeconds, maxSystemRunTimeInSeconds, fillWarehouseWith20PercentOfNeededMaterials, instance);
+        testFirstComeFirstServe(nrOfOrderToOptimize, maxRuntimeInSeconds, fillWarehouseWith20PercentOfNeededMaterials, instance);
+        testProductionProcessOptimization(nrOfOrderToOptimize, maxRuntimeInSeconds, maxSystemRunTimeInSeconds, fillWarehouseWith20PercentOfNeededMaterials, instance);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Main
      * @param fillWarehouseWith20PercentOfNeededMaterials true if the warehouse should be filled with 50 percent of the needed materials
      * @param instance instance for the simulation
      */
-    private static void TestFirstComeFirstServe(int nrOfOrderToOptimize,
+    private static void testFirstComeFirstServe(int nrOfOrderToOptimize,
                                                 long maxRuntimeInSeconds,
                                                 boolean fillWarehouseWith20PercentOfNeededMaterials,
                                                 Instance instance)
@@ -97,7 +97,7 @@ public class Main
      * @param maxSystemRunTimeInSeconds max real runtime for the calculation (will abort the calculation after the nr of seconds)
      * @param instance instance for the simulation
      */
-    private static void TestProductionProcessOptimization(int nrOfOrderToOptimize,
+    private static void testProductionProcessOptimization(int nrOfOrderToOptimize,
                                                           long maxRuntimeInSeconds,
                                                           long maxSystemRunTimeInSeconds,
                                                           boolean fillWarehouseWith20PercentOfNeededMaterials,
