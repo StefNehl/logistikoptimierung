@@ -46,7 +46,8 @@ public class FirstComeFirstServeOptimizerMain implements IOptimizationService {
     }
 
     /**
-     * Optimize a given nr of order from the order list with the first come, first serve algorithm.
+     * Optimize a given nr of order from the order list with the first come, first serve algorithm. Returns an empty list
+     * if the order nr is higher than the available  orders.
      * @param nrOfOrdersToOptimize nr of orders to optimize
      * @return returns a list of factory steps for the simulation of the factory
      */

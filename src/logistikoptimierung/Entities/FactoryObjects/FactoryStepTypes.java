@@ -39,7 +39,8 @@ public enum FactoryStepTypes
 
     /**
      * Move product to output buffer. Needs the Factory Object Production, the produced product and the nr of Batches (only 1).
-     * The output buffer needs to have the space for the product, otherwise the step will fail.
+     * The output buffer needs to have the space for the product and the factory needs to be free, no production in progress,
+     * otherwise the step will fail.
      */
     MoveProductToOutputBuffer,
 

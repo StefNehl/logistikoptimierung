@@ -65,6 +65,12 @@ public class EnumeratedCalculationMain implements IOptimizationService
         this.maxSystemRunTime = maxSystemRunTimeInNanoSeconds;
     }
 
+    /**
+     * Optimizes the order list for the nr given in the parameter. Returns an empty list if the order nr is higher than
+     * the available  orders.
+     * @param nrOfOrdersToOptimize nr of orders which should be optimized.
+     * @return a list of factory steps for the orders
+     */
     @Override
     public List<FactoryStep> optimize(int nrOfOrdersToOptimize)
     {
