@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Creates a factory step object which should be performed at a specific time step
+ * Creates a factory step object which should be performed at a specific time step. The factory step will fail if the
+ * needed factory object is currently blocked by another task.
  */
 public class FactoryStep {
 
@@ -20,7 +21,8 @@ public class FactoryStep {
     private boolean isCompleted;
 
     /**
-     * Creates a factory step object which should be performed at a specific time step
+     * Creates a factory step object which should be performed at a specific time step. The factory step will fail if the
+     * needed factory object is currently blocked by another task.
      * @param factoryConglomerate factory where the step should be performed
      * @param doTimeStep the specific time step when the step should be performed
      * @param itemToManipulate the item which should be manipulated
